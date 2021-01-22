@@ -1,0 +1,54 @@
+.indexBodyBackground{
+    background-image: url("Recursos/Fotos/NIGHT-pexels-neale-lasalle-631477.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+}
+
+.indexH1{
+    font-size: 48px;
+    text-align: left;
+    padding-left: 50px;
+    margin-top: 200px;
+    color: #EDFBC1;
+    display: flex;
+    text-shadow: 3px 3px black
+}
+
+.indexP{
+    font-size: 18px;
+    text-align: left;
+    padding-left: 50px;
+    color: #EDFBC1;
+    display: flex;
+    text-shadow: 3px 3px black
+}
+
+.indexFooter{
+    padding-left: 50px;
+}
+
+.indexDivTitulo{
+    float: left;
+}
+
+.indexDivLogiRegi{
+    float: right;
+}
+
+.fondoLogin{
+    background-color: #90C2E7;
+    padding: 20px;
+    margin-top: 180px;
+    border-radius: 20px;
+}
+
+.contenedorSuenos{
+    display: inline-block;
+    padding-top: 20px;
+    margin: 20px;
+    background-color: red;
+}
+
+
+

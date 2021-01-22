@@ -1,0 +1,4 @@
+TODO: Crear la página principal
+TODO: Aplicar JQuery
+
+TODO: Crear modelo de BD
