@@ -1,6 +1,7 @@
 <?php 
 require "config.php";
 //require "CRUDs/mostrarSuenos.php";
+session_start();
 ?>
 
 <!DOCTYPE html>
@@ -11,7 +12,6 @@ require "config.php";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AnotaSueños - Inicio</title>
-    
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -21,8 +21,9 @@ require "config.php";
 <!-- INICIO BODY -->
 <body style="background-color: #48BEFF;">
     <div class="container">
-        <div class="col-md-12 col-lg-12">
+        <div class="col-md-12 col-lg-12 p-3">
             <h1>Sueños</h1>
+            <p>Este es un trabajo en progreso. Todo está sujeto a cambios, especialmente el mal código.</p>
         </div>
         <div class="row">
             <div class="col-md-8"> 
@@ -35,9 +36,16 @@ require "config.php";
                     <p id="Resultado"></p>
                 </div> <br>
                 <div id="contenedorSuenos" style="width:100%;">
-                    <div id="mostrarSuenosPublic"></div>
+                    <div id="cantidadSuenos" class="text-center border border-info rounded p-1" style="background-color: white; height: 40px;">
+                    <span>Actualmente hay </span>
+                    <span id="cantidadTotalSuenos"></span>
+                    <span> sueños.</span>
+                    </div> <br>
+                    <div id="mostrarSuenosPublic">
+                    <p>Cargando sueños...</p>
+                    </div>
                 </div>
-                <div id="listContainer" style="width:100%;">
+                <div id="listContainer" class="border border-info rounded p-3" style="width:100%;background-color:white;"> 
                     <button id="anteriores10" class="btn btn-info">Anteriores 10</button>
                     <span>Mostrando: </span>
                     <span id="offsetDisplay">-----------</span>
@@ -47,7 +55,11 @@ require "config.php";
                 </div>
             </div>
             <div class="col-md-4">
-            BBBBBBBBBBBBBBBBBbbbB
+                <div id="contenedorMiniPerfil" class="center border border-info rounded p-3" style="background-color:white;">
+                    <span><img src="https://img.icons8.com/ios-filled/50/000000/help.png" width="50px" height="50px" alt="FDP" /></span>
+                    <span id="nomUsuMiniPerfil">Nombre de usuario</span><br>
+                    <span id="cantidadSuenosUsu">AGGA</span>
+                </div>
             </div>
         </div>
     </div>
@@ -55,6 +67,16 @@ require "config.php";
 </body>
 <!-- FIN BODY -->
 <script>
+
+$(document).ready(function(){
+    //Ejecutar función ajax que mostará registros
+    //Parámetros
+    // NPV : NO PRIVADOS
+    // NM18 : NO MAS 18
+    listarRegistrosNPVNM18();
+    listarCantidadSuenos();
+});
+
 $('#publicarSueno').click(function(){
     var sueno = document.getElementById('txtSueno').value;
     var suenoL = sueno.length;
@@ -76,17 +98,25 @@ $('#siguientes10').click(function(){
     console.log("-----------INICIO BTNSIGUIENTE-----------");
     console.log("Botón siguientes 10 - Presionado, iniciando");
     var newOffset = parseInt(document.getElementById("offsetDisplay").innerHTML) + parseInt(10);
-
+    
     //Estos dos deben ser iguales siempre 0 - 0 -> 10 - 10
     //En este caso, se hace automáticamente.
-    var offset = "&offset="+newOffset;
+    var offset = "offset="+newOffset;
     var offsetDspl = newOffset;
     var offsetLimDspl = parseInt(offsetDspl) + parseInt(10);
     console.log("Siguientes 10: Variables definidas");
 
+    var limite = parseInt(document.getElementById("cantidadTotalSuenos").innerHTML);
+    if(limite > newOffset && limite < offsetLimDspl){
+        offset = "&offset="+limite;
+    }
+
     //Mostrar nuevos valores en la página
     console.log("Funcion cambiarSpans llamada");
     cambiarSpans(offsetDspl,offsetLimDspl);
+    
+    //Limitar la cantidad máxima de sueños que se pueden mostrar.
+    console.log(document.getElementById("cantidadTotalSuenos").innerHTML);
     
 
     //TODO: Limitar la cantidad de registros máxima a la cantidad total de registros.
@@ -124,7 +154,7 @@ $('#anteriores10').click(function(){
     }
 
     //Definir variables para el offset.
-    var offset = "&offset="+parseInt(newOffset);
+    var offset = "offset="+parseInt(newOffset);
     var offsetDspl = newOffset;
     var offsetLim = parseInt(offsetDspl) + parseInt(10);
     console.log("Anteriores 10: Variables definidas");
@@ -182,6 +212,7 @@ function publicarSueno(){
     .done(function(respuesta){
         $('#Resultado').html(respuesta);
         listarRegistrosNPVNM18();
+        listarCantidadSuenos();
         document.getElementById('txtSueno').value = null;
         document.getElementById('suenoMas18').checked = false;
         document.getElementById('suenoPrivado').checked = false;
@@ -191,18 +222,8 @@ function publicarSueno(){
     })
 }
 
-$(document).ready(function(){
-    //Ejecutar función ajax que mostará registros
-    //Parámetros
-    // NPV : NO PRIVADOS
-    // NM18 : NO MAS 18
-    listarRegistrosNPVNM18();
-});
-
-
-
 function listarRegistrosNPVNM18(){
-    var offset = "&offset=0";
+    var offset = "offset=0";
     var offSetDspl = "0";
     document.getElementById("offsetDisplay").innerHTML = offSetDspl;
     document.getElementById("offsetLimDisplay").innerHTML = parseInt(offSetDspl) + parseInt(10);
@@ -217,6 +238,21 @@ function listarRegistrosNPVNM18(){
         $("#mostrarSuenosPublic").html("No se pudieron recuperar los registros.");
     });
 }
+
+function listarCantidadSuenos(){
+    var paquete = "funcion=cantidadSuenos";
+    $.ajax({
+        type: "GET",
+        url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
+        dataType: "html",
+        data: paquete,
+    }).done(function(res){
+        $("#cantidadTotalSuenos").html(res);
+    }).fail(function(){
+        $("#cantidadTotalSuenos").html("Algo falló.");
+    });
+}
+
 
 </script>
 </html>
