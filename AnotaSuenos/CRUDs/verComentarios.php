@@ -1,6 +1,5 @@
 <?php 
 require "../config.php";
-//require "CRUDs/mostrarSuenos.php";
 session_start();
 ?>
 
@@ -23,7 +22,7 @@ session_start();
     <div class="container">
         <div class="col-md-12 col-lg-12 p-3">
             <h1>Sueños</h1>
-            <p>Este es un trabajo en progreso. Todo está sujeto a cambios, especialmente el mal código.</p>
+            <a href="../home.php" class="btn btn-warning">Volver a la página principal</a>
         </div>
         <div class="row">
             <div class="col-md-8"> 
@@ -31,12 +30,12 @@ session_start();
                 <?php echo "<input type='hidden' style='display:none;' id='id_sue' value=".$_GET["id_sue"]." '>";?>
                 </div>
                 <div id="contenedorSueno"  style="background-color: white;">
+                <p>Cargando sueño...</p>
                 </div> <br>
-
                 <div id="cantidadSuenos" class="text-center border border-info rounded p-1" style="background-color: white; height: 40px;">
                     <span>Actualmente hay </span>
-                    <span id="cantidadTotalSuenos"></span>
-                    <span> comentarios.</span>
+                    <span id="cantidadTotalComentarios">0</span>
+                    <span> comentario(s).</span>
                     </div> <br>
                 <div id="contenedorAgregarComentario" class="border border-info rounder p-3" style="background-color:white;">
                     <p>Comentario:</p>
@@ -59,7 +58,7 @@ session_start();
             <div class="col-md-4">
                 <div id="contenedorMiniPerfil" class="center border border-info rounded p-3" style="background-color:white;">
                     <span><img src="https://img.icons8.com/ios-filled/50/000000/help.png" width="50px" height="50px" alt="FDP" /></span>
-                    <span id="nomUsuMiniPerfil">Nombre de usuario</span><br>
+                    <span id="nomUsuMiniPerfil"><?php echo $_SESSION["username"]; ?></span><br>
                     <span id="cantidadSuenosUsu">AGGA</span>
                 </div>
             </div>
@@ -71,6 +70,7 @@ session_start();
 $(document).ready(function(){
     mostrarComentarios();
     mostrarSueno();
+    listarCantidadComent();
 });
 
 function mostrarComentarios(){
@@ -111,13 +111,48 @@ $('#publicarComentario').click(function(){
     if(comentario == null || comentario == ''){
         alert("Tu comentario no puede estar vacío");
     }else if(comentarioL > 500){
-        alert("Tu comentario no debe pasar de 500 caracteres. Tienes: "+suenoL);
+        alert("Tu comentario no debe pasar de 500 caracteres. Tienes: "+comentarioL);
     }else{
-        publicarSueno();
+        publicarComentario();
         console.log("PublicarComentario completada");
-        listarRegistrosNPVNM18();
         console.log("ListarRegistros completada");
     }
 });
 
+function publicarComentario(){
+    var txtComentario = document.getElementById('txtComentario').value;
+    var id_sue = document.getElementById('id_sue').value;
+    //Consulta SQL
+    //Empaquetar registro a enviar.
+    var paquete = "txtComentario="+txtComentario+"&id_sue="+id_sue;
+    $.ajax({
+        url: 'http://anotasuenos:8080/CRUDs/agregarComentario.php',
+        type: 'POST',
+        data: paquete,
+    })
+    .done(function(respuesta){
+        $('#Resultado').html(respuesta);
+        mostrarComentarios();
+        listarCantidadComent();
+        document.getElementById('txtComentario').value = null;
+    })
+    .fail(function(){
+        $('#Resultado').html("No se pudo agregar tu sueño, posiblemente debido a un problema de conexión");
+    })
+}
+
+function listarCantidadComent(){
+    var id_sue = document.getElementById("id_sue").value;
+    var paquete = "funcion=cantidadComent&id_sue="+id_sue;    
+    $.ajax({
+        type: "GET",
+        url: "http://anotasuenos:8080/CRUDs/handlerAuxComent.php",
+        dataType: "html",
+        data: paquete,
+    }).done(function(res){
+        $("#cantidadTotalComentarios").html(res);
+    }).fail(function(){
+        $("#cantidadTotalComentarios").html("Algo falló.");
+    });
+}
 </script>

@@ -2,3 +2,17 @@ TODO: Crear la página principal
 TODO: Aplicar JQuery
 
 TODO: Crear modelo de BD
+
+Errores comunes
+
+-No poner el session_start cuando necesito el id o nombre de usuario;
+
+Cosas aprendidas
+-Para conseguir el nuevo valor escrito en un textarea, se debe usar "value", en vez de innerHTML.
+ por ejemplo: controlTXA = document.getElementById("textarea");
+ y luego: controlTXA.value = "ALGO";
+-Podría haber puesto el nombre de usuario en la sesión en vez de buscarlo con una función.
+
+Fuentes:
+https://stackoverflow.com/questions/1927593/cant-update-textarea-with-javascript-after-writing-to-it-manually
+https://stackoverflow.com/questions/14892516/jquery-button-click-triggers-multiple-times

@@ -26,18 +26,18 @@
     //Revisar si la función a ejecutar es deleteLike
     //Por alguna razón, esta función se rehusa a funcionar.
     //De momento, para borrar un like, se usa "handlerDislikeSuenos.php"
-    if($function == "deleteLike"){
-        $sql = "DELETE FROM LikeDislike WHERE id_sue = ? AND id_usu = ?";
-        if($stmt = mysqli_prepare($link,$sql)){
-            mysqli_stmt_bind_param($stmt,"ii",$id_sue_param,$cod_usu_param);
-            $id_sue_param = $id_sue; $cod_usu_param = $_SESSION["id"];
-            mysqli_stmt_execute($stmt);
-            $function = null;
-            echo cantidadLikes($id_sue,$link);
-        }else{
-            echo "Falla de conexión.";
-        }
-    }
+    // if($function == "deleteLike"){
+    //     $sql = "DELETE FROM LikeDislike WHERE id_sue = ? AND id_usu = ?";
+    //     if($stmt = mysqli_prepare($link,$sql)){
+    //         mysqli_stmt_bind_param($stmt,"ii",$id_sue_param,$cod_usu_param);
+    //         $id_sue_param = $id_sue; $cod_usu_param = $_SESSION["id"];
+    //         mysqli_stmt_execute($stmt);
+    //         $function = null;
+    //         echo cantidadLikes($id_sue,$link);
+    //     }else{
+    //         echo "Falla de conexión.";
+    //     }
+    // }
 
     function cantidadLikes($id_sue,$link){
         $result = mysqli_query($link, "SELECT count(*) as total FROM LikeDislike WHERE id_sue = ".$id_sue." ");

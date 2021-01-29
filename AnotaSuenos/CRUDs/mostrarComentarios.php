@@ -6,14 +6,13 @@ $funcion = $_GET["funcion"];
 //Se encarga de separar las funciones a realizar en cada consulta ajax
 //Esto evita que se ejecuten de inmediato ambas y quede la embarrá
 //Y así tambien evito usar dos archivos diferentes sin razón.
-//Los miro a ustedes, handlers.
+//Los miro a ustedes, handlers csm.
 if($funcion == "verComentarios"){
     verComentarios();
 }
 if($funcion == "verSueno"){
     verSueno();
 }
-
 
 //Función verSueno
 //Input: Ninguno directo - Toma el id del sueño con metodo GET
@@ -46,6 +45,9 @@ function verSueno(){
                 if($row["sue_pri"] == 0){
                     echo "Sueño público";
                     echo "&nbsp;&nbsp;";
+                }else if($row["sue_pri"] == 1){
+                    echo "Sueño privado";
+                    echo "&nbsp;&nbsp;";
                 }
             echo "</span>";
             echo "<span>";
@@ -56,10 +58,9 @@ function verSueno(){
                 } 
                 echo "&nbsp;&nbsp;";
                 echo "Me gusta: ";
-                echo "<input type='text' disabled='true' id='cantLikes".$row["id_sue"]."' class='cantLikes' value='".$cantLikes."' style='border: none; width: 35px;' >";
+                echo "<input type='text' disabled='true' id='cantLikes".$row["id_sue"]."'  value='".$cantLikes."' style='border: none; width: 35px;' >";
                 echo "&nbsp;&nbsp;";
             echo "</span>";
-            //echo "<a  class='btn btn-info another-element' href='CRUDs/verComentarios.php?id_sue=".$row["id_sue"]." '>Comentarios (".$cantComentarios.")</a>";
             echo "</div>";
             array_push($response["suenos"], $temp);
         }
@@ -77,7 +78,7 @@ function verSueno(){
 function verComentarios(){
     $link = mysqli_connect('localhost','root','','anotasuenos');
     $response = array();
-    $result = mysqli_query($link, "SELECT id_com,id_sue,id_usu,comentario FROM Comentario WHERE id_sue = ".$_GET["id_sue"]." ");
+    $result = mysqli_query($link, "SELECT id_com,id_sue,id_usu,comentario FROM Comentario WHERE id_sue = ".$_GET["id_sue"]." ORDER BY id_com desc ");
     if(mysqli_num_rows($result)>0){
         $response["comentarios"] = array();
         while($row = mysqli_fetch_array($result)){
@@ -105,7 +106,7 @@ function verComentarios(){
                     } 
                     echo "&nbsp;&nbsp;";
                     echo "Me gusta: ";
-                    echo "<input type='text' disabled='true' id='cantLikesCom".$row["id_com"]."' class='cantLikes' value='".$cantLikes."' style='border: none; width: 35px;' >";
+                    echo "<input type='text' disabled='true' id='cantLikesCom".$row["id_com"]."'  value='".$cantLikes."' style='border: none; width: 35px;' >";
                     echo "&nbsp;&nbsp;";
             echo "</span>";
             echo "</div>";
@@ -323,8 +324,8 @@ $(document).on("click",".dislikeSue", function(){
         button.addClass("like");
         console.log("CLASES AÑADIDAS");
         console.log("Respuesta: "+respuesta);
-        console.log("ID CANTLIKESSUE : "+document.getElementById("cantLikes"+id_com).value);
-        //Cambiar la cantidad de likes a la actual. Esta cagá es terrible mañosa ni idea por qué.
+        console.log("ID CANTLIKESSUE : "+document.getElementById("cantLikes"+id_sue).value);
+        //BUG : Cambiar la cantidad de likes a la actual. Esta cagá es terrible mañosa ni idea por qué.
         document.getElementById("cantLikes"+id_sue).value = respuesta;
         console.log("CANTIDAD DE ME GUSTA ACTUALIZADA");
         return null;
