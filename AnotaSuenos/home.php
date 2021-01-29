@@ -1,7 +1,10 @@
 <?php 
 require "config.php";
-//require "CRUDs/mostrarSuenos.php";
 session_start();
+if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true ){
+    header("location: index.php");
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -39,7 +42,7 @@ session_start();
                     <div id="cantidadSuenos" class="text-center border border-info rounded p-1" style="background-color: white; height: 40px;">
                     <span>Actualmente hay </span>
                     <span id="cantidadTotalSuenos"></span>
-                    <span> sueños.</span>
+                    <span> sueño(s).</span>
                     </div> <br>
                     <div id="mostrarSuenosPublic">
                     <p>Cargando sueños...</p>
@@ -57,8 +60,9 @@ session_start();
             <div class="col-md-4">
                 <div id="contenedorMiniPerfil" class="center border border-info rounded p-3" style="background-color:white;">
                     <span><img src="https://img.icons8.com/ios-filled/50/000000/help.png" width="50px" height="50px" alt="FDP" /></span>
-                    <span id="nomUsuMiniPerfil">Nombre de usuario</span><br>
+                    <span id="nomUsuMiniPerfil"><?php echo $_SESSION["username"]; ?></span><br>
                     <span id="cantidadSuenosUsu">AGGA</span>
+                    <span> <a href="CRUDs/handlerAuxUsuario.php">Test AuxUsuario</a> </span>
                 </div>
             </div>
         </div>
@@ -75,6 +79,7 @@ $(document).ready(function(){
     // NM18 : NO MAS 18
     listarRegistrosNPVNM18();
     listarCantidadSuenos();
+    cantSuenosUsuario();
 });
 
 $('#publicarSueno').click(function(){
@@ -253,6 +258,19 @@ function listarCantidadSuenos(){
     });
 }
 
+function cantSuenosUsuario(){
+    var paquete = "function=getCantSueUsuario";
+    $.ajax({
+        type: "POST",
+        url: "http://anotasuenos:8080/CRUDs/handlerAuxUsuario.php",
+        dataType: "html",
+        data: paquete,
+    }).done(function(res){
+        $("#cantidadSuenosUsu").html(res);
+    }).fail(function(){
+        $("#cantidadSuenosUsu").html("Algo falló.");
+    });
+}
 
 </script>
 </html>

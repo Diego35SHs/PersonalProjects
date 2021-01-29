@@ -12,6 +12,7 @@
             mysqli_stmt_execute($stmt);
             $function = null;
             echo cantidadLikes($id_sue,$link);
+            return null;
         }else{
             echo "Falla de conexión.";
         }

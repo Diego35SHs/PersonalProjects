@@ -1,7 +1,7 @@
 <?php 
 
 //Inicializar conexión con los parámetros definidos.
-
+        session_start();
         $link = mysqli_connect('localhost','root','','anotasuenos');
         $response = array();
         $offsetQuery = $_GET["offset"];
@@ -28,13 +28,21 @@
                     echo $nombreUsuario;
                     echo "</a>";
                 echo "</label>";
-                echo "<textarea class='form-control' style='resize:none;".$alto."border:none;maxlength:500;background-color: white;' disabled='true'>";
+                echo "<textarea class='form-control' id='textAreaSue".$row["id_sue"]."' style='resize:none;".$alto."border:none;maxlength:500;background-color:white;text-color:black;' disabled='true'>";
                     echo $row["sueno"];
                 echo "</textarea> <br>";
                 echo "<span>";
                     if($row["sue_pri"] == 0){
                         echo "Sueño público";
                         echo "&nbsp;&nbsp;";
+                    }
+                echo "</span>";
+                echo "<span>";
+                    if(checkPropiedad($row["cod_usu"]) == 1){
+                        echo "<button id='".$row["id_sue"]."' class='modificar btn btn-warning'>Modificar</button>";
+                        echo "&nbsp;";
+                    }else{
+                        echo null;
                     }
                 echo "</span>";
                 echo "<span>";
@@ -112,6 +120,16 @@
         $result = mysqli_query($link, "SELECT count(*) as total FROM LikeDislike WHERE id_sue = ".$id_sue." AND id_usu =".$id_usu." ");
         $data = mysqli_fetch_assoc($result);
         return $data["total"];
+    }
+
+    function checkPropiedad($id_usu){
+        $id_usu_sue = $id_usu;
+        $id_usu_ses = $_SESSION["id"];
+        if($id_usu_sue == $id_usu_ses){
+            return 1;
+        }else{
+            return 0;
+        }
     }
 
     
@@ -202,6 +220,70 @@ $(document).on("click",".dislike", function(){
     }).fail(function(respuesta){
         alert("Error de conexión. Probablemente.");
     })
+});
+
+$(document).on("click",".modificar",function(){
+    console.log("Botón modificar sueño - Iniciado");
+    var id_sue = $(this).attr("id");
+    console.log("ID BUTTON Y SUEÑO = "+id_sue);
+    var button = $(this);
+    button.text("Guardar");
+    console.log("Quitar clases actuales referentes al funcionamiento del botón");
+    button.removeClass("modificar");
+    button.removeClass("btn-warning");
+    console.log("Añadir clases necesarias para el nuevo funcionamiento del botón");
+    button.addClass("btn-info");
+    button.addClass("guardarCambios");
+    //Conseguir el texto del sueño para luego utilizarlo de alguna forma.
+    var textArea = document.getElementById("textAreaSue"+id_sue).innerHTML;
+    console.log(textArea);
+    //Tomar control sobre el textarea por medio de su id.
+    var controlTXA = document.getElementById("textAreaSue"+id_sue);
+    controlTXA.style="border: 2px 2px black;";
+    controlTXA.style="resize:none;";
+    controlTXA.removeAttribute("disabled");
+    //BUG: El presionar el botón Modificar acciona ambas funciones inmediatamente sin razón en el usuario 2.
+});
+
+$(document).on("click",".guardarCambios",function(){
+    console.log("Botón guardar cambios sueño - Iniciando");
+    var id_sue = $(this).attr("id");
+    console.log("ID BOTÓN Y SUEÑO = "+id_sue);
+    //Tomar control del botón y del textarea
+    var button = $(this);
+    var controlTXA = document.getElementById("textAreaSue"+id_sue);
+    //Conseguir valor nuevo del textarea
+    var textArea = controlTXA.value;
+    //empaquetar la información
+    var paquete = "id_sue="+id_sue+"&nuevoSue="+textArea;
+    console.log(paquete);
+    $.ajax({
+        type: "POST",
+        url: "http://anotasuenos:8080/CRUDs/modificarSueno.php",
+        data: paquete,
+    }).done(function(respuesta){
+        button.text("Modificar");
+        console.log("Quitar clases actuales referentes al funcionamiento del botón");
+        button.removeClass("btn-info");
+        button.removeClass("guardarCambios");
+        console.log("Añadir clases necesarias para el nuevo funcionamiento del botón");
+        button.addClass("modificar");
+        button.addClass("btn-warning");
+        document.getElementById("textAreaSue"+id_sue).innerHTML = respuesta;
+        console.log("RESPUESTA: "+respuesta);
+        //BUG: Este botón le da el style de resize al textarea. Ni idea por qué, dice claramente resize: NONE
+        //Hasta encontrar una razón con sentido, se considera bug.
+        controlTXA.style="border:none;";
+        controlTXA.style="resize:none;";
+        controlTXA.style="background-color:white;"
+        controlTXA.setAttribute("disabled","true");
+        console.log("Botón guardar cambios sueño - Finalizado");
+        alert("Sueño modificado.");
+        return null;
+        event.stopPropagation();
+    }).fail(function(respuesta){
+        document.getElementById("textAreaSue"+id_sue).innerHTML = respuesta;
+    });
 });
 
 </script>
