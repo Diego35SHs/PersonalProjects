@@ -1,8 +1,7 @@
 TODO: Crear la página principal
 TODO: Aplicar JQuery
-
 TODO: Crear modelo de BD
-
+TODO: Implementar chequeo si el sueño es privado y el usuario en sesión es dueño del sueño.
 Errores comunes
 
 -No poner el session_start cuando necesito el id o nombre de usuario;
@@ -16,3 +15,11 @@ Cosas aprendidas
 Fuentes:
 https://stackoverflow.com/questions/1927593/cant-update-textarea-with-javascript-after-writing-to-it-manually
 https://stackoverflow.com/questions/14892516/jquery-button-click-triggers-multiple-times
+
+Versión 0.4
+-Arreglado un bug que hacía que el checkeo de me gusta de cada sueño solo funcionara correctamente con un usuario
+-Se eliminaron los archivos de handlerLike y handlerDislike para sueños. En su lugar se optimizó y organizó el código correspondiente a ambos dentro de "handlerAuxSuenos.php"
+-Siguiendo lo anterior, se eliminaron los archivos handlerLike y handlerDislike para comentarios. Se realizaron las mismas acciones que en el punto anterior.
+-Se añadieron descripciones a más funciones dentro de la aplicación.
+-Añadida la función para modificar sueños.
+-Arreglado un bug que hacía que dos funciones se ejecutaran al presionar un botón cuando no tenía que ser así.
