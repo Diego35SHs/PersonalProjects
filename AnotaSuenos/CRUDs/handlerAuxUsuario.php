@@ -13,10 +13,7 @@ session_start();
 //TODO: getDescrUsuario(){}
 
 $funcion = $_POST["function"];
-// $funcion = "getNombreUsuario";
 $id_usu = $_SESSION["id"];
-// echo $funcion;
-// echo $_SESSION["id"];
 $link = mysqli_connect('localhost','root','','anotasuenos');
 switch($funcion){
     case "getFotoPerUsuario":
@@ -39,6 +36,9 @@ switch($funcion){
     break;
 }
 
+//Función cantSueUsuario
+//Input: Código de usuario y link de conexión.
+//Ouput: Cantidad de sueños publicados por el usuario
 function cantSueUsuario($id_usu,$link){
     $result = mysqli_query($link,"SELECT count(*) as total FROM Sueno WHERE cod_usu = ".$id_usu." ");
     $data = mysqli_fetch_assoc($result);

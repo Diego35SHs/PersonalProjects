@@ -266,16 +266,16 @@ $(document).on("click",".likeSue", function(){
     //Conseguir el atributo del botón, que es el id del sueño.
     var id_sue = $(this).attr("id");
     //Definir la acción a realizar en el handler. Esto NO está funcionando.
-    var accion = "insertLike";
+    var funcion = "insertLike";
     //Tomar control del botón por medio de una variable.
     var button = $(this);
     //Empaquetar la información.
-    var paquete = "accion="+accion+"&id_sue="+id_sue;
+    var paquete = "funcion="+funcion+"&id_sue="+id_sue;
     console.log("PAQUETE: "+paquete);
     //Ajax.
     $.ajax({
         type: "POST",
-        url: "http://anotasuenos:8080/CRUDs/handlerLikesSuenos.php",
+        url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
         data: paquete,
     }).done(function(respuesta){
         //Cambiar características del botón.
@@ -304,14 +304,14 @@ $(document).on("click",".dislikeSue", function(){
     //Tomar control del botón por medio de una variable.
     var button = $(this);
     //Definir la acción a realizar en el handler. Esto NO está funcionando.
-    var accion = "deleteLike";
+    var funcion = "deleteLike";
     //Empaquetar la información.
-    var paquete = "accion="+accion+"&id_sue="+id_sue;
+    var paquete = "funcion="+funcion+"&id_sue="+id_sue;
     console.log("PAQUETE: "+paquete);
     //Ajax.
     $.ajax({
         type: "POST",
-        url: "http://anotasuenos:8080/CRUDs/handlerDislikeSuenos.php",
+        url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
         data: paquete,
     }).done(function(respuesta){
         //Cambiar características del botón.
@@ -345,16 +345,16 @@ $(document).on("click",".like", function(){
     //Conseguir el atributo del botón, que es el id del sueño.
     var id_com = $(this).attr("id");
     //Definir la acción a realizar en el handler. Esto NO está funcionando.
-    var accion = "insertLike";
+    var funcion = "insertLikeCom";
     //Tomar control del botón por medio de una variable.
     var button = $(this);
     //Empaquetar la información.
-    var paquete = "accion="+accion+"&id_com="+id_com;
+    var paquete = "funcion="+funcion+"&id_com="+id_com;
     console.log("PAQUETE: "+paquete);
     //Ajax.
     $.ajax({
         type: "POST",
-        url: "http://anotasuenos:8080/CRUDs/handlerLikeComent.php",
+        url: "http://anotasuenos:8080/CRUDs/handlerAuxComent.php",
         data: paquete,
     }).done(function(respuesta){
         //Cambiar características del botón.
@@ -371,7 +371,7 @@ $(document).on("click",".like", function(){
         //Cambiar la cantidad de likes a la actual. Esta cagá es terrible mañosa ni idea por qué.
         document.getElementById("cantLikesCom"+id_com).value = respuesta;
         console.log("CANTIDAD DE ME GUSTA ACTUALIZADA");
-        return null;
+        event.stopPropagation();
     }).fail(function(respuesta){
         alert("Error de conexión. Probablemente.");
     })
@@ -384,14 +384,14 @@ $(document).on("click",".dislike", function(){
     //Tomar control del botón por medio de una variable.
     var button = $(this);
     //Definir la acción a realizar en el handler. Esto NO está funcionando.
-    var accion = "deleteLike";
+    var funcion = "deleteLikeCom";
     //Empaquetar la información.
-    var paquete = "accion="+accion+"&id_com="+id_com;
+    var paquete = "funcion="+funcion+"&id_com="+id_com;
     console.log("PAQUETE: "+paquete);
     //Ajax.
     $.ajax({
         type: "POST",
-        url: "http://anotasuenos:8080/CRUDs/handlerDislikeComent.php",
+        url: "http://anotasuenos:8080/CRUDs/handlerAuxComent.php",
         data: paquete,
     }).done(function(respuesta){
         //Cambiar las características del botón.
@@ -407,7 +407,7 @@ $(document).on("click",".dislike", function(){
         //Realmente no entiendo como esta función no puede funcionar tranquilamente.
         document.getElementById("cantLikesCom"+id_com).value = respuesta;
         console.log("CANTIDAD DE ME GUSTA ACTUALIZADA");
-        return null;
+        event.stopPropagation();
     }).fail(function(respuesta){
         alert("Error de conexión. Probablemente.");
     })

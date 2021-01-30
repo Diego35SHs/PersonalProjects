@@ -247,7 +247,7 @@ function listarRegistrosNPVNM18(){
 function listarCantidadSuenos(){
     var paquete = "funcion=cantidadSuenos";
     $.ajax({
-        type: "GET",
+        type: "POST",
         url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
         dataType: "html",
         data: paquete,

@@ -145,7 +145,7 @@ function listarCantidadComent(){
     var id_sue = document.getElementById("id_sue").value;
     var paquete = "funcion=cantidadComent&id_sue="+id_sue;    
     $.ajax({
-        type: "GET",
+        type: "POST",
         url: "http://anotasuenos:8080/CRUDs/handlerAuxComent.php",
         dataType: "html",
         data: paquete,
