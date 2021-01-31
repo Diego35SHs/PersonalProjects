@@ -18,7 +18,7 @@
             //TODO: Encontrar una manera más acorde a las convenciones de HTML y CSS para mostrar un multiline. Esto es un parche.
             $cantidadCarac = strlen($row["sueno"]);
             $nombreUsuario = nombreUsuSueno($row["cod_usu"],$link);
-            $alto = heigthTXA($cantidadCarac);
+            $alto = heightTXA($cantidadCarac);
             $cantComentarios = cantidadComentarios($row["id_sue"],$link);
             $cantLikes = cantidadLikes($row["id_sue"],$link);
             echo "<label>";
@@ -63,9 +63,12 @@
         echo "No se encontró ningún registro.";
     }
 
-    function heigthTXA($cantidadCarac){
+    //funcion heightTXA 
+    //Input: cántidad de caracteres de un sueño
+    //Output: Altura de textarea que ocupará el sueño.
+    function heightTXA($cantidadCarac){
         //TODO: Este aspecto podría ajustarse más por cada línea.
-        // ¿Quizás height : 100CH?
+        //TODO: Cambiar por un switch
         $altoTXA = "height:100px;";
         if($cantidadCarac >=180){
             $altoTXA = "height:70px;";
@@ -82,8 +85,10 @@
         return $altoTXA;
     }
 
+    //Función nombreUsuSueno
+    //Input: Código de usuario y Link de conexión.
+    //Output: Nombre de usuario correspondiente al sueño.
     function nombreUsuSueno($codusu,$link){
-        //Consulta individual
         $sql = "SELECT nom_usu FROM Login WHERE cod_usu = ?";
         if($stmt = mysqli_prepare($link,$sql)){
             mysqli_stmt_bind_param($stmt,"i",$param_codusu);
@@ -103,25 +108,37 @@
         return "Usuario no encontrado";
     }
 
+    //Función cantidadComentarios
+    //Input: Código de sueño y Link de conexión.
+    //Output: Cantidad de comentarios correspondientes al sueño.
     function cantidadComentarios($id_sue,$link){
         $result = mysqli_query($link,"SELECT count(*) as total FROM Comentario WHERE id_sue = ".$id_sue." ");
         $data = mysqli_fetch_assoc($result);
         return $data["total"];
     }
 
+    //Función cantidadLikes
+    //Input: Código de sueño y Link de conexión.
+    //Output: Cantidad de likes correspondientes al sueño.
     function cantidadLikes($id_sue,$link){
         $result = mysqli_query($link, "SELECT count(*) as total FROM LikeDislike WHERE id_sue = ".$id_sue." ");
         $data = mysqli_fetch_assoc($result);
         return $data["total"];
     }
 
-    //BUG: Esta función solo funciona correctamente con un usuario, wtf.
+    //Función checkLike
+    //Input: Código de sueño, Código de usuario y Link de conexión
+    //Output: Cantidad de likes que el usuario en sesión ha dado al sueño.
+    //Nota: No puede ser mayor que 1 ni menor que 0.
     function checkLike($id_sue,$id_usu,$link){
         $result = mysqli_query($link, "SELECT count(*) as total FROM LikeDislike WHERE id_sue = ".$id_sue." AND id_usu =".$id_usu." ");
         $data = mysqli_fetch_assoc($result);
         return $data["total"];
     }
 
+    //Función checkPropiedad
+    //Input: Directo: Código de usuario del sueño - Indirecto: Código de usuario en sesión.
+    //Output: 1: El usuario es propietario del sueño - 0: El usuario NO es propietario del sueño.
     function checkPropiedad($id_usu){
         $id_usu_sue = $id_usu;
         $id_usu_ses = $_SESSION["id"];
@@ -165,8 +182,6 @@ $(document).on("click",".like", function(){
         url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
         data: paquete,
     }).done(function(respuesta){
-        // $('.cantLikes').attr("id");
-        //alert(respuesta);
         button.text("Ya no me gusta");
         console.log("TEXTO CAMBIADO: Ya no me Gusta");
         button.removeClass("btn-info");
@@ -174,7 +189,6 @@ $(document).on("click",".like", function(){
         console.log("CLASES REMOVIDAS");
         button.addClass("btn-danger");
         button.addClass("dislike");
-        // button.attr("id", id_sue);
         console.log("CLASES AÑADIDAS");
         console.log("Respuesta: "+respuesta);
         document.getElementById("cantLikes"+id_sue).value = respuesta;
@@ -194,7 +208,6 @@ $(document).on("click",".dislike", function(){
     console.log("PAQUETE: "+paquete);
     $.ajax({
         type: "POST",
-        // url: "http://anotasuenos:8080/CRUDs/handlerDislikeSuenos.php",
         url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
         data: paquete,
     }).done(function(respuesta){
@@ -247,11 +260,11 @@ $(document).on("click",".guardarCambios",function(){
     //Conseguir valor nuevo del textarea
     var textArea = controlTXA.value;
     //empaquetar la información
-    var paquete = "id_sue="+id_sue+"&nuevoSue="+textArea;
+    var paquete = "funcion=modificarSueno&id_sue="+id_sue+"&nuevoSue="+textArea;
     console.log(paquete);
     $.ajax({
         type: "POST",
-        url: "http://anotasuenos:8080/CRUDs/modificarSueno.php",
+        url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
         data: paquete,
     }).done(function(respuesta){
         button.text("Modificar");

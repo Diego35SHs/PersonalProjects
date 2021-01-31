@@ -1,3 +1,19 @@
+   _               _        __                            
+  /_\  _ __   ___ | |_ __ _/ _\_   _  ___ _ __   ___  ___ 
+ //_\\| '_ \ / _ \| __/ _` \ \| | | |/ _ \ '_ \ / _ \/ __|
+/  _  \ | | | (_) | || (_| |\ \ |_| |  __/ | | | (_) \__ \
+\_/ \_/_| |_|\___/ \__\__,_\__/\__,_|\___|_| |_|\___/|___/
+
+------------------------------------------------------------
+-                   AnotaSuenos(WIP)                       -
+-              Creado por Diego Alarcón                    -
+-                    2020 - 2021                           -
+-                  Diego35SHs - Github                     -
+------------------------------------------------------------
+
+Texto en Ascii creado en: https://patorjk.com/software/taag/#p=display&f=Graffiti&t=Type%20Something%20
+
+
 TODO: Crear la página principal
 TODO: Aplicar JQuery
 TODO: Crear modelo de BD
@@ -23,3 +39,13 @@ Versión 0.4
 -Se añadieron descripciones a más funciones dentro de la aplicación.
 -Añadida la función para modificar sueños.
 -Arreglado un bug que hacía que dos funciones se ejecutaran al presionar un botón cuando no tenía que ser así.
+
+Versión 0.5
+-Se eliminaron los archivos de agregarSueno, agregarComentario y modificarSueno. Sus funciones se integraron en handlerAuxSuenos y handlerAuxComent respectivamente, optimizando el código y disminuyendo la cantidad de archivos.
+-Se añadieron aún más descripciones a distintas funciones a lo largo del programa para mantener la legibilidad y mantenibilidad del código, esto continuará con cada versión. 
+-Borrados comentarios de código que no se va a utilizar.
+-Se identificó una función duplicada que se podría eliminar en el futuro.
+-Corregido un nombre incorrecto de una función.
+-La cantidad de sueños publicados por el usuario ahora se actualiza al momento de publicar un sueño.
+-Identificada una acción no intencionada al contar la cantidad de sueños publicados por un usuario.
+-Se cambió un texto que los usuarios podían ver al cargar el miniperfil en la página home por uno menos confuso.
