@@ -124,9 +124,9 @@ function publicarComentario(){
     var id_sue = document.getElementById('id_sue').value;
     //Consulta SQL
     //Empaquetar registro a enviar.
-    var paquete = "txtComentario="+txtComentario+"&id_sue="+id_sue;
+    var paquete = "funcion=agregarComentario&txtComentario="+txtComentario+"&id_sue="+id_sue;
     $.ajax({
-        url: 'http://anotasuenos:8080/CRUDs/agregarComentario.php',
+        url: 'http://anotasuenos:8080/CRUDs/handlerAuxComent.php',
         type: 'POST',
         data: paquete,
     })

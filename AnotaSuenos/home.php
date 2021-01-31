@@ -61,7 +61,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true ){
                 <div id="contenedorMiniPerfil" class="center border border-info rounded p-3" style="background-color:white;">
                     <span><img src="https://img.icons8.com/ios-filled/50/000000/help.png" width="50px" height="50px" alt="FDP" /></span>
                     <span id="nomUsuMiniPerfil"><?php echo $_SESSION["username"]; ?></span><br>
-                    <span id="cantidadSuenosUsu">AGGA</span>
+                    <span id="cantidadSuenosUsu">Cargando...</span>
                     <span> <a href="CRUDs/handlerAuxUsuario.php">Test AuxUsuario</a> </span>
                 </div>
             </div>
@@ -93,6 +93,7 @@ $('#publicarSueno').click(function(){
         publicarSueno();
         console.log("PublicarSueno completada");
         listarRegistrosNPVNM18();
+        cantSuenosUsuario();
         console.log("ListarRegistros completada");
     }
 });
@@ -208,10 +209,10 @@ function publicarSueno(){
     }
     //Consulta SQL
     //Empaquetar registro a enviar.
-    var paquete = "txtSueno="+txtSueno+"&suenoMas18="+suenoMas18+"&suenoPrivado="+suenoPrivado;
+    var paquete = "funcion=agregarSueno&txtSueno="+txtSueno+"&suenoMas18="+suenoMas18+"&suenoPrivado="+suenoPrivado;
     $.ajax({
-        url: 'http://anotasuenos:8080/CRUDs/agregarSueno.php',
         type: 'POST',
+        url: 'http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php',
         data: paquete,
     })
     .done(function(respuesta){

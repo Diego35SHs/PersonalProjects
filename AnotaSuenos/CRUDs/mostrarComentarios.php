@@ -29,7 +29,7 @@ function verSueno(){
             //TODO: Encontrar una manera más acorde a las convenciones de HTML y CSS para mostrar un multiline. Esto es un parche.
             $cantidadCarac = strlen($row["sueno"]);
             $nombreUsuario = nombreUsuSueno($row["cod_usu"],$link);
-            $alto = heigthTXA($cantidadCarac);
+            $alto = heightTXA($cantidadCarac);
             $cantComentarios = cantidadComentarios($row["id_sue"],$link);
             $cantLikes = cantidadLikes($row["id_sue"],$link);
             echo "<label>";
@@ -85,7 +85,7 @@ function verComentarios(){
             $temp = array();
             $cantidadCarac = strlen($row["comentario"]);
             $nombreUsuario = nombreUsuarioCome($row["id_usu"],$link);
-            $alto = heigthTXA($cantidadCarac);
+            $alto = heightTXA($cantidadCarac);
             $cantComentarios = cantidadComentarios($row["id_sue"],$link);
             $cantLikes = cantidadLikesCom($row["id_com"],$link);
             echo "<div class='border border-info rounded p-3' style='width: 100%; background-color: white;'>";
@@ -168,10 +168,10 @@ function nombreUsuarioCome($cod_usu,$link){
 }
 
 
-//Función heigthTXA
+//Función heightTXA
 //Input: Cantidad de caracteres del sueño o comentario.
 //Output: Alto del textarea que ocupará el comentario.
-function heigthTXA($cantidadCarac){
+function heightTXA($cantidadCarac){
     //TODO: Este aspecto podría ajustarse más por cada línea, quizás un switch sea mejor.
     $altoTXA = "height:100px;";
     if($cantidadCarac >=180){
