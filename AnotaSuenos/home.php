@@ -40,9 +40,9 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true ){
                 </div> <br>
                 <div id="contenedorSuenos" style="width:100%;">
                     <div id="cantidadSuenos" class="text-center border border-info rounded p-1" style="background-color: white; height: 40px;">
-                    <span>Actualmente hay </span>
+                    <span>Listando </span>
                     <span id="cantidadTotalSuenos"></span>
-                    <span> sueño(s).</span>
+                    <span> sueño(s) públicos.</span>
                     </div> <br>
                     <div id="mostrarSuenosPublic">
                     <p>Cargando sueños...</p>
@@ -61,8 +61,22 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true ){
                 <div id="contenedorMiniPerfil" class="center border border-info rounded p-3" style="background-color:white;">
                     <span><img src="https://img.icons8.com/ios-filled/50/000000/help.png" width="50px" height="50px" alt="FDP" /></span>
                     <span id="nomUsuMiniPerfil"><?php echo $_SESSION["username"]; ?></span><br>
-                    <span id="cantidadSuenosUsu">Cargando...</span>
+                    
                     <span> <a href="CRUDs/handlerAuxUsuario.php">Test AuxUsuario</a> </span>
+                </div> <br>
+                <div id="contenedorEstadisticas" class="center border border-info rounded p-3" style="background-color:white;">
+                    <p class="text-center"><strong>Estadísticas del sitio.</strong></p>
+                    <p id="cantidadSuenosUsu"        >Cargando...</p>
+                    <p id="cantidadComentUsu"        >Cargando...</p>
+                    <p id="cantidadUsuarios"         >Cargando...</p>
+                    <p id="cantidadSuenosTotal"      >Cargando...</p>
+                    <p id="cantidadSuenosPublic"     >Cargando...</p>
+                    <p id="cantidadSuenosPrivados"   >Cargando...</p>
+                    <p id="cantidadSuenosM18"        >Cargando...</p>
+                    <p id="cantidadLikesSuenos"      >Cargando...</p>
+                    <p id="cantidadComent"           >Cargando...</p>
+                    <p id="cantidadLikesComent"      >Cargando...</p>
+                    <button id="actualizarEstadisticas" class="btn btn-info">Actualizar</button>
                 </div>
             </div>
         </div>
@@ -79,7 +93,7 @@ $(document).ready(function(){
     // NM18 : NO MAS 18
     listarRegistrosNPVNM18();
     listarCantidadSuenos();
-    cantSuenosUsuario();
+    mostrarEstadisticas();
 });
 
 $('#publicarSueno').click(function(){
@@ -93,7 +107,7 @@ $('#publicarSueno').click(function(){
         publicarSueno();
         console.log("PublicarSueno completada");
         listarRegistrosNPVNM18();
-        cantSuenosUsuario();
+        mostrarEstadisticas();
         console.log("ListarRegistros completada");
     }
 });
@@ -142,8 +156,6 @@ $('#siguientes10').click(function(){
     scrollTop();
 });
 
-
-
 $('#anteriores10').click(function(){
     console.log("-----------INICIO BTNANTERIORES-----------");
 
@@ -182,6 +194,10 @@ $('#anteriores10').click(function(){
     console.log("Anteriores 10 - Ajax mostrando");
     console.log("-----------FIN BTNANTERIORES-----------");
     scrollTop();
+});
+
+$('#actualizarEstadisticas').click(function(){
+    mostrarEstadisticas();
 });
 
 function cambiarSpans(offsetDspl, offsetLimDspl){
@@ -246,7 +262,7 @@ function listarRegistrosNPVNM18(){
 }
 
 function listarCantidadSuenos(){
-    var paquete = "funcion=cantidadSuenos";
+    var paquete = "funcion=cantidadSuenosPublic";
     $.ajax({
         type: "POST",
         url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
@@ -257,6 +273,20 @@ function listarCantidadSuenos(){
     }).fail(function(){
         $("#cantidadTotalSuenos").html("Algo falló.");
     });
+}
+
+//Sección estadísticas.
+function mostrarEstadisticas(){
+    cantSuenosUsuario();
+    cantComentUsuario();
+    cantidadUsuarios();
+    cantidadSuenosTotal();
+    cantidadSuenosPublic();
+    cantidadSuenosPrivados();
+    cantidadSuenosM18();
+    cantidadLikesSuenos();
+    cantidadComent();
+    cantidadLikesComent();
 }
 
 function cantSuenosUsuario(){
@@ -270,6 +300,132 @@ function cantSuenosUsuario(){
         $("#cantidadSuenosUsu").html(res);
     }).fail(function(){
         $("#cantidadSuenosUsu").html("Algo falló.");
+    });
+}
+
+function cantComentUsuario(){
+    var paquete = "funcion=getCantComentUsu";
+    $.ajax({
+        type: "POST",
+        url: "http://anotasuenos:8080/CRUDs/handlerAuxApp.php",
+        dataType: "html",
+        data: paquete,
+    }).done(function(res){
+        $("#cantidadComentUsu").html(res);
+    }).fail(function(){
+        $("#cantidadComentUsu").html("No se pudo cargar.");
+    });
+}
+
+function cantidadUsuarios(){
+    var paquete = "funcion=getCantUsuarios";
+    $.ajax({
+        type: "POST",
+        url: "http://anotasuenos:8080/CRUDs/handlerAuxApp.php",
+        dataType: "html",
+        data: paquete,
+    }).done(function(res){
+        $("#cantidadUsuarios").html(res);
+    }).fail(function(){
+        $("#cantidadUsuarios").html("No se pudo cargar.");
+    });
+}
+
+function cantidadSuenosTotal(){
+    var paquete = "funcion=getCantSuenosTotal";
+    $.ajax({
+        type: "POST",
+        url: "http://anotasuenos:8080/CRUDs/handlerAuxApp.php",
+        dataType: "html",
+        data: paquete,
+    }).done(function(res){
+        $("#cantidadSuenosTotal").html(res);
+    }).fail(function(){
+        $("#cantidadSuenosTotal").html("No se pudo cargar.");
+    });
+}
+
+function cantidadSuenosPublic(){
+    var paquete = "funcion=getCantSuenosPublic";
+    $.ajax({
+        type: "POST",
+        url: "http://anotasuenos:8080/CRUDs/handlerAuxApp.php",
+        dataType: "html",
+        data: paquete,
+    }).done(function(res){
+        $("#cantidadSuenosPublic").html(res);
+    }).fail(function(){
+        $("#cantidadSuenosPublic").html("No se pudo cargar.");
+    });
+}
+
+function cantidadSuenosPrivados(){
+    var paquete = "funcion=getCantSuenosPriv";
+    $.ajax({
+        type: "POST",
+        url: "http://anotasuenos:8080/CRUDs/handlerAuxApp.php",
+        dataType: "html",
+        data: paquete,
+    }).done(function(res){
+        $("#cantidadSuenosPrivados").html(res);
+    }).fail(function(){
+        $("#cantidadSuenosPrivados").html("No se pudo cargar.");
+    });
+}
+
+function cantidadSuenosM18(){
+    var paquete = "funcion=getCantSuenosM18";
+    $.ajax({
+        type: "POST",
+        url: "http://anotasuenos:8080/CRUDs/handlerAuxApp.php",
+        dataType: "html",
+        data: paquete,
+    }).done(function(res){
+        $("#cantidadSuenosM18").html(res);
+    }).fail(function(){
+        $("#cantidadSuenosM18").html("No se pudo cargar.");
+    });
+}
+
+function cantidadLikesSuenos(){
+    var paquete = "funcion=getCantLikesSuenos";
+    $.ajax({
+        type: "POST",
+        url: "http://anotasuenos:8080/CRUDs/handlerAuxApp.php",
+        dataType: "html",
+        data: paquete,
+    }).done(function(res){
+        $("#cantidadLikesSuenos").html(res);
+    }).fail(function(){
+        $("#cantidadLikesSuenos").html("No se pudo cargar.");
+    });
+}
+
+function cantidadComent(){
+    var paquete = "funcion=getCantComent";
+    $.ajax({
+        type: "POST",
+        url: "http://anotasuenos:8080/CRUDs/handlerAuxApp.php",
+        dataType: "html",
+        data: paquete,
+    }).done(function(res){
+        $("#cantidadComent").html(res);
+    }).fail(function(){
+        $("#cantidadComent").html("No se pudo cargar.");
+    });
+}
+
+function cantidadLikesComent(){
+    var paquete = "funcion=getCantLikesComent";
+    $.ajax({
+        type: "POST",
+        url: "http://anotasuenos:8080/CRUDs/handlerAuxApp.php",
+        dataType: "html",
+        data: paquete,
+    }).done(function(res){
+        $("#cantidadLikesComent").html(res);
+    }).fail(function(){
+        $("#cantidadLikesComent").html("No se pudo cargar.");
     });
 }
 

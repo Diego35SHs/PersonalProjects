@@ -335,11 +335,6 @@ $(document).on("click",".dislikeSue", function(){
 });
 
 //LIKES Y DISLIKES PARA COMENTARIOS.
-//TODO : Arreglar el que se repita la función al "cambiar de página".
-//Podría tener que ver con el document en esta función de abajo.
-//Parece que este bug ya está solucionado según las pruebas realizadas
-//Pero de momento parece ya no darse la situación.
-//La solución fue un return en la función insertLike en el handlerLikesSuenos.php
 $(document).on("click",".like", function(){
     console.log("INICIANDO PROCESO: BOTON LIKE");
     //Conseguir el atributo del botón, que es el id del sueño.

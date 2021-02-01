@@ -15,14 +15,20 @@
         case "modificarSueno":
             modificarSueno($link);
         break;
-        case "cantidadSuenos":
-            cantidadSuenos($link);
+        case "cantidadSuenosPublic":
+            cantidadSuenosPublic($link);
+        break;
+        case "cantidadSuenosTotal":
+            cantidadSuenosTotal($link);
         break;
         case "insertLike":
             insertLike($link);
         break;
         case "deleteLike":
             deleteLike($link);
+        break;
+        case "heightTXA":
+            return heightTXA($caracteres);
         break;
     }
 
@@ -78,7 +84,13 @@
     //Función cantidadSuenos
     //Input: Directo: Link de conexión - Indirecto: id_sue por método GET
     //Output: Cantidad de sueños total.
-    function cantidadSuenos($link){
+    function cantidadSuenosPublic($link){
+        $result = mysqli_query($link,"SELECT count(*) as total FROM Sueno WHERE sue_pri = 0 AND sue_m18 = 0");
+        $data = mysqli_fetch_assoc($result);
+        echo $data["total"];
+    }
+
+    function cantidadSuenosTotal($link){
         $result = mysqli_query($link,"SELECT count(*) as total FROM Sueno");
         $data = mysqli_fetch_assoc($result);
         echo $data["total"];
@@ -144,5 +156,27 @@
         $data = mysqli_fetch_assoc($result);
         return $data["total"];
     }
+
+    //funcion heightTXA 
+    //Input: cántidad de caracteres de un sueño
+    //Output: Altura de textarea que ocupará el sueño.
+    //NOTA: Esto no se está usando todavía. Pero en teoría es utilizable por medio de Ajax.
+    function heightTXA($cantidadCarac){
+        $altoTXA = "height:100px;";
+        if($cantidadCarac >=180){
+            $altoTXA = "height:70px;";
+        }
+        if($cantidadCarac >= 200){
+            $altoTXA = "height:130px;";
+        }
+        if($cantidadCarac >=300){
+            $altoTXA = "height:160px;";
+        }
+        if($cantidadCarac >= 400){
+            $altoTXA = "height:210px;";
+        }
+        return $altoTXA;
+    }
+
 
 ?>

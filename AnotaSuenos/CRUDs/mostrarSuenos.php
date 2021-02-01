@@ -9,7 +9,6 @@
         $offsetQuery = 0;
     }
     $result = mysqli_query($link, "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno WHERE sue_pri = 0 AND sue_m18 = 0 ORDER BY fec_sue DESC LIMIT 10 OFFSET ".$offsetQuery." ");
-    // $result = mysqli_query($link, "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno WHERE sue_pri = 0 AND sue_m18 = 0 ORDER BY fec_sue ");
     if(mysqli_num_rows($result)>0){
         $response["suenos"] = array();
         while($row = mysqli_fetch_array($result)){
@@ -68,19 +67,21 @@
     //Output: Altura de textarea que ocupará el sueño.
     function heightTXA($cantidadCarac){
         //TODO: Este aspecto podría ajustarse más por cada línea.
-        //TODO: Cambiar por un switch
         $altoTXA = "height:100px;";
-        if($cantidadCarac >=180){
-            $altoTXA = "height:70px;";
+        if($cantidadCarac <= 100){
+            $altoTXA = "height:84px;";
         }
-        if($cantidadCarac >= 200){
-            $altoTXA = "height:130px;";
+        if($cantidadCarac > 100 && $cantidadCarac <= 200){
+            $altoTXA = "height:135px;";
         }
-        if($cantidadCarac >=300){
+        if($cantidadCarac > 200 && $cantidadCarac <=300){
+            $altoTXA = "height:190px;";
+        }
+        if($cantidadCarac > 300 && $cantidadCarac <= 400){
             $altoTXA = "height:160px;";
         }
-        if($cantidadCarac >= 400){
-            $altoTXA = "height:210px;";
+        if($cantidadCarac > 400){
+            $altoTXA = "height:300px;";
         }
         return $altoTXA;
     }
@@ -163,11 +164,7 @@
 <body>
 </body>
 <script>
-//TODO : Arreglar el que se repita la función al "cambiar de página".
-//Podría tener que ver con el document en esta función de abajo.
-//Parece que este bug ya está solucionado según las pruebas realizadas
-//Pero de momento parece ya no darse la situación.
-//La solución fue un return en la función insertLike en el handlerLikesSuenos.php
+
 $(document).on("click",".like", function(){
     console.log("INICIANDO PROCESO: BOTON LIKE");
     var id_sue = $(this).attr("id");
@@ -245,8 +242,7 @@ $(document).on("click",".modificar",function(){
     console.log(textArea);
     //Tomar control sobre el textarea por medio de su id.
     var controlTXA = document.getElementById("textAreaSue"+id_sue);
-    controlTXA.style="border: 2px 2px black;";
-    controlTXA.style="resize:none;";
+    controlTXA.style="border-stiyle:solid;border-color:black;resize:none;";
     controlTXA.removeAttribute("disabled");
 });
 
@@ -259,6 +255,14 @@ $(document).on("click",".guardarCambios",function(){
     var controlTXA = document.getElementById("textAreaSue"+id_sue);
     //Conseguir valor nuevo del textarea
     var textArea = controlTXA.value;
+    var alto = heightTXA(textArea.length);
+    if(textArea == null || textArea == ''){
+        alert("El sueño no puede estar vacío");
+        return null;
+    }else if(textArea.length > 500){
+        alert("El sueño no puede pasar de 500 caracteres. Tienes "+textArea.length);
+        return null;
+    }
     //empaquetar la información
     var paquete = "funcion=modificarSueno&id_sue="+id_sue+"&nuevoSue="+textArea;
     console.log(paquete);
@@ -276,11 +280,7 @@ $(document).on("click",".guardarCambios",function(){
         button.addClass("btn-warning");
         document.getElementById("textAreaSue"+id_sue).innerHTML = respuesta;
         console.log("RESPUESTA: "+respuesta);
-        //BUG: Este botón le da el style de resize al textarea. Ni idea por qué, dice claramente resize: NONE
-        //Hasta encontrar una razón con sentido, se considera bug.
-        controlTXA.style="border:none;";
-        controlTXA.style="resize:none;";
-        controlTXA.style="background-color:white;"
+        controlTXA.style="border:none;resize:none;background-color:white;"+alto+"";
         controlTXA.setAttribute("disabled","true");
         console.log("Botón guardar cambios sueño - Finalizado");
         alert("Sueño modificado.");
@@ -291,5 +291,34 @@ $(document).on("click",".guardarCambios",function(){
     });
 });
 
+
+//TODO: Analizar esto.
+//Esta función existe en formato PHP, pero para aplicar el estilo al modificar un comentario
+//Es necesaria esta copia en javascript. Hacen lo mismo, pero usarla en formato php significaría
+//Usar ajax con redirección a esta misma página, es posible, y de hecho podría implementarse una función
+//en handlerAuxSuenos.php que se encargue de esto siempre que sea necesario, de momento, esta solución
+//está funcionando y correctamente.
+function heightTXA(cantidadCarac){
+        //TODO: Este aspecto podría ajustarse más por cada línea.
+        //TODO: Cambiar por un switch si es posible.
+        var altoTXA = "height:100px;";
+        if(cantidadCarac <= 100){
+            altoTXA = "height:84px;";
+        }
+        if(cantidadCarac > 100 && cantidadCarac <= 200){
+            altoTXA = "height:135px;";
+        }
+        if(cantidadCarac > 200 && cantidadCarac <=300){
+            altoTXA = "height:190px;";
+        }
+        if(cantidadCarac > 300 && cantidadCarac <= 400){
+            altoTXA = "height:160px;";
+        }
+        if(cantidadCarac > 400){
+            altoTXA = "height:300px;";
+        }
+        return altoTXA;
+        
+}
 </script>
 </html>

@@ -20,7 +20,7 @@ switch($funcion){
         return "FotoPerfilPlaceHolder";
     break;
     case "getCantSueUsuario":
-        echo "Sueños publicados: ".cantSueUsuario($id_usu,$link);
+        echo "Sueños publicados por ti: ".cantSueUsuario($id_usu,$link);
     break;
     case "getExpUsuario":
         return "ExpUsuarioPlaceholder";

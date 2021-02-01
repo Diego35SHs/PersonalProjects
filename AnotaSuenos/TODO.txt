@@ -49,3 +49,14 @@ Versión 0.5
 -La cantidad de sueños publicados por el usuario ahora se actualiza al momento de publicar un sueño.
 -Identificada una acción no intencionada al contar la cantidad de sueños publicados por un usuario.
 -Se cambió un texto que los usuarios podían ver al cargar el miniperfil en la página home por uno menos confuso.
+
+Versión 0.6
+-Se cambió la función de cantidad de sueños a una que muestre solo los públicos y no +18 en la página home.
+-La función para contar todos los sueños usada anteriormente se cambió a cantidadSuenosTotal. Esta contará todos los sueños de todos los usuarios.
+-Se creó una sección de estadísticas que todos los usuarios podrán consultar. Esta sección podría desaparecer en el futuro.
+-Se arregló un bug que hacía que al guardar modificaciones a un sueño no se aplicaran las modificaciones al estilo como correspondía.
+-La altura de los sueños ahora se ajusta correctamente al terminar de modificar uno.
+-Arreglado un parámetro de altura para los sueños que tenían 200 caracteres.
+-Se recalibraron todos los parámetros para el alto del textarea de cada sueño.
+-Se añadieron restricciones para modificar sueños, ahora no pueden estar vacíos ni superar 500 caracteres y el usuario recibirá un aviso de ello.
+
