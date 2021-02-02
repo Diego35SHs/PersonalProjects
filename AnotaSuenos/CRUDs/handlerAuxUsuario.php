@@ -34,6 +34,9 @@ switch($funcion){
     case "getDescrUsuario":
         return "getDescrUsuarioPlaceholder";
     break;
+    case "updateDescrUsuario":
+        updateDescrUsuario($link);
+    break;
 }
 
 //Función cantSueUsuario
@@ -46,15 +49,29 @@ function cantSueUsuario($id_usu,$link){
     return $data["total"];
 }
 
+function updateDescrUsuario($link){
+    $nueva_des = $_POST["nuevaDes"];
+    $cod_usu = $_SESSION["id"];
+
+    $sql = "UPDATE Login SET des_usu=? WHERE cod_usu=? ";
+
+    if($stmt = mysqli_prepare($link,$sql)){
+        mysqli_stmt_bind_param($stmt,"si",$des_param,$cod_usu_param);
+        $des_param = $nueva_des; 
+        $cod_usu_param = $cod_usu;
+        if(mysqli_stmt_execute($stmt)){
+            //BUG: No se muestra este mensaje cuando la nueva descripción viene vacía.
+            if($nueva_des == null || $nueva_des = ''){
+                echo "Este usuario no ha escrito ninguna descripción.";
+            }else{
+                echo $nueva_des;
+            }
+        }else{
+            echo "No se pudo actualizar la descripción. Help.";
+        }
+    }else{
+        echo "Falla de conexión.";
+    }
+}
+
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ASS</title>
-</head>
-<body>
-    <!-- <a href="../home.php">Volver a la página principal</a> -->
-</body>
-</html>

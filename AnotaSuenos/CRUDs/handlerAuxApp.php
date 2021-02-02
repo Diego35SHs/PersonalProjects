@@ -15,7 +15,7 @@ switch($funcion){
         echo "Cantidad total de sueños: ".cantidadSuenosTotal($link);
     break;
     case "getCantSuenosPublic":
-        echo "Sueños públicos: ".cantidadSuenosPublic($link);
+        echo "Sueños publicados en total: ".cantidadSuenosPublic($link);
     break;
     case "getCantSuenosPriv":
         echo "Sueños privados: ".cantidadSuenosPrivados($link);
