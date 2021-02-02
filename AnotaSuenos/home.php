@@ -15,7 +15,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true ){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AnotaSueños - Inicio</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <link rel="stylesheet" href="estilo.css">
@@ -61,8 +61,6 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true ){
                 <div id="contenedorMiniPerfil" class="center border border-info rounded p-3" style="background-color:white;">
                     <span><img src="https://img.icons8.com/ios-filled/50/000000/help.png" width="50px" height="50px" alt="FDP" /></span>
                     <span id="nomUsuMiniPerfil"><?php echo $_SESSION["username"]; ?></span><br>
-                    
-                    <span> <a href="CRUDs/handlerAuxUsuario.php">Test AuxUsuario</a> </span>
                 </div> <br>
                 <div id="contenedorEstadisticas" class="center border border-info rounded p-3" style="background-color:white;">
                     <p class="text-center"><strong>Estadísticas del sitio.</strong></p>
@@ -121,14 +119,14 @@ $('#siguientes10').click(function(){
     
     //Estos dos deben ser iguales siempre 0 - 0 -> 10 - 10
     //En este caso, se hace automáticamente.
-    var offset = "offset="+newOffset;
+    var offset = "function=mostrarSuenosNPVNM18&offset="+newOffset;
     var offsetDspl = newOffset;
     var offsetLimDspl = parseInt(offsetDspl) + parseInt(10);
     console.log("Siguientes 10: Variables definidas");
 
     var limite = parseInt(document.getElementById("cantidadTotalSuenos").innerHTML);
     if(limite > newOffset && limite < offsetLimDspl){
-        offset = "&offset="+limite;
+        offset = "function=mostrarSuenosNPVNM18&offset="+limite;
     }
 
     //Mostrar nuevos valores en la página
@@ -172,7 +170,7 @@ $('#anteriores10').click(function(){
     }
 
     //Definir variables para el offset.
-    var offset = "offset="+parseInt(newOffset);
+    var offset = "function=mostrarSuenosNPVNM18&offset="+parseInt(newOffset);
     var offsetDspl = newOffset;
     var offsetLim = parseInt(offsetDspl) + parseInt(10);
     console.log("Anteriores 10: Variables definidas");
@@ -245,7 +243,7 @@ function publicarSueno(){
 }
 
 function listarRegistrosNPVNM18(){
-    var offset = "offset=0";
+    var offset = "function=mostrarSuenosNPVNM18&offset=0";
     var offSetDspl = "0";
     document.getElementById("offsetDisplay").innerHTML = offSetDspl;
     document.getElementById("offsetLimDisplay").innerHTML = parseInt(offSetDspl) + parseInt(10);

@@ -17,20 +17,23 @@ Texto en Ascii creado en: https://patorjk.com/software/taag/#p=display&f=Graffit
 TODO: Crear la página principal
 TODO: Aplicar JQuery
 TODO: Crear modelo de BD
-TODO: Implementar chequeo si el sueño es privado y el usuario en sesión es dueño del sueño.
+
 Errores comunes
 
 -No poner el session_start cuando necesito el id o nombre de usuario;
+-No poner el require config.php o ponerlo sin la referencia escrita correctamente -> "../config.php" por ejemplo.
+
 
 Cosas aprendidas
 -Para conseguir el nuevo valor escrito en un textarea, se debe usar "value", en vez de innerHTML.
  por ejemplo: controlTXA = document.getElementById("textarea");
  y luego: controlTXA.value = "ALGO";
--Podría haber puesto el nombre de usuario en la sesión en vez de buscarlo con una función.
+-Ajax igual es piola. Para que voy a mentir.
 
 Fuentes:
 https://stackoverflow.com/questions/1927593/cant-update-textarea-with-javascript-after-writing-to-it-manually
 https://stackoverflow.com/questions/14892516/jquery-button-click-triggers-multiple-times
+https://stackoverflow.com/questions/18605563/href-must-not-reload
 
 Versión 0.4
 -Arreglado un bug que hacía que el checkeo de me gusta de cada sueño solo funcionara correctamente con un usuario
@@ -59,4 +62,18 @@ Versión 0.6
 -Arreglado un parámetro de altura para los sueños que tenían 200 caracteres.
 -Se recalibraron todos los parámetros para el alto del textarea de cada sueño.
 -Se añadieron restricciones para modificar sueños, ahora no pueden estar vacíos ni superar 500 caracteres y el usuario recibirá un aviso de ello.
+
+Versión 0.7
+-Se creó el archivo perfilPublico.php, actualmente se puede ver el nombre de usuario y su descripción
+-El usuario en sesión verá el botón para modificar su descripción, pero no puede modificar la de otro usuario.
+-Se implementó la función para modificar descripción en el archivo handlerAuxUsuario.php
+-Se calibró el alto del textarea para la descripción del perfil de usuario cuando este sobrepase los 400 caracteres.
+-Se identificó un bug en el que la descripción queda vacía cuando los usuarios dejan su descripción vacía, debería decir "Este usuario no ha escrito ninguna descripción".
+-Se modificó el script SQL para incluir la columna de descripción en los perfiles de usuario.
+-Se cambió la implementación de la función principal de mostrarSuenos.php, ahora se accede a ella por medio de un switch como en los demás handlers.
+-Se solucionó un problema que impedía que los usuarios pudieran acceder a la sección de comentarios de los sueños desde un perfil de usuario.
+-Se crearon funciones para listar categorías de sueños. Están hechas de una forma muy poco eficiente, por lo tanto están en la mira para cambios en el futuro.
+-Se identificaron más especificaciones para listar categorías de sueños. Este aspecto se encuentra en fases de testeo y calibración.
+-Se eliminaron los otros archivos de mostrarSuenos ya que el archivo principal ahora sirve para todas las funciones requeridas.
+-Se implementó un indicador si un sueño es +18.
 
