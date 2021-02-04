@@ -18,6 +18,12 @@
         case "cantidadSuenosPublic":
             cantidadSuenosPublic($link);
         break;
+        case "cantSueUsuario":
+            cantSueUsuario($link);
+        break;
+        case "cantLikesRecUsuario":
+            cantLikesRecUsuario($link);
+        break;
         case "cantidadSuenosTotal":
             cantidadSuenosTotal($link);
         break;
@@ -81,7 +87,21 @@
         }
     }
 
-    //Función cantidadSuenos
+    function cantSueUsuario($link){
+        $cod_usu = $_POST["cod_usu"];
+        $result = mysqli_query($link,"SELECT count(*) as total FROM Sueno WHERE cod_usu = ".$cod_usu." ");
+        $data = mysqli_fetch_assoc($result);
+        echo $data["total"];
+    }
+
+    function cantLikesRecUsuario($link){
+        $cod_usu = $_POST["cod_usu"];
+        $result = mysqli_query($link, "SELECT Count(*) AS total From LikeDislike,Sueno WHERE Sueno.cod_usu = ".$cod_usu." AND Sueno.id_sue = LikeDislike.id_sue;");
+        $data = mysqli_fetch_assoc($result);
+        echo $data["total"];
+    }
+
+    //Función cantidadSuenosPublic
     //Input: Directo: Link de conexión - Indirecto: id_sue por método GET
     //Output: Cantidad de sueños total.
     function cantidadSuenosPublic($link){

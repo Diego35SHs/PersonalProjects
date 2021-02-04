@@ -47,23 +47,25 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true ){
                     <div id="mostrarSuenosPublic">
                     <p>Cargando sueños...</p>
                     </div>
+                    <!-- <iframe src="../CRUDs/paginationtest.php" frameborder="0" title="iFramemostrarSuenos" allowtransparency="true" width="100%" height="2500px"></iframe> -->
                 </div>
-                <div id="listContainer" class="border border-info rounded p-3" style="width:100%;background-color:white;"> 
+                <div id="listContainer" class="border border-info rounded p-3 text-center" style="width:100%;background-color:white;"> 
                     <button id="anteriores10" class="btn btn-info">Anteriores 10</button>
                     <span>Mostrando: </span>
                     <span id="offsetDisplay">-----------</span>
                     <span> - </span>
-                    <span id="offsetLimDisplay">--------</span>
+                    <span id="offsetLimDisplay">-----------</span>
                     <button id="siguientes10" class="btn btn-primary">Siguientes 10</button>
                 </div>
             </div>
             <div class="col-md-4">
                 <div id="contenedorMiniPerfil" class="center border border-info rounded p-3" style="background-color:white;">
                     <span><img src="https://img.icons8.com/ios-filled/50/000000/help.png" width="50px" height="50px" alt="FDP" /></span>
-                    <span id="nomUsuMiniPerfil"><?php echo $_SESSION["username"]; ?></span><br>
+                    <span id="nomUsuMiniPerfil"><?php echo $_SESSION["username"]; ?></span><br><br>
+                    <p><a href="Registro\logout.php" class="btn btn-danger">Cerrar sesión</a></p>
                 </div> <br>
                 <div id="contenedorEstadisticas" class="center border border-info rounded p-3" style="background-color:white;">
-                    <p class="text-center"><strong>Estadísticas del sitio.</strong></p>
+                    <p class="text-center"><strong>Estadísticas del sitio</strong></p>
                     <p id="cantidadSuenosUsu"        >Cargando...</p>
                     <p id="cantidadComentUsu"        >Cargando...</p>
                     <p id="cantidadUsuarios"         >Cargando...</p>
@@ -79,7 +81,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true ){
             </div>
         </div>
     </div>
-    <a href="Registro\logout.php" class="btn btn-danger">Cerrar sesión</a>
+    
 </body>
 <!-- FIN BODY -->
 <script>
@@ -250,6 +252,7 @@ function listarRegistrosNPVNM18(){
     $.ajax({
         type: "GET",
         url: "http://anotasuenos:8080/CRUDs/mostrarSuenos.php",
+        // url: "http://anotasuenos:8080/CRUDs/paginationtest.php",
         dataType: "html",
         data: offset,
     }).done(function(respuesta){
@@ -426,6 +429,7 @@ function cantidadLikesComent(){
         $("#cantidadLikesComent").html("No se pudo cargar.");
     });
 }
+//Fin sección estadísticas
 
 </script>
 </html>
