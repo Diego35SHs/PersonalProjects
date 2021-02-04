@@ -34,6 +34,7 @@ Fuentes:
 https://stackoverflow.com/questions/1927593/cant-update-textarea-with-javascript-after-writing-to-it-manually
 https://stackoverflow.com/questions/14892516/jquery-button-click-triggers-multiple-times
 https://stackoverflow.com/questions/18605563/href-must-not-reload
+https://www.w3schools.com/tags/att_a_target.asp
 
 Versión 0.4
 -Arreglado un bug que hacía que el checkeo de me gusta de cada sueño solo funcionara correctamente con un usuario
@@ -77,3 +78,15 @@ Versión 0.7
 -Se eliminaron los otros archivos de mostrarSuenos ya que el archivo principal ahora sirve para todas las funciones requeridas.
 -Se implementó un indicador si un sueño es +18.
 
+Versión 0.8
+-Se creó una nueva forma de filtrar registros, más ligera y con menos código. Su funcionamiento es por medio de un switch que tendrá todas las posibles consultas juntas. Pero todas
+ acabarán por pasarse a la misma función de mostrar sueños, disminuyendo drásticamente la cantidad de código a mantener en caso de que se realicen cambios a la función de mostrar sueños.
+ gracias a este cambio se eliminaron 184 líneas de código y se reemplazaron por 109, el mayor beneficio es la mantenibilidad.
+-Identificado un bug en el que los usuarios no pueden modificar sus sueños luego de aplicar un filtro dentro de su perfil.
+ De momento, solo se podrán modificar antes de aplicar un filtro o desde la página de home. Se desconoce la causa del bug.
+-Se eliminó la cuenta de sueños del perfil de usuario que se ubicaba al principio del listado, ahora solo se mostrará en la parte superior junto a las demás estadísticas.
+-Se cambió de posición el botón cerrar sesión a una posición más cómoda.
+-Se solucionó un problema que provocaba que el div del perfil del usuario se viera más ancho que los elementos de la parte de abajo.
+-Identificado un problema con los filtros en los que no se puede pasar de página al filtrar. Investigar paginación.
+-Se hizo una prueba con paginación, pero no se va a implementar aún.
+-Se añadió un contador de "Me gusta" recibidos al perfil de usuario.

@@ -90,14 +90,14 @@
 </head>
 <body style="background-color: #48BEFF;">
     <div class="container">
-        <div class="row">
-            <div class="col-md-12 col-lg 12"> <a href="../home.php" class="btn btn-warning">Volver al menú principal</a> </div> <br> <br>
-            <div class="col-md-12 col-lg-12 border border-info rounded p-3 " style="background-color:white;">
-            <span class="col-md-4 col-lg-4"> <img src="https://img.icons8.com/ios-filled/50/000000/help.png" width="60px" height="60px" alt="FDP" /> </span>
+        <br>
+        <div class="col-md-12 col-lg 12"> <a href="../home.php" class="btn btn-warning">Volver al home</a> </div> <br>
+            <div class="col-md-12 col-lg-12 border border-info rounded p-3 " style="background-color:white;width:100%;">
+            <span class="col-md-3 col-lg-2"> <img src="https://img.icons8.com/ios-filled/50/000000/help.png" width="60px" height="60px" alt="FDP" /> </span>
             <span class="font-weight-bold col-md-4 col-lg-4" style="text-size: 80px;"> <?php echo htmlspecialchars($nombreUsuarioPerf); ?> </span> 
-            <span id="cantidadSuenos"     class="col-md-4 col-lg-4">Sueños publicados: ---</span>
-            <span id="cantidadSeguidores" class="col-md-4 col-lg-4">Seguidores: ---</span>
-            <span id="cantidadMegusta"    class="col-md-4 col-lg-4">Me gusta recibidos: ----</span><br><br>
+            <span>Sueños publicados: </span><span id="cantidadSuenosUserProf">---</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <span>Seguidores: </span><span id="cantidadSeguidoresUserProf">¡Pronto!</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <span>Me gusta recibidos: </span><span id="cantidadMegustaUserProf">---</span><br><br>
             <p>Descripción:</p>
             <?php 
                 $cantidadCarac = strlen($descrUsuario);
@@ -107,17 +107,13 @@
                     echo "<button id='".$_GET["cod_usu"]."' class='modificarDes btn btn-warning'>Editar descripción</button>";
                 }
             ?>
-            </div>
+        </div> <br>
+        <div class="row">
             <div id="contenedorSuenos" class="col-md-8 col-lg-8" style="width:100%;">
-                    <div id="cantidadSuenos" class="text-center border border-info rounded p-1" style="background-color: white; height: 40px;">
-                    <span>Listando </span>
-                    <span id="cantidadTotalSuenos"></span>
-                    <span> sueño(s) públicos.</span>
-                    </div> <br>
                     <div id="mostrarSuenosPublic">
                     <p>Cargando sueños...</p>
                     </div>
-                    <div id="listContainer" class="border border-info rounded p-3" style="width:100%;background-color:white;"> 
+                    <div id="listContainer" class="border border-info rounded p-3 text-center" style="width:100%;background-color:white;"> 
                     <button id="anteriores10" class="btn btn-info">Anteriores 10</button>
                     <span>Mostrando: </span>
                     <span id="offsetDisplay">-----------</span>
@@ -129,17 +125,16 @@
             <div class="col-md-4">
                 <div id="contenedorMiniPerfil" class="center border border-info rounded p-3" style="background-color:white;">
                     <a href="javascript:void(0)" id="mostrarPublic"     >Sueños públicos no +18</a><br>
-                    <a href="javascript:void(0)" id="mostrarM18Public"  >Sueños +18 y públicos</a><br>
+                    <a href="javascript:void(0)" id="mostrarM18Public"  >Sueños públicos y +18</a><br>
                     <?php 
                     if($codigoUsuario == $_SESSION["id"]){
                         echo  "<a href='javascript:void(0)' id='mostrarAllM18PubPri' >Todos mis sueños (+18, públicos y privados)</a><br>";
                         echo  "<a href='javascript:void(0)' id='mostrarPriv'          >Solo sueños privados</a><br>";
                     }
                     ?>
-                    <a href="javascript:void(0)" id="mostrarM18"           >Solo sueños +18</a><br>                       
+                    <a href="javascript:void(0)" id="mostrarM18"           >Solo sueños +18</a><br>        
                 </div> <br>
             </div>
-            
         </div>
 
     </div>
@@ -152,8 +147,9 @@
 <script>
 
 $(document).ready(function(){
-    listarRegistrosUsuarioPerf()();
+    listarRegistrosUsuarioPerf();
     listarCantSueUsuPerf(); 
+    listarCantLikesRecUsu();
 });
 
 $(document).on("click",".modificarDes",function(){
@@ -175,6 +171,7 @@ $(document).on("click",".modificarDes",function(){
     var controlTXA = document.getElementById("descUsu"+id_des);
     controlTXA.style="border-stiyle:solid;border-color:black;resize:none;";
     controlTXA.removeAttribute("disabled");
+    event.stopPropagation();
 });
 
 $(document).on("click",".guardarCambiosDes",function(){
@@ -214,7 +211,6 @@ $(document).on("click",".guardarCambiosDes",function(){
         controlTXA.setAttribute("disabled","true");
         console.log("Botón guardar cambios sueño - Finalizado");
         alert("Descripción modificada.");
-        return null;
         event.stopPropagation();
     }).fail(function(respuesta){
         document.getElementById("descUsu"+id_sue).innerHTML = respuesta;
@@ -223,7 +219,7 @@ $(document).on("click",".guardarCambiosDes",function(){
 
 function listarRegistrosUsuarioPerf(){
     var cod_usu = document.getElementById("cod_usuHid").value;
-    var offset = "function=mostrarSuenosUsuarioPerf&cod_usu="+cod_usu+"&offset=0&sue_pri=0&sue_m18=0";
+    var offset = "function=mostrarSueCustomQuery&cod_usu="+cod_usu+"&offset=0&opcion=noPVnoM18User";
     var offSetDspl = "0";
     document.getElementById("offsetDisplay").innerHTML = offSetDspl;
     document.getElementById("offsetLimDisplay").innerHTML = parseInt(offSetDspl) + parseInt(10);
@@ -241,10 +237,11 @@ function listarRegistrosUsuarioPerf(){
 
 $(document).on("click","#mostrarPriv",function(){
     var cod_usu = document.getElementById("cod_usuHid").value;
-    var offset = "function=mostrarSuenosUsuarioPerf&cod_usu="+cod_usu+"&offset=0&sue_pri=1&sue_m18=0";
+    var offset = "function=mostrarSueCustomQuery&cod_usu="+cod_usu+"&offset=0&opcion=soloPVUser";
     var offSetDspl = "0";
     document.getElementById("offsetDisplay").innerHTML = offSetDspl;
     document.getElementById("offsetLimDisplay").innerHTML = parseInt(offSetDspl) + parseInt(10);
+    $("#mostrarSuenosPublic").html("Cargando sueños...");
     $.ajax({
         type: "GET",
         url: "http://anotasuenos:8080/CRUDs/mostrarSuenos.php",
@@ -259,7 +256,7 @@ $(document).on("click","#mostrarPriv",function(){
 
 $(document).on("click","#mostrarPublic",function(){
     var cod_usu = document.getElementById("cod_usuHid").value;
-    var offset = "function=mostrarSuenosUsuarioPerf&cod_usu="+cod_usu+"&offset=0&sue_pri=0&sue_m18=0";
+    var offset = "function=mostrarSueCustomQuery&cod_usu="+cod_usu+"&offset=0&opcion=noPVnoM18User";
     var offSetDspl = "0";
     document.getElementById("offsetDisplay").innerHTML = offSetDspl;
     document.getElementById("offsetLimDisplay").innerHTML = parseInt(offSetDspl) + parseInt(10);
@@ -277,7 +274,7 @@ $(document).on("click","#mostrarPublic",function(){
 
 $(document).on("click","#mostrarM18",function(){
     var cod_usu = document.getElementById("cod_usuHid").value;
-    var offset = "function=mostrarSuenosUsuarioPerf&cod_usu="+cod_usu+"&offset=0&sue_pri=0&sue_m18=1";
+    var offset = "function=mostrarSueCustomQuery&cod_usu="+cod_usu+"&offset=0&opcion=soloM18User";
     var offSetDspl = "0";
     document.getElementById("offsetDisplay").innerHTML = offSetDspl;
     document.getElementById("offsetLimDisplay").innerHTML = parseInt(offSetDspl) + parseInt(10);
@@ -295,7 +292,7 @@ $(document).on("click","#mostrarM18",function(){
 
 $(document).on("click","#mostrarM18Public",function(){
     var cod_usu = document.getElementById("cod_usuHid").value;
-    var offset = "function=mostrarSuenosUsuarioPerfAlt&cod_usu="+cod_usu+"&offset=0&sue_pri=0&sue_m18=1";
+    var offset = "function=mostrarSueCustomQuery&cod_usu="+cod_usu+"&offset=0&opcion=noPVsiM18User";
     var offSetDspl = "0";
     document.getElementById("offsetDisplay").innerHTML = offSetDspl;
     document.getElementById("offsetLimDisplay").innerHTML = parseInt(offSetDspl) + parseInt(10);
@@ -313,7 +310,7 @@ $(document).on("click","#mostrarM18Public",function(){
 
 $(document).on("click","#mostrarAllM18PubPri",function(){
     var cod_usu = document.getElementById("cod_usuHid").value;
-    var offset = "function=mostrarSueUsuAll&cod_usu="+cod_usu+"&offset=0";
+    var offset = "function=mostrarSueCustomQuery&cod_usu="+cod_usu+"&offset=0&opcion=todosUser";
     var offSetDspl = "0";
     document.getElementById("offsetDisplay").innerHTML = offSetDspl;
     document.getElementById("offsetLimDisplay").innerHTML = parseInt(offSetDspl) + parseInt(10);
@@ -329,19 +326,52 @@ $(document).on("click","#mostrarAllM18PubPri",function(){
     });
 });
 
-//TODO: Crear la función que permita conseguir los sueños publicados por un usuario que no esté en sesión
+$(document).on("click","#queryUserPerf",function(){
+    var cod_usu = document.getElementById("cod_usuHid").value;
+    var offset = "function=mostrarSueCustomQuery&cod_usu="+cod_usu+"&offset=0&opcion=noPVnoM18User";
+    var offSetDspl = "0";
+    document.getElementById("offsetDisplay").innerHTML = offSetDspl;
+    document.getElementById("offsetLimDisplay").innerHTML = parseInt(offSetDspl) + parseInt(10);
+    $.ajax({
+        type: "GET",
+        url: "http://anotasuenos:8080/CRUDs/mostrarSuenos.php",
+        dataType: "html",
+        data: offset,
+    }).done(function(respuesta){
+        $("#mostrarSuenosPublic").html(respuesta);
+    }).fail(function(){
+        $("#mostrarSuenosPublic").html("No se pudieron recuperar los registros.");
+    });
+});
+
 //Esto será útil para los spans del perfil y el mensaje de "listando X sueños".
 function listarCantSueUsuPerf(){
-    var paquete = "funcion=getCantSueUsuario";
+    var cod_usu = document.getElementById("cod_usuHid").value;
+    var paquete = "funcion=cantSueUsuario&cod_usu="+cod_usu;
     $.ajax({
         type: "POST",
         url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
         dataType: "html",
         data: paquete,
     }).done(function(res){
-        $("#cantidadTotalSuenos").html(res);
+        $("#cantidadSuenosUserProf").html(res);
     }).fail(function(){
-        $("#cantidadTotalSuenos").html("Algo falló.");
+        $("#cantidadSuenosUserProf").html("Algo falló.");
+    });
+}
+
+function listarCantLikesRecUsu(){
+    var cod_usu = document.getElementById("cod_usuHid").value;
+    var paquete = "funcion=cantLikesRecUsuario&cod_usu="+cod_usu;
+    $.ajax({
+        type: "POST",
+        url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
+        dataType: "html",
+        data: paquete,
+    }).done(function(res){
+        $("#cantidadMegustaUserProf").html(res);
+    }).fail(function(){
+        $("#cantidadMegustaUserProf").html("Algo falló.");
     });
 }
 
@@ -369,6 +399,7 @@ function heightTXA($cantidadCarac){
 }
 
 //Offsets.
+//TODO: Encontrar la manera de que los offsets se apliquen a cada filtro.
 $('#siguientes10').click(function(){
     //Se consigue un nuevo offset para la consulta sql y se le suma 10, haciendo que avance a los siguientes
     //10 registros.
@@ -378,22 +409,23 @@ $('#siguientes10').click(function(){
     
     //Estos dos deben ser iguales siempre 0 - 0 -> 10 - 10
     //En este caso, se hace automáticamente.
-    var offset = "function=mostrarSuenosNPVNM18&offset="+newOffset;
+    var cod_usu = document.getElementById("cod_usuHid").value;
+    var offset = "function=mostrarSueCustomQuery&opcion=noPVnoM18User&cod_usu="+cod_usu+"&offset="+newOffset;
     var offsetDspl = newOffset;
     var offsetLimDspl = parseInt(offsetDspl) + parseInt(10);
     console.log("Siguientes 10: Variables definidas");
 
-    var limite = parseInt(document.getElementById("cantidadTotalSuenos").innerHTML);
-    if(limite > newOffset && limite < offsetLimDspl){
-        offset = "function=mostrarSuenosNPVNM18&offset="+limite;
-    }
+    // var limite = parseInt(document.getElementById("cantidadTotalSuenos").innerHTML);
+    // if(limite > newOffset && limite < offsetLimDspl){
+    //     offset = "function=mostrarSueCustomQuery&opcion=noPVnoM18&offset="+limite;
+    // }
 
     //Mostrar nuevos valores en la página
     console.log("Funcion cambiarSpans llamada");
     cambiarSpans(offsetDspl,offsetLimDspl);
     
     //Limitar la cantidad máxima de sueños que se pueden mostrar.
-    console.log(document.getElementById("cantidadTotalSuenos").innerHTML);
+    // console.log(document.getElementById("cantidadTotalSuenos").innerHTML);
     
 
     //TODO: Limitar la cantidad de registros máxima a la cantidad total de registros.
@@ -429,7 +461,8 @@ $('#anteriores10').click(function(){
     }
 
     //Definir variables para el offset.
-    var offset = "function=mostrarSuenosNPVNM18&offset="+parseInt(newOffset);
+    var cod_usu = document.getElementById("cod_usuHid").value;
+    var offset = "function=mostrarSueCustomQuery&opcion=noPVnoM18User&cod_usu="+cod_usu+"&offset="+parseInt(newOffset);
     var offsetDspl = newOffset;
     var offsetLim = parseInt(offsetDspl) + parseInt(10);
     console.log("Anteriores 10: Variables definidas");
