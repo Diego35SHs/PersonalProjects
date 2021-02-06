@@ -47,7 +47,8 @@ session_start();
                     <p>Cargando comentarios...</p>
                 </div> <br>
                 <div id="listContainer" class="border border-info rounded p-3" style="width:100%;background-color:white;"> 
-                    <button id="anteriores10" class="btn btn-info">Anteriores 10</button>
+                    <a href="" class="btn btn-info">Inicio</a>
+                    <button id="anteriores10" class="btn btn-primary">Anteriores 10</button>
                     <span>Mostrando: </span>
                     <span id="offsetDisplay">-----------</span>
                     <span> - </span>

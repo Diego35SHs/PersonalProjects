@@ -31,11 +31,21 @@ switch($funcion){
     case "getNivelUsuario":
         return "NivelUsuarioPlaceholder";
     break;
-    case "getDescrUsuario":
-        return "getDescrUsuarioPlaceholder";
-    break;
+    //Ya existe en el archivo perfilpublico.php
+    // case "getDescrUsuario":
+    //     return "getDescrUsuarioPlaceholder";
+    // break;
     case "updateDescrUsuario":
         updateDescrUsuario($link);
+    break;
+    case "seguirUsuario":
+        seguirUsuario($link);
+    break;
+    case "noseguirUsuario":
+        noseguirUsuario($link);
+    break;
+    case "getSeguidoresUsuario":
+        ajaxSeguidoresUsu($_POST["cod_usu"],$link);
     break;
 }
 
@@ -73,5 +83,57 @@ function updateDescrUsuario($link){
         echo "Falla de conexión.";
     }
 }
+
+function seguirUsuario($link){
+    $cod_usu_seguir = $_POST["cod_usu"];
+    if($cod_usu_seguir == $_SESSION["id"]){
+        echo "No se qué hiciste, pero no puedes seguirte a ti mismo. ¿Me cuentas qué hiciste?";
+    }else{
+        //sdo = Usuario Seguido o A Seguir
+        //sdr = Usuario que Sigue o Seguidor
+        $sql = "INSERT INTO Seguidores (id_usu_sdo,id_usu_sdr) VALUES(?,?)";
+        if($stmt = mysqli_prepare($link,$sql)){
+            mysqli_stmt_bind_param($stmt,"ii",$id_usu_seguir_param,$id_usu_sigue_param);
+            $id_usu_seguir_param = $cod_usu_seguir; $id_usu_sigue_param = $_SESSION["id"];
+            mysqli_stmt_execute($stmt);
+            echo seguidoresUsuario($cod_usu_seguir,$link);
+        }else{
+            echo "Falla de conexión.";
+        }
+    }
+}
+
+function noseguirUsuario($link){
+    $cod_usu_seguir = $_POST["cod_usu"];
+    if($cod_usu_seguir == $_SESSION["id"]){
+        echo "<script>alert(De verdad, ¿qué estás haciendo? Llegar a este mensaje debería ser imposible.);</script>";
+    }else{
+        //sdo = Usuario Seguido o A Seguir
+        //sdr = Usuario que Sigue o Seguidor
+        $sql = "DELETE FROM Seguidores WHERE id_usu_sdo = ? AND id_usu_sdr = ?";
+        if($stmt = mysqli_prepare($link,$sql)){
+            mysqli_stmt_bind_param($stmt,"ii",$id_usu_seguir_param,$id_usu_sigue_param);
+            $id_usu_seguir_param = $cod_usu_seguir; $id_usu_sigue_param = $_SESSION["id"];
+            mysqli_stmt_execute($stmt);
+            echo seguidoresUsuario($cod_usu_seguir,$link);
+        }else{
+            echo "Falla de conexión";
+        }
+    }
+}
+
+//Para ser usada desde la página perfil público.
+function seguidoresUsuario($cod_usu,$link){
+    $result = mysqli_query($link,"SELECT count(*) as total FROM Seguidores WHERE id_usu_sdo = ".$cod_usu." ");
+    $data = mysqli_fetch_assoc($result);
+    return $data["total"];
+}
+
+function ajaxSeguidoresUsu($cod_usu,$link){
+    $result = mysqli_query($link,"SELECT count(*) as total FROM Seguidores WHERE id_usu_sdo = ".$cod_usu." ");
+    $data = mysqli_fetch_assoc($result);
+    echo $data["total"];
+}
+
 
 ?>

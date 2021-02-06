@@ -87,6 +87,9 @@
         }
     }
 
+    //Función cantSueUsuario
+    //Input: Directo: Link de conexión - Indirecto: Código de usuario por método POST
+    //Output: Cantidad de sueños publicados por el usuario solicitado, sin importar categorías o configuración.
     function cantSueUsuario($link){
         $cod_usu = $_POST["cod_usu"];
         $result = mysqli_query($link,"SELECT count(*) as total FROM Sueno WHERE cod_usu = ".$cod_usu." ");
@@ -94,6 +97,9 @@
         echo $data["total"];
     }
 
+    //Función cantLikesRecUsuario
+    //Input: Directo: Link de conexión - Indirecto: código de usuario del perfil.
+    //Output: Cantidad de likes recibidos (Rec) en total del usuario del perfil.
     function cantLikesRecUsuario($link){
         $cod_usu = $_POST["cod_usu"];
         $result = mysqli_query($link, "SELECT Count(*) AS total From LikeDislike,Sueno WHERE Sueno.cod_usu = ".$cod_usu." AND Sueno.id_sue = LikeDislike.id_sue;");
@@ -110,6 +116,9 @@
         echo $data["total"];
     }
 
+    //Función cantidadSuenosTotal
+    //Input: Link de conexión
+    //Output: Cantidad de sueños total publicados, sin importar sus categorías o configuración.
     function cantidadSuenosTotal($link){
         $result = mysqli_query($link,"SELECT count(*) as total FROM Sueno");
         $data = mysqli_fetch_assoc($result);
@@ -197,6 +206,5 @@
         }
         return $altoTXA;
     }
-
 
 ?>

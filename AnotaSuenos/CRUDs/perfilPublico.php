@@ -4,6 +4,10 @@
     $nombreUsuarioPerf = nombreUsuSueno($_GET["cod_usu"],$link);
     $descrUsuario = descripcionUsuario($_GET["cod_usu"],$link);
     $codigoUsuario = $_GET["cod_usu"];
+    if($codigoUsuario <= 0){
+        header("location: ../home.php");
+        exit;
+    }
     if($descrUsuario == null || $descrUsuario == ''){
         $descrUsuario = "Este usuario no ha escrito ninguna descripción.";
     }
@@ -31,6 +35,9 @@
         return "Usuario no encontrado";
     }
 
+    //Función descripcionUsuario
+    //Input: Código de usuario y Link de conexión
+    //Output: La descripción del usuario.
     function descripcionUsuario($codusu,$link){
         $sql = "SELECT des_usu FROM Login WHERE cod_usu = ?";
         if($stmt = mysqli_prepare($link,$sql)){
@@ -55,7 +62,6 @@
     //Input: cántidad de caracteres de un sueño
     //Output: Altura de textarea que ocupará el sueño.
     function heightTXA($cantidadCarac){
-        //TODO: Este aspecto podría ajustarse más por cada línea.
         $altoTXA = "height:50px;";
         if($cantidadCarac <= 100){
             $altoTXA = "height:50px;";
@@ -73,6 +79,12 @@
             $altoTXA = "height:180px;";
         }
         return $altoTXA;
+    }
+
+    function checkSeguir($id_usu_sdo, $id_usu_sdr, $link){
+        $result = mysqli_query($link, "SELECT count(*) as total FROM Seguidores WHERE id_usu_sdo = " . $id_usu_sdo . " AND id_usu_sdr =" . $id_usu_sdr . " ");
+        $data = mysqli_fetch_assoc($result);
+        return $data["total"];
     }
 
 ?>
@@ -96,8 +108,16 @@
             <span class="col-md-3 col-lg-2"> <img src="https://img.icons8.com/ios-filled/50/000000/help.png" width="60px" height="60px" alt="FDP" /> </span>
             <span class="font-weight-bold col-md-4 col-lg-4" style="text-size: 80px;"> <?php echo htmlspecialchars($nombreUsuarioPerf); ?> </span> 
             <span>Sueños publicados: </span><span id="cantidadSuenosUserProf">---</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <span>Seguidores: </span><span id="cantidadSeguidoresUserProf">¡Pronto!</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <span>Me gusta recibidos: </span><span id="cantidadMegustaUserProf">---</span><br><br>
+            <span>Seguidores: </span><span id="cantidadSeguidoresUserProf">---</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <span>Me gusta recibidos: </span><span id="cantidadMegustaUserProf">---</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <?php if($_SESSION["id"] != $_GET["cod_usu"]){ 
+                if(checkSeguir($_GET["cod_usu"],$_SESSION["id"],$link) == 0){
+                    echo "<span><button class='seguirUser btn btn-info'>Seguir</button></span>"; 
+                }else{
+                    echo "<span><button class='noseguirUser btn btn-warning'>Dejar de seguir</button></span>"; 
+                }
+            }?>
+            <br><br>
             <p>Descripción:</p>
             <?php 
                 $cantidadCarac = strlen($descrUsuario);
@@ -114,7 +134,8 @@
                     <p>Cargando sueños...</p>
                     </div>
                     <div id="listContainer" class="border border-info rounded p-3 text-center" style="width:100%;background-color:white;"> 
-                    <button id="anteriores10" class="btn btn-info">Anteriores 10</button>
+                    <a href="" class="btn btn-info">Inicio</a>
+                    <button id="anteriores10" class="btn btn-primary">Anteriores 10</button>
                     <span>Mostrando: </span>
                     <span id="offsetDisplay">-----------</span>
                     <span> - </span>
@@ -150,6 +171,52 @@ $(document).ready(function(){
     listarRegistrosUsuarioPerf();
     listarCantSueUsuPerf(); 
     listarCantLikesRecUsu();
+    listarCantSegUsu();
+});
+
+$(document).on("click",".seguirUser",function(){
+    console.log("Seguir usuario - Iniciado");
+    var cod_usu = document.getElementById("cod_usuHid").value;
+    var button = $(this);
+    var paquete = "function=seguirUsuario&cod_usu=" + cod_usu;
+    $.ajax({
+        type: "POST",
+        url: "http://anotasuenos:8080/CRUDs/handlerAuxUsuario.php",
+        data: paquete,
+    }).done(function(respuesta){
+        button.text("Dejar de seguir");
+        button.removeClass("seguirUser");
+        button.removeClass("btn-info");
+        button.addClass("noseguirUser");
+        button.addClass("btn-warning");
+        document.getElementById("cantidadSeguidoresUserProf").innerHTML = respuesta;
+        console.log("CANTIDAD DE Seguidores ACTUALIZADA");
+        event.stopPropagation();
+    }).fail(function(respuesta) {
+        alert("Error de conexión. Probablemente.");
+    });
+});
+
+$(document).on("click",".noseguirUser",function(){
+    var cod_usu = document.getElementById("cod_usuHid").value;
+    var button = $(this);
+    var paquete = "function=noseguirUsuario&cod_usu=" + cod_usu;
+    $.ajax({
+        type: "POST",
+        url: "http://anotasuenos:8080/CRUDs/handlerAuxUsuario.php",
+        data: paquete,
+    }).done(function(respuesta){
+        button.text("Seguir");
+        button.addClass("seguirUser");
+        button.addClass("btn-info");
+        button.removeClass("noseguirUser");
+        button.removeClass("btn-warning");
+        document.getElementById("cantidadSeguidoresUserProf").innerHTML = respuesta;
+        console.log("CANTIDAD DE Seguidores ACTUALIZADA");
+        event.stopPropagation();
+    }).fail(function(respuesta) {
+        alert("Error de conexión. Probablemente.");
+    });
 });
 
 $(document).on("click",".modificarDes",function(){
@@ -375,6 +442,21 @@ function listarCantLikesRecUsu(){
     });
 }
 
+function listarCantSegUsu(){
+    var cod_usu = document.getElementById("cod_usuHid").value;
+    var paquete = "function=getSeguidoresUsuario&cod_usu="+cod_usu;
+    $.ajax({
+        type: "POST",
+        url: "http://anotasuenos:8080/CRUDs/handlerAuxUsuario.php",
+        dataType: "html",
+        data: paquete,
+    }).done(function(res){
+        $("#cantidadSeguidoresUserProf").html(res);
+    }).fail(function(){
+        $("#cantidadSeguidoresUserProf").html("Algo falló.");
+    });
+}
+
 //funcion heightTXA 
 //Input: cántidad de caracteres de un sueño
 //Output: Altura de textarea que ocupará el sueño.
@@ -400,6 +482,8 @@ function heightTXA($cantidadCarac){
 
 //Offsets.
 //TODO: Encontrar la manera de que los offsets se apliquen a cada filtro.
+//Idea: Mostrar el filtro actual en algun lado, ponerle id que cambie cuando se cambie de filtro
+//Tomar el filtro en estas funciones y mandarlo a la consulta, de alguna manera. Quizás cambiar la opcion con una variable.
 $('#siguientes10').click(function(){
     //Se consigue un nuevo offset para la consulta sql y se le suma 10, haciendo que avance a los siguientes
     //10 registros.

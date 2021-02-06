@@ -1,24 +1,23 @@
 <?php 
 session_start();
+require "../config.php";
 $id_sue = $_GET["id_sue"];
 $funcion = $_GET["funcion"];
 
 //Se encarga de separar las funciones a realizar en cada consulta ajax
-//Esto evita que se ejecuten de inmediato ambas y quede la embarrá
-//Y así tambien evito usar dos archivos diferentes sin razón.
-//Los miro a ustedes, handlers csm.
-if($funcion == "verComentarios"){
-    verComentarios();
-}
-if($funcion == "verSueno"){
-    verSueno();
+switch($funcion){
+    case "verComentarios":
+        verComentarios($link);
+    break;
+    case "verSueno":
+        verSueno($link);
+    break;
 }
 
 //Función verSueno
 //Input: Ninguno directo - Toma el id del sueño con metodo GET
 //Output: Mostrar el sueño
-function verSueno(){
-    $link = mysqli_connect('localhost','root','','anotasuenos');
+function verSueno($link){
     $response = array();
     $result = mysqli_query($link, "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno WHERE id_sue =  ".$_GET["id_sue"]." ");
     if(mysqli_num_rows($result)>0){
@@ -26,11 +25,11 @@ function verSueno(){
         while($row = mysqli_fetch_array($result)){
             $temp = array();
             echo "<div class='border border-info rounded p-3' style='width: 100%; background-color: white;'>";
-            //TODO: Encontrar una manera más acorde a las convenciones de HTML y CSS para mostrar un multiline. Esto es un parche.
             $cantidadCarac = strlen($row["sueno"]);
             $nombreUsuario = nombreUsuSueno($row["cod_usu"],$link);
             $alto = heightTXA($cantidadCarac);
-            $cantComentarios = cantidadComentarios($row["id_sue"],$link);
+            // $cantComentarios = cantidadComentarios($row["id_sue"],$link);
+            //TODO: Ajustes acerca de chequeos, etc, llevar a la par con la función principal.
             $cantLikes = cantidadLikes($row["id_sue"],$link);
             echo "<label>";
                 echo "Por: ";
@@ -75,8 +74,8 @@ function verSueno(){
 //Input: Ninguno directo - Toma el id del sueño con metodo GET
 //Output: Listado de comentarios correspondientes a un sueño
 //TODO: Hacer funcionar el sistema de offset.
-function verComentarios(){
-    $link = mysqli_connect('localhost','root','','anotasuenos');
+function verComentarios($link){
+    // $link = mysqli_connect('localhost','root','','anotasuenos');
     $response = array();
     $result = mysqli_query($link, "SELECT id_com,id_sue,id_usu,comentario FROM Comentario WHERE id_sue = ".$_GET["id_sue"]." ORDER BY id_com desc ");
     if(mysqli_num_rows($result)>0){
@@ -123,7 +122,6 @@ function verComentarios(){
 //Input: ID de usuario y Link de conexión
 //Output: Nombre de usuario correspondiente al sueño.
 function nombreUsuSueno($codusu,$link){
-    //Consulta individual
     $sql = "SELECT nom_usu FROM Login WHERE cod_usu = ?";
     if($stmt = mysqli_prepare($link,$sql)){
         mysqli_stmt_bind_param($stmt,"i",$param_codusu);
@@ -142,7 +140,6 @@ function nombreUsuSueno($codusu,$link){
     }
     return "Usuario no encontrado";
 }
-
 
 //Función nombreUsuarioCome
 //Input: ID de usuario y Link de conexión
@@ -167,12 +164,10 @@ function nombreUsuarioCome($cod_usu,$link){
     return "Usuario no encontrado";
 }
 
-
 //Función heightTXA
 //Input: Cantidad de caracteres del sueño o comentario.
 //Output: Alto del textarea que ocupará el comentario.
 function heightTXA($cantidadCarac){
-    //TODO: Este aspecto podría ajustarse más por cada línea, quizás un switch sea mejor.
     $altoTXA = "height:100px;";
     if($cantidadCarac >=180){
         $altoTXA = "height:70px;";
@@ -189,7 +184,6 @@ function heightTXA($cantidadCarac){
     return $altoTXA;
 }
 
-
 //SUEÑOS
 //Función cantidadComentarios 
 //Input: ID del sueño y Link de conexion
@@ -199,6 +193,7 @@ function cantidadComentarios($id_sue,$link){
     $data = mysqli_fetch_assoc($result);
     return $data["total"];
 }
+
 //Función cantidadLikes
 //Input: ID del sueño y Link de conexión
 //Output: Cantidad de "Me gusta" correspondientes al sueño.
@@ -239,7 +234,6 @@ function checkLikeCom($id_com,$id_usu,$link){
 }
 
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
