@@ -13,15 +13,11 @@
 
 Texto en Ascii creado en: https://patorjk.com/software/taag/#p=display&f=Graffiti&t=Type%20Something%20
 
-
-TODO: Crear la página principal
-TODO: Aplicar JQuery
-TODO: Crear modelo de BD
-
 Errores comunes
 
 -No poner el session_start cuando necesito el id o nombre de usuario;
 -No poner el require config.php o ponerlo sin la referencia escrita correctamente -> "../config.php" por ejemplo.
+-Poner .value cuando en realidad se necesita innerHTML o viceversa.
 
 
 Cosas aprendidas
@@ -29,6 +25,8 @@ Cosas aprendidas
  por ejemplo: controlTXA = document.getElementById("textarea");
  y luego: controlTXA.value = "ALGO";
 -Ajax igual es piola. Para que voy a mentir.
+-Al empaquetar información en ajax no poner NADA antes del primer valor, a pesar de que el "&" funciona, es mejor no ponerlo al principio.
+
 
 Fuentes:
 https://stackoverflow.com/questions/1927593/cant-update-textarea-with-javascript-after-writing-to-it-manually
@@ -90,3 +88,20 @@ Versión 0.8
 -Identificado un problema con los filtros en los que no se puede pasar de página al filtrar. Investigar paginación.
 -Se hizo una prueba con paginación, pero no se va a implementar aún.
 -Se añadió un contador de "Me gusta" recibidos al perfil de usuario.
+
+Versión 0.9
+-Se añadieron más descripciones para algunas funciones.
+-Se creó la tabla Segudidores en el script SQL.
+-Se arregló un error de lógica en que la comparación entre usuario en sesión y 
+ usuario del perfil resultaba en que el botón "Seguir" solo aparecía para 
+ el usuario en sesión que visita su propio perfil, lo cual no tiene sentido.
+-Se agregó el botón para volver al inicio de los listados de sueños.
+-Se agregó el botón para volver al inicio de los listados de comentarios.
+-Se agregó el botón para seguir y dejar de seguir a usuarios
+-Se agregó una función que permite contar los seguidores de un respectivo usuario.
+-Se agregó un chequeo de "Seguidor" para los usuarios, ahora, si se sigue un usuario aparecerá el botón "dejar de seguir" en lugar del de "seguir".
+-Ahora se lista la cantidad de seguidores en el perfil del usuario.
+-Se cambiaron los "ifs" del archivo mostrarComentarios.php por un switch.
+-Las funciones del archivo mostrarComentarios ahora utilizan la configuración de config.php en lugar de ser declaradas dentro de las funciones.
+-El botón para seguir/dejar de seguir usuarios ya es completamente funcional.
+-TODO: Crear las opciones para eliminar sueños, modificar comentarios y eliminar comentarios.

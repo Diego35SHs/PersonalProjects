@@ -16,6 +16,8 @@ switch ($function) {
 }
 
 //Preparar consulta.
+//Este switch es en extremo importante, es aquí donde se elegirá la consulta pre-hecha 
+//a utilizar en la función "mostrarSuenosGeneric"
 function prepararQuery($link)
 {
     $opcion = $_GET["opcion"];
@@ -23,6 +25,8 @@ function prepararQuery($link)
     switch ($opcion) {
             //PARA USO COMÚN:
         case "noPVnoM18":
+            //Sueños que no sean privados y tampoco +18.
+            //Esta es la opción que se usa en home.php
             $query = "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno WHERE sue_pri = 0 AND sue_m18 = 0 ORDER BY fec_sue DESC LIMIT 10 OFFSET " . $offsetQuery . " ";
             mostrarSuenosGeneric($query, $link);
             break;
@@ -66,12 +70,13 @@ function prepararQuery($link)
             mostrarSuenosGeneric($query, $link);
             break;
     }
-
-
     return $query;
 }
 
 //Función genérica para mostrar sueños:
+//INPUT: Directo - Consulta SQL preparada en el switch y link de conexión.
+//OUTPUT: Los sueños
+//NOTA: Esta función es extremadamente importante.
 function mostrarSuenosGeneric($query, $link)
 {
     $response = array();
@@ -87,8 +92,7 @@ function mostrarSuenosGeneric($query, $link)
             $cantComentarios = cantidadComentarios($row["id_sue"], $link);
             $cantLikes = cantidadLikes($row["id_sue"], $link);
             echo "<label>";
-            echo "Por: ";
-            echo "<a href='../CRUDs/perfilPublico.php?cod_usu=" . $row["cod_usu"] . "'>".$nombreUsuario."</a>";
+            echo "Por: <a href='../CRUDs/perfilPublico.php?cod_usu=" . $row["cod_usu"] . "'>".$nombreUsuario."</a>";
             echo "</label>";
             echo "<textarea class='form-control' id='textAreaSue" . $row["id_sue"] . "' style='resize:none;" . $alto . "border:none;maxlength:500;background-color:white;text-color:black;' disabled='true'>";
             echo $row["sueno"];
@@ -106,8 +110,7 @@ function mostrarSuenosGeneric($query, $link)
             }
             echo "<span>";
             if (checkPropiedad($row["cod_usu"]) == 1) {
-                echo "<button id='" . $row["id_sue"] . "' class='modificar btn btn-warning'>Modificar</button>";
-                echo "&nbsp;";
+                echo "<button id='" . $row["id_sue"] . "' class='modificar btn btn-warning'>Modificar</button> &nbsp;";
             }
             echo "</span>";
             echo "<span>";
@@ -126,7 +129,9 @@ function mostrarSuenosGeneric($query, $link)
             array_push($response["suenos"], $temp);
         }
     } else {
-        echo "No se encontró ningún registro.";
+        echo "<div class='border border-info rounded p-3' style='width: 100%; background-color: white;'>";
+        echo "<p>No se encontró ningún registro.</p>";
+        echo "</div> <br>";
     }
 }
 
@@ -135,7 +140,6 @@ function mostrarSuenosGeneric($query, $link)
 //Output: Altura de textarea que ocupará el sueño.
 function heightTXA($cantidadCarac)
 {
-    //TODO: Este aspecto podría ajustarse más por cada línea.
     $altoTXA = "height:100px;";
     if ($cantidadCarac <= 100) {
         $altoTXA = "height:84px;";
@@ -236,10 +240,13 @@ function checkPropiedad($id_usu)
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 </head>
-
 <body>
 </body>
 <script>
+    //Función "Like" o "Me Gusta" para sueños.
+    //Esta función se encarga de atender la solicitud del usuario (Dar "Me Gusta" a un sueño) y mostrar
+    //el resultado cambiando el texto y clase del botón recién presionado y cambiando la cantidad
+    //de "Me Gusta" que ha recibido el sueño a la actual.
     $(document).on("click", ".like", function() {
         console.log("INICIANDO PROCESO: BOTON LIKE");
         var id_sue = $(this).attr("id");
@@ -268,9 +275,13 @@ function checkPropiedad($id_usu)
             event.stopPropagation();
         }).fail(function(respuesta) {
             alert("Error de conexión. Probablemente.");
-        })
+        });
     });
 
+    //Función "DisLike" o "No Me Gusta" para sueños.
+    //Esta función se encarga de atender la solicitud del usuario (Dar "No Me Gusta" a un sueño) y mostrar
+    //el resultado cambiando el texto y clase del botón recién presionado y cambiando la cantidad
+    //de "No Me Gusta" que ha recibido el sueño a la actual.
     $(document).on("click", ".dislike", function() {
         console.log("INICIANDO PROCESO: BOTON DISLIKE");
         var id_sue = $(this).attr("id");
@@ -300,6 +311,10 @@ function checkPropiedad($id_usu)
         })
     });
 
+    //Función para "Modificar" un sueño.
+    //Esta función se encarga de simplemente cambiar los atributos del botón y del textarea
+    //correspondiente al sueño para permitir que el usuario modifique su sueño y tenga la opción
+    //de guardarlo.
     $(document).on("click", ".modificar", function() {
         console.log("Botón modificar sueño - Iniciado");
         var id_sue = $(this).attr("id");
@@ -322,6 +337,10 @@ function checkPropiedad($id_usu)
         event.stopPropagation();
     });
 
+    //Función para "Guardar Cambios" efectuados al sueño.
+    //Esta función se encarga de procesar el cambio hecho al sueño
+    //tomará lo que el usuario haya escrito en el textarea, luego hará que vuelva a su estado original
+    //y con ese dato hará la consulta update y luego mostrará el nuevo valor en el textarea.
     $(document).on("click", ".guardarCambios", function() {
         console.log("Botón guardar cambios sueño - Iniciando");
         var id_sue = $(this).attr("id");
@@ -366,16 +385,12 @@ function checkPropiedad($id_usu)
         });
     });
 
-
-    //TODO: Analizar esto.
     //Esta función existe en formato PHP, pero para aplicar el estilo al modificar un comentario
     //Es necesaria esta copia en javascript. Hacen lo mismo, pero usarla en formato php significaría
     //Usar ajax con redirección a esta misma página, es posible, y de hecho podría implementarse una función
     //en handlerAuxSuenos.php que se encargue de esto siempre que sea necesario, de momento, esta solución
     //está funcionando y correctamente.
     function heightTXA(cantidadCarac) {
-        //TODO: Este aspecto podría ajustarse más por cada línea.
-        //TODO: Cambiar por un switch si es posible.
         var altoTXA = "height:100px;";
         if (cantidadCarac <= 100) {
             altoTXA = "height:84px;";

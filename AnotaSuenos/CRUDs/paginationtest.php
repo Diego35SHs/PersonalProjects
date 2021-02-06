@@ -136,8 +136,7 @@ if ($currentpage != $totalpages) {
 //Input: cántidad de caracteres de un sueño
 //Output: Altura de textarea que ocupará el sueño.
 function heightTXA($cantidadCarac)
-{
-    //TODO: Este aspecto podría ajustarse más por cada línea.
+{ 
     $altoTXA = "height:100px;";
     if ($cantidadCarac <= 100) {
         $altoTXA = "height:84px;";
@@ -373,15 +372,12 @@ $(document).on("click",".guardarCambios",function(){
 });
 
 
-//TODO: Analizar esto.
 //Esta función existe en formato PHP, pero para aplicar el estilo al modificar un comentario
 //Es necesaria esta copia en javascript. Hacen lo mismo, pero usarla en formato php significaría
 //Usar ajax con redirección a esta misma página, es posible, y de hecho podría implementarse una función
 //en handlerAuxSuenos.php que se encargue de esto siempre que sea necesario, de momento, esta solución
 //está funcionando y correctamente.
 function heightTXA(cantidadCarac){
-        //TODO: Este aspecto podría ajustarse más por cada línea.
-        //TODO: Cambiar por un switch si es posible.
         var altoTXA = "height:100px;";
         if(cantidadCarac <= 100){
             altoTXA = "height:84px;";
