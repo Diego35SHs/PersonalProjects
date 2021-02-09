@@ -10,7 +10,24 @@ switch($funcion){
         verComentarios($link);
     break;
     case "verSueno":
-        verSueno($link);
+        // echo "<script> alert('Hola'); </script>";
+        //1 = Privado -- 0 = Público.
+        if(checkPrivacidad($link) == 1){
+            if(checkPropiedad($link) == 1){
+                verSueno($link);
+            }else{
+                echo "<script> alert('Este sueño es privado y no es tuyo, buen intento. Volviendo a home.'); </script>";
+                //Esta función fue tomada desde StackOverflow. Gracias Dan Heberden.
+                echo  "<script>";
+                echo "parent.changeURL('../home.php' );";
+                echo "</script>";
+                //Fin.
+                die();
+            }   
+        }else{
+            //Sueño no privado
+            verSueno($link);
+        }
     break;
 }
 
@@ -28,14 +45,10 @@ function verSueno($link){
             $cantidadCarac = strlen($row["sueno"]);
             $nombreUsuario = nombreUsuSueno($row["cod_usu"],$link);
             $alto = heightTXA($cantidadCarac);
-            // $cantComentarios = cantidadComentarios($row["id_sue"],$link);
             //TODO: Ajustes acerca de chequeos, etc, llevar a la par con la función principal.
             $cantLikes = cantidadLikes($row["id_sue"],$link);
             echo "<label>";
-                echo "Por: ";
-                echo "<a href='perfilPublico.php?nom_usu=".$nombreUsuario."'>";
-                echo $nombreUsuario;
-                echo "</a>";
+                echo "Por : <a href='perfilPublico.php?nom_usu=".$nombreUsuario."'>".$nombreUsuario."</a>";
             echo "</label>";
             echo "<textarea class='form-control' style='resize:none;".$alto."border:none;maxlength:500;background-color: white;' disabled='true'>";
                 echo $row["sueno"];
@@ -43,11 +56,15 @@ function verSueno($link){
             echo "<span>";
                 if($row["sue_pri"] == 0){
                     echo "Sueño público";
-                    echo "&nbsp;&nbsp;";
                 }else if($row["sue_pri"] == 1){
                     echo "Sueño privado";
-                    echo "&nbsp;&nbsp;";
                 }
+                echo "&nbsp;&nbsp;";
+            echo "</span>";
+                if ($row["sue_m18"] == 1) {
+                    echo "<span> +18 </span> &nbsp;&nbsp;";
+                }
+            echo "<span>";
             echo "</span>";
             echo "<span>";
                 if(checkLike($row["id_sue"],$row["cod_usu"],$link) == 0){
@@ -64,11 +81,60 @@ function verSueno($link){
             array_push($response["suenos"], $temp);
         }
     }else{
+        echo "<div class='border border-info rounded p-3' style='width: 100%; background-color: white;'>";
         echo "No se encontró ningún registro.";
+        echo "</div>";
     }
     
 }
 
+function checkPrivacidad($link){
+    $id_sue = $_GET["id_sue"];
+    $sql = "SELECT sue_pri FROM Sueno WHERE id_sue = ?";
+    if($stmt = mysqli_prepare($link,$sql)){
+        mysqli_stmt_bind_param($stmt,"i",$param_id_sue);
+        $param_id_sue = $id_sue;
+        if(mysqli_stmt_execute($stmt)){
+            mysqli_stmt_store_result($stmt);
+            if(mysqli_stmt_num_rows($stmt) == 1){
+                mysqli_stmt_bind_result($stmt,$privacidad);
+                if(mysqli_stmt_fetch($stmt)){
+                    return $privacidad;
+                }
+            }else{
+                return "No se pudo encontrar la privacidad del sueño.";
+            }
+        }
+    }
+    return "Posible error de conexión.";
+}
+
+//Función checkPropiedad
+//Input: Directo: Código de usuario del sueño - Indirecto: Código de usuario en sesión.
+//Output: 1: El usuario es propietario del sueño - 0: El usuario NO es propietario del sueño.
+function checkPropiedad($link)
+{
+    $id_sue = $_GET["id_sue"];
+    $sql = "SELECT cod_usu FROM Sueno WHERE id_sue = ?";
+    if($stmt = mysqli_prepare($link,$sql)){
+        mysqli_stmt_bind_param($stmt,"i",$param_id_sue);
+        $param_id_sue = $id_sue;
+        if(mysqli_stmt_execute($stmt)){
+            mysqli_stmt_store_result($stmt);
+            if(mysqli_stmt_num_rows($stmt) == 1){
+                mysqli_stmt_bind_result($stmt,$usuarioProp);
+                if(mysqli_stmt_fetch($stmt)){
+                    $id_usu_ses = $_SESSION["id"];
+                    if ($usuarioProp == $id_usu_ses) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            }
+        }
+    }
+}
 
 //Función verComentarios
 //Input: Ninguno directo - Toma el id del sueño con metodo GET
@@ -401,6 +467,13 @@ $(document).on("click",".dislike", function(){
         alert("Error de conexión. Probablemente.");
     })
 });
+
+//Función tomada desde Stack Overflow - Usuario Dan Heberden
+function changeURL( url ) {
+    document.location = url;
+}
+//Fin.
+
 
 </script>
 </html>

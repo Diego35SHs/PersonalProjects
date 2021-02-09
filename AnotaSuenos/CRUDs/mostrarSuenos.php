@@ -6,9 +6,9 @@ $function = $_GET["function"];
 
 switch ($function) {
     case "mostrarSuenosNPVNM18":
-        $offsetQuery = $_GET["offset"];
-        $query = "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno WHERE sue_pri = 0 AND sue_m18 = 0 ORDER BY fec_sue DESC LIMIT 10 OFFSET " . $offsetQuery . " ";
-        mostrarSuenosGeneric($query, $link);
+        // $offsetQuery = $_GET["offset"];
+        // $query = "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno WHERE sue_pri = 0 AND sue_m18 = 0 ORDER BY fec_sue DESC LIMIT 10 OFFSET " . $offsetQuery . " ";
+        // mostrarSuenosGeneric($query, $link);
         break;
     case "mostrarSueCustomQuery":
         prepararQuery($link);
@@ -50,16 +50,34 @@ function prepararQuery($link)
             //Esta opción es exclusiva para el usuario en sesión que visite su perfil y solo aparecerá si el chequeo de propiedad da 1, es decir, positivo.
             //Deben aparecer todos los sueños del usuario.
             $cod_usu = $_GET["cod_usu"];
-            $query = "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno WHERE cod_usu = " . $cod_usu . " ORDER BY fec_sue DESC LIMIT 10 OFFSET " . $offsetQuery . " ";
-            mostrarSuenosGeneric($query, $link);
+            if($cod_usu == $_SESSION["id"]){
+                $query = "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno WHERE cod_usu = " . $cod_usu . " ORDER BY fec_sue DESC LIMIT 10 OFFSET " . $offsetQuery . " ";
+                mostrarSuenosGeneric($query, $link);
+            }else{
+                echo "<script> alert('Si de verdad quieres ver lo que este usuario no quiere que veas, pídeselo, a ver que dice. Volviendo a home.'); </script>";
+                //Esta función fue tomada desde StackOverflow. Gracias Dan Heberden.
+                echo  "<script>";
+                echo "parent.changeURL('../home.php' );";
+                echo "</script>";
+                //Fin.
+            }
             break;
         case "soloPVUser":
             //Los sueños que sean privados, sin importar si son +18 o no del usuario.
             //Opción exclusiva para el usuario en sesión que visita su propio perfil.
             //Deben aparecer todos los sueños privados, sin importar si son +18 o no.
             $cod_usu = $_GET["cod_usu"];
-            $query = "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno WHERE sue_pri = 1 AND cod_usu = " . $cod_usu . " ORDER BY fec_sue DESC LIMIT 10 OFFSET " . $offsetQuery . " ";
-            mostrarSuenosGeneric($query, $link);
+            if($cod_usu == $_SESSION["id"]){
+                $query = "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno WHERE sue_pri = 1 AND cod_usu = " . $cod_usu . " ORDER BY fec_sue DESC LIMIT 10 OFFSET " . $offsetQuery . " ";
+                mostrarSuenosGeneric($query, $link);
+            }else{
+                echo "<script> alert('¿Inspeccionar elemento? Casi resulta. Volviendo a home.'); </script>";
+                //Esta función fue tomada desde StackOverflow. Gracias Dan Heberden.
+                echo  "<script>";
+                echo "parent.changeURL('../home.php' );";
+                echo "</script>";
+                //Fin.
+            }
             break;
         case "soloM18User":
             //Los sueños que sean públicos y +18.
@@ -69,8 +87,14 @@ function prepararQuery($link)
             $query = "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno WHERE sue_pri = 0 AND sue_m18 = 1 AND cod_usu = " . $cod_usu . " ORDER BY fec_sue DESC LIMIT 10 OFFSET " . $offsetQuery . " ";
             mostrarSuenosGeneric($query, $link);
             break;
+        case "soloSeguidosNoM18":
+            //Los sueños correspondientes a los usuarios seguidos por el usuario en sesión
+            //Opción disponible para todos los usuarios.
+            //Esta opción NO funciona hasta ahora.
+            $query = "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,Sueno.cod_usu FROM Sueno,Seguidores,Login WHERE Sueno.cod_usu = Seguidores.id_usu_sdo AND Seguidores.id_usu_sdr = ".$_SESSION["id"]." AND Sueno.sue_pri = 0 AND Sueno.sue_m18 = 0 ORDER BY fec_sue DESC LIMIT 10 OFFSET " . $offsetQuery . " ";
+            mostrarSuenosGeneric($query, $link);
+            break;
     }
-    return $query;
 }
 
 //Función genérica para mostrar sueños:
@@ -103,8 +127,7 @@ function mostrarSuenosGeneric($query, $link)
             } else {
                 echo "Sueño privado";
             }
-            echo "&nbsp;&nbsp;";
-            echo "</span>";
+            echo "&nbsp;&nbsp;</span>";
             if ($row["sue_m18"] == 1) {
                 echo "<span> +18 </span> &nbsp;&nbsp;";
             }
@@ -119,11 +142,9 @@ function mostrarSuenosGeneric($query, $link)
             } else {
                 echo "<button id='" . $row['id_sue'] . "' class='dislike btn btn-danger'>Ya no me gusta</button>";
             }
-            echo "&nbsp;&nbsp;";
-            echo "Me gusta: ";
+            echo "&nbsp;&nbsp;Me gusta: ";
             echo "<input type='text' disabled='true' id='cantLikes" . $row["id_sue"] . "' class='cantLikes' value='" . $cantLikes . "' style='border: none; width: 35px;' >";
-            echo "&nbsp;&nbsp;";
-            echo "</span>";
+            echo "&nbsp;&nbsp;</span>";
             echo "<a  class='btn btn-info another-element' href='../CRUDs/verComentarios.php?id_sue=" . $row["id_sue"] . " '>Comentarios (" . $cantComentarios . ")</a>";
             echo "</div> </br>";
             array_push($response["suenos"], $temp);
@@ -410,6 +431,13 @@ function checkPropiedad($id_usu)
         return altoTXA;
 
     }
+
+
+    //Función tomada desde Stack Overflow - Usuario Dan Heberden
+    function changeURL( url ) {
+        document.location = url;
+    }
+    //Fin.
 </script>
 
 </html>

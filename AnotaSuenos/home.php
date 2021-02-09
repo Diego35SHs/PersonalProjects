@@ -61,7 +61,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
             <div class="col-md-4">
                 <div id="contenedorMiniPerfil" class="center border border-info rounded p-3" style="background-color:white;">
                     <span><img src="https://img.icons8.com/ios-filled/50/000000/help.png" width="50px" height="50px" alt="FDP" /></span>
-                    <span id="nomUsuMiniPerfil"><?php echo $_SESSION["username"]; ?></span><br><br>
+                    <span id="nomUsuMiniPerfil">  <a href="../CRUDs/perfilPublico.php?cod_usu=<?php echo $_SESSION["id"];?>" > <?php echo $_SESSION["username"]; ?>  </a>    </span><br><br>
                     <p><a href="Registro\logout.php" class="btn btn-danger">Cerrar sesión</a></p>
                 </div> <br>
                 <div id="contenedorEstadisticas" class="center border border-info rounded p-3" style="background-color:white;">
@@ -77,11 +77,16 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                     <p id="cantidadComent">Cargando...</p>
                     <p id="cantidadLikesComent">Cargando...</p>
                     <button id="actualizarEstadisticas" class="btn btn-info">Actualizar</button>
+                    <button id="verSeguidos" class="btn btn-info">Ver seguidos</button>
                 </div>
             </div>
         </div>
     </div>
-
+    <?php
+        echo "<div hidden='true'>";
+        echo "<input type='hidden' id='filtroActual' value='default '";
+        echo " </div>";
+    ?>
 </body>
 <!-- FIN BODY -->
 <script>
@@ -120,14 +125,15 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 
         //Estos dos deben ser iguales siempre 0 - 0 -> 10 - 10
         //En este caso, se hace automáticamente.
-        var offset = "function=mostrarSuenosNPVNM18&offset=" + newOffset;
+        var opcion = document.getElementById("filtroActual").value;
+        var offset = "function=mostrarSueCustomQuery&opcion="+opcion+"&offset=" + newOffset;
         var offsetDspl = newOffset;
         var offsetLimDspl = parseInt(offsetDspl) + parseInt(10);
         console.log("Siguientes 10: Variables definidas");
 
         var limite = parseInt(document.getElementById("cantidadTotalSuenos").innerHTML);
         if (limite > newOffset && limite < offsetLimDspl) {
-            offset = "function=mostrarSuenosNPVNM18&offset=" + limite;
+            offset = "function=mostrarSueCustomQuery&opcion="+opcion+"&offset=" + limite;
         }
 
         //Mostrar nuevos valores en la página
@@ -171,7 +177,8 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         }
 
         //Definir variables para el offset.
-        var offset = "function=mostrarSuenosNPVNM18&offset=" + parseInt(newOffset);
+        var opcion = document.getElementById("filtroActual").value;
+        var offset = "function=mostrarSueCustomQuery&opcion="+opcion+"&offset=" + parseInt(newOffset);
         var offsetDspl = newOffset;
         var offsetLim = parseInt(offsetDspl) + parseInt(10);
         console.log("Anteriores 10: Variables definidas");
@@ -197,6 +204,24 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 
     $('#actualizarEstadisticas').click(function() {
         mostrarEstadisticas();
+    });
+
+    $('#verSeguidos').click(function(){
+        var paquete = "function=mostrarSueCustomQuery&offset=0&opcion=soloSeguidosNoM18";
+        var offSetDspl = "0";
+        document.getElementById("offsetDisplay").innerHTML = offSetDspl;
+        document.getElementById("offsetLimDisplay").innerHTML = parseInt(offSetDspl) + parseInt(10);
+        document.getElementById("filtroActual").value = "soloSeguidosNoM18";
+        $.ajax({
+            type: "GET",
+            url: "http://anotasuenos:8080/CRUDs/mostrarSuenos.php",
+            dataType: "html",
+            data: paquete,
+        }).done(function(res){
+            $("#mostrarSuenosPublic").html(res);
+        }).fail(function(){
+            $("#mostrarSuenosPublic").html("Algo falló.");
+        });
     });
 
     function cambiarSpans(offsetDspl, offsetLimDspl) {
@@ -246,14 +271,14 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     }
 
     function listarRegistrosNPVNM18() {
-        var offset = "function=mostrarSuenosNPVNM18&offset=0";
+        var offset = "function=mostrarSueCustomQuery&opcion=noPVnoM18&offset=0";
         var offSetDspl = "0";
         document.getElementById("offsetDisplay").innerHTML = offSetDspl;
         document.getElementById("offsetLimDisplay").innerHTML = parseInt(offSetDspl) + parseInt(10);
+        document.getElementById("filtroActual").value = "noPVnoM18";
         $.ajax({
             type: "GET",
             url: "http://anotasuenos:8080/CRUDs/mostrarSuenos.php",
-            // url: "http://anotasuenos:8080/CRUDs/paginationtest.php",
             dataType: "html",
             data: offset,
         }).done(function(respuesta) {
@@ -433,5 +458,4 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     }
     //Fin sección estadísticas
 </script>
-
 </html>
