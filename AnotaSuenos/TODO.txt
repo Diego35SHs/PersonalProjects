@@ -104,4 +104,22 @@ Versión 0.9
 -Se cambiaron los "ifs" del archivo mostrarComentarios.php por un switch.
 -Las funciones del archivo mostrarComentarios ahora utilizan la configuración de config.php en lugar de ser declaradas dentro de las funciones.
 -El botón para seguir/dejar de seguir usuarios ya es completamente funcional.
+
+Versión 1.0
+-Se añadió un chequeo de propiedad al intentar ver sueños. El sitio verificará primero si el sueño es privado, si lo es, verificará la propiedad.
+ si el usuario que intenta acceder al sueño NO es propietario, el sitio dará aviso y enviará al usuario a la página home. Si es el propietario mostrará
+ el sueño normalmente. Finalmente, si el sueño no es privado, no se realizará la verificación de propiedad y el sueño se mostrará sin problema.
+-Se actualizó la función verSueno para reflejar los cambios hechos a la función mostrarSuenosGeneric().
+-Ahora el hacer click en el nombre de usuario llevará al usuario a su propio perfil.
+-Se añadió la función para ver sueños solo de usuarios seguidos. Sin embargo, no es compatible con la paginación. Todavía.
+-Se añadió el botón "Ver Seguidos" para listar los sueños solo de usuarios seguidos para realizar pruebas.
+-Se añadió una variable para controlar los filtros que posibilitará usar la paginación dentro de los perfiles de usuario y próximamente dentro de la página home.
+-La variable para controlar los filtros mencionada en el punto anterior parece funcionar correctamente, se deberían realizar más pruebas, incluidas pruebas con hackeo.
+-Se identificó un fallo de seguridad en el que los usuarios podrán ver sueños privados sin ser propietarios del mismo.
+-Aparentemente, se solucionó este fallo de seguridad, sin embargo se necesitan hacer más pruebas para poder asegurarlo completamente.
+-Se cambió la opción en ajax para ver los sueños. Ahora forma parte del listado de consultas preparadas.
+-Se implementó el control de filtros en la página home. Ahora implementar nuevos filtros será mucho más sencillo.
+
+Versión 1.1
+
 -TODO: Crear las opciones para eliminar sueños, modificar comentarios y eliminar comentarios.

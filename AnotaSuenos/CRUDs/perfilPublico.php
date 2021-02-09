@@ -162,6 +162,7 @@
     <?php
         echo "<div hidden='true'>";
         echo "<input type='hidden' id='cod_usuHid' value='".$_GET["cod_usu"]."'>";
+        echo "<input type='hidden' id='filtroActual' value='default'";
         echo " </div>";
     ?>
 </body>
@@ -290,6 +291,7 @@ function listarRegistrosUsuarioPerf(){
     var offSetDspl = "0";
     document.getElementById("offsetDisplay").innerHTML = offSetDspl;
     document.getElementById("offsetLimDisplay").innerHTML = parseInt(offSetDspl) + parseInt(10);
+    document.getElementById("filtroActual").value = "noPVnoM18User";
     $.ajax({
         type: "GET",
         url: "http://anotasuenos:8080/CRUDs/mostrarSuenos.php",
@@ -308,6 +310,7 @@ $(document).on("click","#mostrarPriv",function(){
     var offSetDspl = "0";
     document.getElementById("offsetDisplay").innerHTML = offSetDspl;
     document.getElementById("offsetLimDisplay").innerHTML = parseInt(offSetDspl) + parseInt(10);
+    document.getElementById("filtroActual").value = "noPVnoM18User";
     $("#mostrarSuenosPublic").html("Cargando sueños...");
     $.ajax({
         type: "GET",
@@ -327,6 +330,7 @@ $(document).on("click","#mostrarPublic",function(){
     var offSetDspl = "0";
     document.getElementById("offsetDisplay").innerHTML = offSetDspl;
     document.getElementById("offsetLimDisplay").innerHTML = parseInt(offSetDspl) + parseInt(10);
+    document.getElementById("filtroActual").value = "noPVnoM18User";
     $.ajax({
         type: "GET",
         url: "http://anotasuenos:8080/CRUDs/mostrarSuenos.php",
@@ -345,6 +349,7 @@ $(document).on("click","#mostrarM18",function(){
     var offSetDspl = "0";
     document.getElementById("offsetDisplay").innerHTML = offSetDspl;
     document.getElementById("offsetLimDisplay").innerHTML = parseInt(offSetDspl) + parseInt(10);
+    document.getElementById("filtroActual").value = "soloM18User";
     $.ajax({
         type: "GET",
         url: "http://anotasuenos:8080/CRUDs/mostrarSuenos.php",
@@ -363,6 +368,7 @@ $(document).on("click","#mostrarM18Public",function(){
     var offSetDspl = "0";
     document.getElementById("offsetDisplay").innerHTML = offSetDspl;
     document.getElementById("offsetLimDisplay").innerHTML = parseInt(offSetDspl) + parseInt(10);
+    document.getElementById("filtroActual").value = "noPVsiM18User";
     $.ajax({
         type: "GET",
         url: "http://anotasuenos:8080/CRUDs/mostrarSuenos.php",
@@ -381,6 +387,7 @@ $(document).on("click","#mostrarAllM18PubPri",function(){
     var offSetDspl = "0";
     document.getElementById("offsetDisplay").innerHTML = offSetDspl;
     document.getElementById("offsetLimDisplay").innerHTML = parseInt(offSetDspl) + parseInt(10);
+    document.getElementById("filtroActual").value = "todosUser";
     $.ajax({
         type: "GET",
         url: "http://anotasuenos:8080/CRUDs/mostrarSuenos.php",
@@ -399,6 +406,7 @@ $(document).on("click","#queryUserPerf",function(){
     var offSetDspl = "0";
     document.getElementById("offsetDisplay").innerHTML = offSetDspl;
     document.getElementById("offsetLimDisplay").innerHTML = parseInt(offSetDspl) + parseInt(10);
+    document.getElementById("filtroActual").value = "noPVnoM18User";
     $.ajax({
         type: "GET",
         url: "http://anotasuenos:8080/CRUDs/mostrarSuenos.php",
@@ -494,7 +502,8 @@ $('#siguientes10').click(function(){
     //Estos dos deben ser iguales siempre 0 - 0 -> 10 - 10
     //En este caso, se hace automáticamente.
     var cod_usu = document.getElementById("cod_usuHid").value;
-    var offset = "function=mostrarSueCustomQuery&opcion=noPVnoM18User&cod_usu="+cod_usu+"&offset="+newOffset;
+    var opcion = document.getElementById("filtroActual").value;
+    var offset = "function=mostrarSueCustomQuery&opcion="+opcion+"&cod_usu="+cod_usu+"&offset="+newOffset;
     var offsetDspl = newOffset;
     var offsetLimDspl = parseInt(offsetDspl) + parseInt(10);
     console.log("Siguientes 10: Variables definidas");
@@ -546,7 +555,8 @@ $('#anteriores10').click(function(){
 
     //Definir variables para el offset.
     var cod_usu = document.getElementById("cod_usuHid").value;
-    var offset = "function=mostrarSueCustomQuery&opcion=noPVnoM18User&cod_usu="+cod_usu+"&offset="+parseInt(newOffset);
+    var opcion = document.getElementById("filtroActual").value;
+    var offset = "function=mostrarSueCustomQuery&opcion="+opcion+"&cod_usu="+cod_usu+"&offset="+parseInt(newOffset);
     var offsetDspl = newOffset;
     var offsetLim = parseInt(offsetDspl) + parseInt(10);
     console.log("Anteriores 10: Variables definidas");

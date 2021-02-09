@@ -62,22 +62,19 @@ function cantSueUsuario($id_usu,$link){
 function updateDescrUsuario($link){
     $nueva_des = $_POST["nuevaDes"];
     $cod_usu = $_SESSION["id"];
-
     $sql = "UPDATE Login SET des_usu=? WHERE cod_usu=? ";
-
     if($stmt = mysqli_prepare($link,$sql)){
         mysqli_stmt_bind_param($stmt,"si",$des_param,$cod_usu_param);
         $des_param = $nueva_des; 
         $cod_usu_param = $cod_usu;
         if(mysqli_stmt_execute($stmt)){
             //BUG: No se muestra este mensaje cuando la nueva descripción viene vacía.
-            if($nueva_des == null || $nueva_des = ''){
-                echo "Este usuario no ha escrito ninguna descripción.";
+            if($nueva_des == null || $nueva_des == ''){
+                $nueva_des = "Este usuario no ha escrito ninguna descripción.";
+                echo $nueva_des;
             }else{
                 echo $nueva_des;
             }
-        }else{
-            echo "No se pudo actualizar la descripción. Help.";
         }
     }else{
         echo "Falla de conexión.";
