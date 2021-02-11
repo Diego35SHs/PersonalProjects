@@ -133,7 +133,8 @@ function mostrarSuenosGeneric($query, $link)
             }
             echo "<span>";
             if (checkPropiedad($row["cod_usu"]) == 1) {
-                echo "<button id='" . $row["id_sue"] . "' class='modificar btn btn-warning'>Modificar</button> &nbsp;";
+                echo "<button id='" . $row["id_sue"] . "' class='modificar btn btn-warning'><i id='modIcon".$row["id_sue"]."' class='modIcon fa fa-pencil'></i></button> &nbsp;";
+                echo "<button id='" . $row["id_sue"] . "' class='eliminar btn btn-danger'><i id='modIcon".$row["id_sue"]."' class='eliIcon fa fa-trash'></i></button> &nbsp;";
             }
             echo "</span>";
             echo "<span>";
@@ -260,6 +261,7 @@ function checkPropiedad($id_usu)
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
 </body>
@@ -339,12 +341,16 @@ function checkPropiedad($id_usu)
     $(document).on("click", ".modificar", function() {
         console.log("Botón modificar sueño - Iniciado");
         var id_sue = $(this).attr("id");
+        
         console.log("ID BUTTON Y SUEÑO = " + id_sue);
         var button = $(this);
-        button.text("Guardar");
+        // button.text("Guardar");
+        // button.text("<i class='modIcon fa fa-save'></i>");
         console.log("Quitar clases actuales referentes al funcionamiento del botón");
         button.removeClass("modificar");
         button.removeClass("btn-warning");
+        // document.getElementsById("modIcon"+id_sue).removeClass("fa-pencil");
+        // document.getElementsById("modIcon"+id_sue).addClass("fa-save");
         console.log("Añadir clases necesarias para el nuevo funcionamiento del botón");
         button.addClass("btn-info");
         button.addClass("guardarCambios");
@@ -365,6 +371,7 @@ function checkPropiedad($id_usu)
     $(document).on("click", ".guardarCambios", function() {
         console.log("Botón guardar cambios sueño - Iniciando");
         var id_sue = $(this).attr("id");
+        var icon = document.getElementsByClassName("modIcon");
         console.log("ID BOTÓN Y SUEÑO = " + id_sue);
         //Tomar control del botón y del textarea
         var button = $(this);
@@ -387,8 +394,9 @@ function checkPropiedad($id_usu)
             url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
             data: paquete,
         }).done(function(respuesta) {
-            button.text("Modificar");
+            // button.text("Modificar");
             console.log("Quitar clases actuales referentes al funcionamiento del botón");
+            
             button.removeClass("btn-info");
             button.removeClass("guardarCambios");
             console.log("Añadir clases necesarias para el nuevo funcionamiento del botón");

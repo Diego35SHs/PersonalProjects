@@ -55,15 +55,17 @@
     //Input: Directo: Link de conexión - Indirecto: id_com por método POST
     //Output: Cantidad de likes actualizada tras insertar un like para ese comentario.
     function insertLikeCom($link){
-        $sql = "INSERT INTO LikeDislikeCom(id_com,id_usu) VALUES(?,?)";
+        $sql = "INSERT INTO LikeDislikeCom(id_com,id_usu,id_sue) VALUES(?,?,?)";
         $id_com = $_POST["id_com"];
+        $id_sue = $_POST["id_sue"];
         if(cantidadLikesUsuario($id_com,$_SESSION["id"],$link) == 1){
             echo cantidadLikes($id_com,$link);
             return null;
         }
         if($stmt = mysqli_prepare($link,$sql)){
-            mysqli_stmt_bind_param($stmt,"ii",$id_com_param,$cod_usu_param);
+            mysqli_stmt_bind_param($stmt,"iii",$id_com_param,$cod_usu_param,$id_sue_param);
             $id_com_param = $id_com; $cod_usu_param = $_SESSION["id"];
+            $id_sue_param = $id_sue;
             mysqli_stmt_execute($stmt);
             echo cantidadLikes($id_com,$link);
             return null;

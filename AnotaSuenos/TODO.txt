@@ -33,6 +33,11 @@ https://stackoverflow.com/questions/1927593/cant-update-textarea-with-javascript
 https://stackoverflow.com/questions/14892516/jquery-button-click-triggers-multiple-times
 https://stackoverflow.com/questions/18605563/href-must-not-reload
 https://www.w3schools.com/tags/att_a_target.asp
+https://www.w3schools.com/howto/howto_css_icon_buttons.asp
+https://fontawesome.com/v4.7.0/icons/
+https://stackoverflow.com/questions/22709936/alert-with-multiple-options
+https://www.w3schools.com/bootstrap4/tryit.asp?filename=trybs_navbar_collapse
+https://stackoverflow.com/questions/8919682/remove-all-styling-formatting-from-hyperlinks
 
 Versión 0.4
 -Arreglado un bug que hacía que el checkeo de me gusta de cada sueño solo funcionara correctamente con un usuario
@@ -121,5 +126,17 @@ Versión 1.0
 -Se implementó el control de filtros en la página home. Ahora implementar nuevos filtros será mucho más sencillo.
 
 Versión 1.1
+-Se añadió la librería de fontawesome, su principal función hasta ahora es la de incluir íconos en botones.
+-Se reemplazaron textos por botones para los de modificar y eliminar sueños.
+-Se identificó un problema en el que el ícono para modificar sueños no se puede modificar.
+-Se añadió una confirmación para los usuarios que deseen eliminar un sueño, junto al botón para eliminar sueños.
+-Se mejoró la tabla de me gusta para comentarios, facilitando el borrado para futuras consultas.
+-Se cambiaron las funciones en el archivo handlerAuxComent para reflejar estos cambios.
+-El botón para eliminar sueños ya es funcional completamente. Al borrar un sueño se eliminarán también los me gusta, comentarios y me gusta dados a los comentarios.
+-Se implementó una función tomada de Stack Overflow (creditada) que permitirá obtener los elementos de la URL a medida que sean necesarios
+-Se identificó un posible bug que podría permitir a los usuarios asociar sus me gusta de comentarios a sueños que no tienen nada que ver. 
+-Una prueba con el punto anterior indica que no es el caso.
+-Se añadió una barra de navegación a la parte superior con distintas funcionalidades.
+-Se solucionó un problema en el que el filtro no se aplicaba correctamente al presionar el link "Seguidos" en la barra de navegación.
 
--TODO: Crear las opciones para eliminar sueños, modificar comentarios y eliminar comentarios.
+-TODO: Crear las opciones para modificar comentarios y eliminar comentarios.

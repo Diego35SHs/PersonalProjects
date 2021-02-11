@@ -12,6 +12,9 @@
         case "agregarSueno":
             agregarSueno($link);
         break;
+        case "eliminarSueno":
+            eliminarSueno($link);
+        break;
         case "modificarSueno":
             modificarSueno($link);
         break;
@@ -60,6 +63,62 @@
             }
         }else{
             echo "Falla de conexión.";
+        }
+    }
+
+    function eliminarSueno($link){
+        $id_sue = $_POST["id_sue"];
+        $sql = "DELETE FROM Sueno WHERE id_sue = ? AND cod_usu = ? ";
+        if($stmt = mysqli_prepare($link,$sql)){
+            mysqli_stmt_bind_param($stmt,"ii",$id_sue_param,$cod_usu_param);
+            $id_sue_param = $id_sue; $cod_usu_param = $_SESSION["id"];
+            if(mysqli_stmt_execute($stmt)){
+                eliminarComSue($link,$id_sue);
+                eliminarLikeSue($link,$id_sue);
+                eliminarLikeCom($link,$id_sue);
+                echo "Eliminado.";
+            }else{
+                echo "Fallo al eliminar. El usuario en sesión podría no coincidir con el sueño que se intenta borrar.";
+            }
+        }
+    }
+
+    function eliminarComSue($link,$id_sue){
+        $sql = "DELETE FROM Comentario WHERE id_sue = ? ";
+        if($stmt = mysqli_prepare($link,$sql)){
+            mysqli_stmt_bind_param($stmt,"i",$id_sue_param);
+            $id_sue_param = $id_sue;
+            if(mysqli_stmt_execute($stmt)){
+                return 1;
+            }else{
+                return 0;
+            }
+        }
+    }
+
+    function eliminarLikeSue($link,$id_sue){
+        $sql = "DELETE FROM LikeDislike WHERE id_sue = ? ";
+        if($stmt = mysqli_prepare($link,$sql)){
+            mysqli_stmt_bind_param($stmt,"i",$id_sue_param);
+            $id_sue_param = $id_sue;
+            if(mysqli_stmt_execute($stmt)){
+                return 1;
+            }else{
+                return 0;
+            }
+        }
+    }
+
+    function eliminarLikeCom($link,$id_sue){
+        $sql = "DELETE FROM LikeDislikeCom WHERE id_sue = ? ";
+        if($stmt = mysqli_prepare($link,$sql)){
+            mysqli_stmt_bind_param($stmt,"i",$id_sue_param);
+            $id_sue_param = $id_sue;
+            if(mysqli_stmt_execute($stmt)){
+                return 1;
+            }else{
+                return 0;
+            }
         }
     }
 

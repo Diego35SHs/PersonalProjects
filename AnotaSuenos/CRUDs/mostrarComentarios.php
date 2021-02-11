@@ -85,7 +85,6 @@ function verSueno($link){
         echo "No se encontró ningún registro.";
         echo "</div>";
     }
-    
 }
 
 function checkPrivacidad($link){
@@ -399,12 +398,13 @@ $(document).on("click",".like", function(){
     console.log("INICIANDO PROCESO: BOTON LIKE");
     //Conseguir el atributo del botón, que es el id del sueño.
     var id_com = $(this).attr("id");
+    var id_sue = getParameterByName("id_sue");
     //Definir la acción a realizar en el handler. Esto NO está funcionando.
     var funcion = "insertLikeCom";
     //Tomar control del botón por medio de una variable.
     var button = $(this);
     //Empaquetar la información.
-    var paquete = "funcion="+funcion+"&id_com="+id_com;
+    var paquete = "funcion="+funcion+"&id_com="+id_com+"&id_sue="+id_sue;
     console.log("PAQUETE: "+paquete);
     //Ajax.
     $.ajax({
@@ -473,6 +473,13 @@ function changeURL( url ) {
     document.location = url;
 }
 //Fin.
+//Función tomada desde Stack Overflow - Usuario Chofoteddy
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+    results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
 
 
 </script>
