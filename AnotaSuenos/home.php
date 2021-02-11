@@ -15,18 +15,57 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AnotaSueños - Inicio</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="estilo.css">
 </head>
 
 <body style="background-color: #48BEFF;">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navBar" aria-controls="navBar" aria-expanded="false" aria-label="Toggle navigation" >
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand" href="home.php">AnotaSueños</a>
+            <div class="collapse navbar-collapse" id="navBar">
+                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="op1" href="home.php">Inicio<span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item ">
+                        <span class="nav-link" id="op2" ><a href="javascript:void(0);" id="verSeguidos" style="text-decoration: none; color:inherit;" >Seguidos</a></span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="op3" href="javascript:void(0);">Populares</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="../CRUDs/perfilPublico.php?cod_usu=<?php echo $_SESSION["id"];?>" class="nav-link" id="op4" > <?php echo $_SESSION["username"]; ?>  </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="op5" href="javascript:void(0);">Blog</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
+                            Opciones
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
+                            <li><a class="dropdown-item" href="#">Ajustes</a></li>
+                            <li><a class="dropdown-item" href="#">Créditos</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a href="Registro\logout.php" class="dropdown-item bg-danger" style="color: white;">Cerrar sesión</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Buscar" aria-label="Buscar">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+                </form>
+            </div>
+        </nav>
     <div class="container">
-        <div class="col-md-12 col-lg-12 p-3">
-            <h1>Sueños</h1>
-            <p>Este es un trabajo en progreso. Todo está sujeto a cambios, especialmente el mal código.</p>
-        </div>
+    <br>
         <div class="row">
             <div class="col-md-8">
                 <div id="contenedorAgregarSueno" class="border border-info rounded p-3" style="background-color:white;">
@@ -41,12 +80,11 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                     <div id="cantidadSuenos" class="text-center border border-info rounded p-1" style="background-color: white; height: 40px;">
                         <span>Listando </span>
                         <span id="cantidadTotalSuenos"></span>
-                        <span> sueño(s) públicos.</span>
+                        <span id="filtroSueList"> sueño(s) públicos.</span>
                     </div> <br>
                     <div id="mostrarSuenosPublic">
                         <p>Cargando sueños...</p>
                     </div>
-                    <!-- <iframe src="../CRUDs/paginationtest.php" frameborder="0" title="iFramemostrarSuenos" allowtransparency="true" width="100%" height="2500px"></iframe> -->
                 </div>
                 <div id="listContainer" class="border border-info rounded p-3 text-center" style="width:100%;background-color:white;">
                     <a href="home.php" class="btn btn-info">Inicio</a>
@@ -62,7 +100,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                 <div id="contenedorMiniPerfil" class="center border border-info rounded p-3" style="background-color:white;">
                     <span><img src="https://img.icons8.com/ios-filled/50/000000/help.png" width="50px" height="50px" alt="FDP" /></span>
                     <span id="nomUsuMiniPerfil">  <a href="../CRUDs/perfilPublico.php?cod_usu=<?php echo $_SESSION["id"];?>" > <?php echo $_SESSION["username"]; ?>  </a>    </span><br><br>
-                    <p><a href="Registro\logout.php" class="btn btn-danger">Cerrar sesión</a></p>
+                    <!-- <p><a href="Registro\logout.php" class="btn btn-danger">Cerrar sesión</a></p> -->
                 </div> <br>
                 <div id="contenedorEstadisticas" class="center border border-info rounded p-3" style="background-color:white;">
                     <p class="text-center"><strong>Estadísticas del sitio</strong></p>
@@ -212,6 +250,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         document.getElementById("offsetDisplay").innerHTML = offSetDspl;
         document.getElementById("offsetLimDisplay").innerHTML = parseInt(offSetDspl) + parseInt(10);
         document.getElementById("filtroActual").value = "soloSeguidosNoM18";
+        document.getElementById("filtroSueList").innerHTML = " sueños de usuarios seguidos.";
         $.ajax({
             type: "GET",
             url: "http://anotasuenos:8080/CRUDs/mostrarSuenos.php",
@@ -222,6 +261,30 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         }).fail(function(){
             $("#mostrarSuenosPublic").html("Algo falló.");
         });
+    });
+
+    $(document).on("click",".eliminar",function(){
+        var button = $(this);
+        var id_sue = button.attr("id");
+        paquete = "funcion=eliminarSueno&id_sue="+id_sue;
+        if(window.confirm("¿Eliminar este sueño?")){
+            // alert("Eliminado, recargando página.");
+            $.ajax({
+                type: "POST",
+                url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
+                data: paquete,
+            }).done(function(respuesta) {
+                alert(respuesta);
+                listarRegistrosNPVNM18();
+                mostrarEstadisticas();
+                event.stopPropagation();
+            }).fail(function(respuesta) {
+                document.getElementById("textAreaSue" + id_sue).innerHTML = respuesta;
+            });
+            event.stopPropagation();
+        }else{
+            alert("Sueño no eliminado.");
+        }
     });
 
     function cambiarSpans(offsetDspl, offsetLimDspl) {
@@ -457,5 +520,24 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         });
     }
     //Fin sección estadísticas
+
+    //Cambiar clase active de los link del navBar
+    //Un tanto ineficiente, pero solo se ejecuta al presionar el botón.
+    $(document).on("click",".nav-link",function(){
+        var idopcion = $(this);
+        console.log(idopcion);
+        var opcion1 = document.getElementById("op1");
+        var opcion2 = document.getElementById("op2");
+        var opcion3 = document.getElementById("op3");
+        var opcion4 = document.getElementById("op4");
+        var opcion5 = document.getElementById("op5");
+        $(opcion1).removeClass("active");
+        $(opcion2).removeClass("active");
+        $(opcion3).removeClass("active");
+        $(opcion4).removeClass("active");
+        $(opcion5).removeClass("active");
+        idopcion.addClass("active");
+    });
+    
 </script>
 </html>
