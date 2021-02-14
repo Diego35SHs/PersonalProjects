@@ -18,6 +18,7 @@ Errores comunes
 -No poner el session_start cuando necesito el id o nombre de usuario;
 -No poner el require config.php o ponerlo sin la referencia escrita correctamente -> "../config.php" por ejemplo.
 -Poner .value cuando en realidad se necesita innerHTML o viceversa.
+-Confundir id_usu y cod_usu y ocupar ambos, se hace confuso.
 
 
 Cosas aprendidas
@@ -110,7 +111,7 @@ Versión 0.9
 -Las funciones del archivo mostrarComentarios ahora utilizan la configuración de config.php en lugar de ser declaradas dentro de las funciones.
 -El botón para seguir/dejar de seguir usuarios ya es completamente funcional.
 
-Versión 1.0
+Versión 1.0 - Alpha
 -Se añadió un chequeo de propiedad al intentar ver sueños. El sitio verificará primero si el sueño es privado, si lo es, verificará la propiedad.
  si el usuario que intenta acceder al sueño NO es propietario, el sitio dará aviso y enviará al usuario a la página home. Si es el propietario mostrará
  el sueño normalmente. Finalmente, si el sueño no es privado, no se realizará la verificación de propiedad y el sueño se mostrará sin problema.
@@ -125,7 +126,7 @@ Versión 1.0
 -Se cambió la opción en ajax para ver los sueños. Ahora forma parte del listado de consultas preparadas.
 -Se implementó el control de filtros en la página home. Ahora implementar nuevos filtros será mucho más sencillo.
 
-Versión 1.1
+Versión 1.1 - Alpha
 -Se añadió la librería de fontawesome, su principal función hasta ahora es la de incluir íconos en botones.
 -Se reemplazaron textos por botones para los de modificar y eliminar sueños.
 -Se identificó un problema en el que el ícono para modificar sueños no se puede modificar.
@@ -139,4 +140,18 @@ Versión 1.1
 -Se añadió una barra de navegación a la parte superior con distintas funcionalidades.
 -Se solucionó un problema en el que el filtro no se aplicaba correctamente al presionar el link "Seguidos" en la barra de navegación.
 
--TODO: Crear las opciones para modificar comentarios y eliminar comentarios.
+Versión 1.2 - Alpha
+-Se añadió la opción para cambiar contraseñas, sin embargo, se necesita realizar trabajo en su front end, que se encuentra claramente falto de estética.
+-Se añadieron botones para modificar y eliminar comentarios, aun no están operativos.
+-Se incluyó un chequeo de propiedad para los comentarios.
+-Se mejoró la presentación del mensaje de carga de sueños en la página home.
+-Se crearon las funciones ajax para modificar y eliminar comentarios.
+-Se implementarion las opciones para modificar y eliminar comentarios, se identificaron bugs con estas funciones, pero no afectan al funcionamiento normal de la aplicación.
+-Se identificó un bug al cambiar de filtro.
+-Se implementó un conteo de sueños basado en filtros en la página home.
+-Se mejoró la presentación del mensaje de carga del sueño y sus comentarios en la página de verComentarios.php
+-Se agregaron descripciones a funciones.
+-Se implementaron más chequeos de sesión para mejorar la seguridad del sitio.
+-REBRANDING - Se cambió el nombre del sitio a "OniricNote", es posible que este cambio no esté reflejado en todos los aspectos de la aplicación o en github.
+
+Version 1.3 - Alpha

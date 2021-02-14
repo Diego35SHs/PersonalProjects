@@ -11,9 +11,10 @@ session_start();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AnotaSueños - Inicio</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="../estilo.css">
 </head>
 <!-- FIN HEAD -->
@@ -30,7 +31,7 @@ session_start();
                 <?php echo "<input type='hidden' style='display:none;' id='id_sue' value=".$_GET["id_sue"]." '>";?>
                 </div>
                 <div id="contenedorSueno"  style="background-color: white;">
-                <p>Cargando sueño...</p>
+                <p class="border border-info rounded p-3" style="background-color:white;">Cargando sueño...</p>
                 </div> <br>
                 <div id="cantidadSuenos" class="text-center border border-info rounded p-1" style="background-color: white; height: 40px;">
                     <span>Actualmente hay </span>
@@ -44,7 +45,7 @@ session_start();
                     <p id="Resultado"></p>
                 </div> <br>
                 <div id="contenedorComentarios" >
-                    <p>Cargando comentarios...</p>
+                    <p class="border border-info rounded p-3" style="background-color:white;">Cargando comentarios...</p>
                 </div> <br>
                 <div id="listContainer" class="border border-info rounded p-3" style="width:100%;background-color:white;"> 
                     <a href="" class="btn btn-info">Inicio</a>
@@ -89,6 +90,28 @@ function mostrarComentarios(){
         $("#contenedorComentarios").html("No se pudieron recuperar los registros.");
     });
 }
+
+$(document).on("click",".eliminarCome",function(){
+        var button = $(this);
+        var id_com = button.attr("id");
+        paquete = "funcion=eliminarComentario&id_com="+id_com;
+        if(window.confirm("¿Eliminar este comentario?")){
+            $.ajax({
+                type: "POST",
+                url: "http://anotasuenos:8080/CRUDs/handlerAuxComent.php",
+                data: paquete,
+            }).done(function(respuesta) {
+                alert(respuesta);
+                mostrarComentarios();
+                event.stopPropagation();
+            }).fail(function(respuesta) {
+                document.getElementById("textAreaCom" + id_com).innerHTML = respuesta;
+            });
+            event.stopPropagation();
+        }else{
+            alert("Comentario no eliminado.");
+        }
+    });
 
 function mostrarSueno(){
     var id_sue = document.getElementById("id_sue").value;
@@ -141,6 +164,8 @@ function publicarComentario(){
         $('#Resultado').html("No se pudo agregar tu sueño, posiblemente debido a un problema de conexión");
     })
 }
+
+
 
 function listarCantidadComent(){
     var id_sue = document.getElementById("id_sue").value;
