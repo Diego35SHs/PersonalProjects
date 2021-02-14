@@ -97,6 +97,8 @@ function prepararQuery($link)
     }
 }
 
+
+
 //Función genérica para mostrar sueños:
 //INPUT: Directo - Consulta SQL preparada en el switch y link de conexión.
 //OUTPUT: Los sueños

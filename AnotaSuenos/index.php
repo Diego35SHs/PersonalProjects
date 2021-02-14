@@ -83,7 +83,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bienvenido a AnotaSueños</title>
+    <title>Bienvenido a OniricNote</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <link rel="stylesheet" href="estilo.css">
@@ -99,7 +99,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 <body class="indexBodyBackground">    
     <div class="row mostrar" id="#titulo" style="display:none;">
         <div class="indexDivTitulo col-xs-12 col-sm-12 col-md-12 col-lg-8">
-            <h1 class="indexH1">Bienvenido/a a AnotaSueños</h1>
+            <h1 class="indexH1">Bienvenido/a a OniricNote</h1>
             <p class="indexP">Ingresa tu nombre de usuario y contraseña para iniciar.</p>
         </div>
         <div class="indexDivTitulo col-xs-12 col-sm-12 col-md-12 col-lg-4">

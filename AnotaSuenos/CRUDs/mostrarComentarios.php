@@ -150,7 +150,6 @@ function verComentarios($link){
             $cantidadCarac = strlen($row["comentario"]);
             $nombreUsuario = nombreUsuarioCome($row["id_usu"],$link);
             $alto = heightTXA($cantidadCarac);
-            $cantComentarios = cantidadComentarios($row["id_sue"],$link);
             $cantLikes = cantidadLikesCom($row["id_com"],$link);
             echo "<div class='border border-info rounded p-3' style='width: 100%; background-color: white;'>";
             echo "<label>";
@@ -159,10 +158,14 @@ function verComentarios($link){
                     echo $nombreUsuario;
                     echo "</a>";
             echo "</label>";
-            echo "<textarea class='form-control' style='resize:none;".$alto."border:none;maxlength:500;background-color: white;' disabled='true'>";
+            echo "<textarea class='form-control' id='textAreaCom" . $row["id_com"] . "' style='resize:none;".$alto."border:none;maxlength:500;background-color: white;' disabled='true'>";
                 echo $row["comentario"];
             echo "</textarea> <br>";
             echo "<span>";
+                    if(checkPropiedadCom($row["id_usu"]) == 1){
+                        echo "<button id='" . $row["id_com"] . "' class='modificarCome btn btn-warning'><i id='modIcon".$row["id_com"]."' class='modIcon fa fa-pencil'></i></button> &nbsp;";
+                        echo "<button id='" . $row["id_com"] . "' class='eliminarCome btn btn-danger'><i id='modIcon".$row["id_com"]."' class='eliIcon fa fa-trash'></i></button> &nbsp;";
+                    }
                     if(checkLikeCom($row["id_com"],$row["id_usu"],$link) == 0){
                         echo "<button id='".$row['id_com']."' class='like btn btn-info'>Me gusta</button>";
                     }else{
@@ -298,6 +301,14 @@ function checkLikeCom($id_com,$id_usu,$link){
     return $data["total"];
 }
 
+function checkPropiedadCom($id_usu_com){
+    if($id_usu_com == $_SESSION["id"]){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -350,7 +361,7 @@ $(document).on("click",".likeSue", function(){
         //Cambiar la cantidad de likes a la actual. Esta cagá es terrible mañosa ni idea por qué.
         document.getElementById("cantLikes"+id_sue).value = respuesta;
         console.log("CANTIDAD DE ME GUSTA ACTUALIZADA");
-        return null;
+        event.stopPropagation();
     }).fail(function(respuesta){
         alert("Error de conexión. Probablemente.");
     })
@@ -387,7 +398,7 @@ $(document).on("click",".dislikeSue", function(){
         //BUG : Cambiar la cantidad de likes a la actual. Esta cagá es terrible mañosa ni idea por qué.
         document.getElementById("cantLikes"+id_sue).value = respuesta;
         console.log("CANTIDAD DE ME GUSTA ACTUALIZADA");
-        return null;
+        event.stopPropagation();
     }).fail(function(respuesta){
         alert("Error de conexión. Probablemente.");
     })
@@ -468,6 +479,101 @@ $(document).on("click",".dislike", function(){
     })
 });
 
+//Función para "Modificar" un sueño.
+    //Esta función se encarga de simplemente cambiar los atributos del botón y del textarea
+    //correspondiente al sueño para permitir que el usuario modifique su sueño y tenga la opción
+    //de guardarlo.
+    $(document).on("click", ".modificarCome", function() {
+        console.log("Botón modificar sueño - Iniciado");
+        var id_com = $(this).attr("id");
+        console.log("ID BUTTON Y SUEÑO = " + id_sue);
+        var button = $(this);
+        // button.text("Guardar");
+        console.log("Quitar clases actuales referentes al funcionamiento del botón");
+        button.removeClass("modificarCome");
+        button.removeClass("btn-warning");
+        console.log("Añadir clases necesarias para el nuevo funcionamiento del botón");
+        button.addClass("btn-info");
+        button.addClass("guardarCambiosCome");
+        //Conseguir el texto del sueño para luego utilizarlo de alguna forma.
+        var textArea = document.getElementById("textAreaCom" + id_com).innerHTML;
+        console.log(textArea);
+        //Tomar control sobre el textarea por medio de su id.
+        var controlTXA = document.getElementById("textAreaCom" + id_com);
+        controlTXA.style = "border-stiyle:solid;border-color:black;resize:none;";
+        controlTXA.removeAttribute("disabled");
+        event.stopPropagation();
+    });
+
+    //Función para "Guardar Cambios" efectuados al sueño.
+    //Esta función se encarga de procesar el cambio hecho al sueño
+    //tomará lo que el usuario haya escrito en el textarea, luego hará que vuelva a su estado original
+    //y con ese dato hará la consulta update y luego mostrará el nuevo valor en el textarea.
+    $(document).on("click", ".guardarCambiosCome", function() {
+        console.log("Botón guardar cambios comentario - Iniciando");
+        var id_com = $(this).attr("id");
+        var icon = document.getElementsByClassName("modIcon");
+        console.log("ID BOTÓN Y COMENTARIO = " + id_com);
+        //Tomar control del botón y del textarea
+        var button = $(this);
+        var controlTXA = document.getElementById("textAreaCom" + id_com);
+        //Conseguir valor nuevo del textarea
+        var textArea = controlTXA.value;
+        var alto = heightTXA(textArea.length);
+        if (textArea == null || textArea == '') {
+            alert("El comentario no puede estar vacío");
+            return null;
+        } else if (textArea.length > 500) {
+            alert("El comentario no puede pasar de 500 caracteres. Tienes " + textArea.length);
+            return null;
+        }
+        //empaquetar la información
+        var paquete = "funcion=modificarComentario&id_com=" + id_com + "&nuevoCom=" + textArea;
+        console.log(paquete);
+        $.ajax({
+            type: "POST",
+            url: "http://anotasuenos:8080/CRUDs/handlerAuxComent.php",
+            data: paquete,
+        }).done(function(respuesta) {
+            console.log("Quitar clases actuales referentes al funcionamiento del botón");
+            button.removeClass("btn-info");
+            button.removeClass("guardarCambiosCome");
+            console.log("Añadir clases necesarias para el nuevo funcionamiento del botón");
+            button.addClass("modificarCome");
+            button.addClass("btn-warning");
+            document.getElementById("textAreaCom" + id_com).innerHTML = respuesta;
+            console.log("RESPUESTA: " + respuesta);
+            controlTXA.style = "border:none;resize:none;background-color:white;" + alto + "";
+            controlTXA.setAttribute("disabled", "true");
+            console.log("Botón guardar cambios comentario - Finalizado");
+            alert("Comentario modificado.");
+            event.stopPropagation();
+        }).fail(function(respuesta) {
+            document.getElementById("textAreaCom" + id_com).innerHTML = respuesta;
+        });
+    });
+
+    //funcion heightTXA 
+    //Input: cántidad de caracteres de un sueño
+    //Output: Altura de textarea que ocupará el sueño.
+    //NOTA: Esto no se está usando todavía. Pero en teoría es utilizable por medio de Ajax.
+    function heightTXA($cantidadCarac){
+        $altoTXA = "height:100px;";
+        if($cantidadCarac >=180){
+            $altoTXA = "height:70px;";
+        }
+        if($cantidadCarac >= 200){
+            $altoTXA = "height:130px;";
+        }
+        if($cantidadCarac >=300){
+            $altoTXA = "height:160px;";
+        }
+        if($cantidadCarac >= 400){
+            $altoTXA = "height:210px;";
+        }
+        return $altoTXA;
+    }
+
 //Función tomada desde Stack Overflow - Usuario Dan Heberden
 function changeURL( url ) {
     document.location = url;
@@ -480,6 +586,7 @@ function getParameterByName(name) {
     results = regex.exec(location.search);
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
+//Fin
 
 
 </script>

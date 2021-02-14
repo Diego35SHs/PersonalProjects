@@ -5,7 +5,17 @@
 
     session_start();
     require "../config.php";
+
+    if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+        header("location: ../index.php");
+        exit;
+    }
+
     $funcion = $_POST["funcion"];
+    if(!isset($_POST["funcion"])){
+        header("location: ../index.php");
+        exit;
+    }
 
     //A partir de este switch se accederá a las funciones requeridas.
     switch($funcion){
@@ -39,6 +49,24 @@
         case "heightTXA":
             return heightTXA($caracteres);
         break;
+        case "contarSueFiltro":
+            prepararCountQuery($link);
+        break;
+    }
+
+    //Contar cantidad de sueños basado en el filtro actual.
+    function prepararCountQuery($link){
+        $opcion = $_POST["opcion"];
+        switch($opcion){
+            case "noPVnoM18":
+                $query = "SELECT count(*) as total FROM Sueno WHERE sue_pri = 0 AND sue_m18 = 0";
+                cantidadSuenosCustom($link,$query);
+            break;
+            case "soloSeguidosNoM18":
+                $query = "SELECT count(*) as total FROM Sueno,Seguidores,Login WHERE Sueno.cod_usu = Seguidores.id_usu_sdo AND Seguidores.id_usu_sdr = ".$_SESSION["id"]." AND Sueno.sue_pri = 0 AND Sueno.sue_m18 = 0 ";
+                cantidadSuenosCustom($link,$query);
+            break;
+        }
     }
 
     //Función agregarSueno
@@ -180,6 +208,12 @@
     //Output: Cantidad de sueños total publicados, sin importar sus categorías o configuración.
     function cantidadSuenosTotal($link){
         $result = mysqli_query($link,"SELECT count(*) as total FROM Sueno");
+        $data = mysqli_fetch_assoc($result);
+        echo $data["total"];
+    }
+
+    function cantidadSuenosCustom($link,$query){
+        $result = mysqli_query($link, $query);
         $data = mysqli_fetch_assoc($result);
         echo $data["total"];
     }

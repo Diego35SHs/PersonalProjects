@@ -1,12 +1,29 @@
 <?php 
     session_start();
     require "../config.php";
+
+    if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+        header("location: ../index.php");
+        exit;
+    }
+    
+    //Tomar la función a realizar
     $funcion = $_POST["funcion"];
+    if(!isset($_POST["funcion"])){
+        header("location: ../index.php");
+        exit;
+    }
 
     //A partir de este switch se accederá a las funciones requeridas.
     switch($funcion){
         case "agregarComentario":
             agregarComentario($link);
+        break;
+        case "eliminarComentario":
+            eliminarComentario($link);
+        break;
+        case "modificarComentario":
+            modificarComentario($link);
         break;
         case "cantidadComent":
             cantidadComent($link);
@@ -38,6 +55,62 @@
             }
         }else{
             echo "Falla de conexión.";
+        }
+    }
+
+    //Función eliminarComentario
+    //Input: Directo: Link de conexión - Indirecto: código de comentario.
+    //Output: Mensaje de éxito o fallo de la operación
+    function eliminarComentario($link){
+        $id_com = $_POST["id_com"];
+        $sql = "DELETE FROM Comentario WHERE id_com = ? AND id_usu = ? ";
+        if($stmt = mysqli_prepare($link,$sql)){
+            mysqli_stmt_bind_param($stmt,"ii",$id_com_param,$cod_usu_param);
+            $id_com_param = $id_com; $cod_usu_param = $_SESSION["id"];
+            if(mysqli_stmt_execute($stmt)){
+                eliminarLikeCom($link,$id_com);
+                echo "Eliminado.";
+            }else{
+                echo "Fallo al eliminar. El usuario en sesión podría no coincidir con el sueño que se intenta borrar.";
+            }
+        }
+    }
+
+    //Función modificarComentario
+    //Input: Directo: Link de conexión - Indirecto: código de comentario, nuevo comentario y código de usuario
+    //Output: Nuevo comentario para asignar al textarea o mensaje de fallo.
+    function modificarComentario($link){
+        $id_com = $_POST["id_com"];
+        $nuevo_com = $_POST["nuevoCom"];
+        $cod_usu = $_SESSION["id"];
+        $sql = "UPDATE Comentario SET comentario=? WHERE id_com=? AND id_usu=? ";
+        if($stmt = mysqli_prepare($link,$sql)){
+            mysqli_stmt_bind_param($stmt,"sii",$coment_param,$id_com_param,$cod_usu_param);
+            $coment_param = $nuevo_com; $id_com_param = $id_com;
+            $cod_usu_param = $cod_usu;
+            if(mysqli_stmt_execute($stmt)){
+                echo $nuevo_com;
+            }else{
+                echo "No se pudo actualizar el comentario. Help.";
+            }
+        }else{
+            echo "Falla de conexión.";
+        }
+    }
+
+    //Función eliminarLikeCom
+    //Input: Directo: Link de conexión e id de comentario
+    //Output: 1 -> Éxito - 2 -> Fallo
+    function eliminarLikeCom($link,$id_com){
+        $sql = "DELETE FROM LikeDislikeCom WHERE id_com = ? ";
+        if($stmt = mysqli_prepare($link,$sql)){
+            mysqli_stmt_bind_param($stmt,"i",$id_sue_param);
+            $id_sue_param = $id_com;
+            if(mysqli_stmt_execute($stmt)){
+                return 1;
+            }else{
+                return 0;
+            }
         }
     }
 
@@ -113,4 +186,5 @@
         $data = mysqli_fetch_assoc($result);
         return $data["total"];
     }
+
 ?>
