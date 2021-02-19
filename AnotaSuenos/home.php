@@ -21,8 +21,8 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="estilo.css">
+    <link rel="icon" type="image/png" href="Recursos/Fotos/ONPLACEHOLDERFAV.png"/>
 </head>
-
 <body style="background-color: #48BEFF;">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navBar" aria-controls="navBar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,13 +38,16 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                     <span class="nav-link" id="op2"><a href="javascript:void(0);" id="verSeguidos" style="text-decoration: none; color:inherit;">Seguidos</a></span>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="op3" href="javascript:void(0);">Populares</a>
+                    <span class="nav-link" id="op3">  <a href="javascript:void(0);" id="verPopulares" style="text-decoration: none; color:inherit;" >Populares</a></span>
                 </li>
                 <li class="nav-item">
-                    <a href="../CRUDs/perfilPublico.php?cod_usu=<?php echo $_SESSION["id"]; ?>" class="nav-link" id="op4"> <?php echo $_SESSION["username"]; ?> </a>
+                    <span class="nav-link" id="op4">  <a href="javascript:void(0);" id="verMas18" style="text-decoration: none; color:inherit;" >+18</a></span>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="op5" href="https://shsblog944322090.wordpress.com" target="_blank">Blog</a>
+                    <a href="../CRUDs/perfilPublico.php?cod_usu=<?php echo $_SESSION["id"]; ?>" class="nav-link" id="op5"> <?php echo $_SESSION["username"]; ?> </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="op6" href="https://shsblog944322090.wordpress.com" target="_blank">Blog</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
@@ -61,8 +64,8 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                     </ul>
                 </li>
             </ul>
-            <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="search" placeholder="Buscar" aria-label="Buscar">
+            <form class="form-inline my-2 my-lg-0" method="GET" action="CRUDs/busqueda.php">
+                <input class="form-control mr-sm-2" type="search" name="buscar" placeholder="Buscar" aria-label="Buscar">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
             </form>
         </div>
@@ -117,7 +120,6 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                     <p id="cantidadComent">Cargando...</p>
                     <p id="cantidadLikesComent">Cargando...</p>
                     <button id="actualizarEstadisticas" class="btn btn-info">Actualizar</button>
-                    <button id="verSeguidos" class="btn btn-info">Ver seguidos</button>
                 </div>
             </div>
         </div>
@@ -251,6 +253,50 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         document.getElementById("offsetLimDisplay").innerHTML = parseInt(offSetDspl) + parseInt(10);
         document.getElementById("filtroActual").value = "soloSeguidosNoM18";
         document.getElementById("filtroSueList").innerHTML = " sueños de usuarios seguidos.";
+        $.ajax({
+            type: "GET",
+            url: "http://anotasuenos:8080/CRUDs/mostrarSuenos.php",
+            dataType: "html",
+            data: paquete,
+        }).done(function(res) {
+            $("#mostrarSuenosPublic").html(res);
+            listarCantidadSueCustom();
+            event.stopPropagation();
+        }).fail(function() {
+            $("#mostrarSuenosPublic").html("Algo falló.");
+        });
+    });
+
+    $('#verPopulares').click(function(){
+        $("#mostrarSuenosPublic").html("Cargando filtro...");
+        var paquete = "function=mostrarSueCustomQuery&offset=0&opcion=masPopulares";
+        var offSetDspl = "0";
+        document.getElementById("offsetDisplay").innerHTML = offSetDspl;
+        document.getElementById("offsetLimDisplay").innerHTML = parseInt(offSetDspl) + parseInt(10);
+        document.getElementById("filtroActual").value = "masPopulares";
+        document.getElementById("filtroSueList").innerHTML = " sueños por popularidad. (Se incluyen +18)";
+        $.ajax({
+            type: "GET",
+            url: "http://anotasuenos:8080/CRUDs/mostrarSuenos.php",
+            dataType: "html",
+            data: paquete,
+        }).done(function(res) {
+            $("#mostrarSuenosPublic").html(res);
+            listarCantidadSueCustom();
+            event.stopPropagation();
+        }).fail(function() {
+            $("#mostrarSuenosPublic").html("Algo falló.");
+        });
+    });
+
+    $('#verMas18').click(function(){
+        $("#mostrarSuenosPublic").html("Cargando filtro...");
+        var paquete = "function=mostrarSueCustomQuery&offset=0&opcion=noPVsiM18";
+        var offSetDspl = "0";
+        document.getElementById("offsetDisplay").innerHTML = offSetDspl;
+        document.getElementById("offsetLimDisplay").innerHTML = parseInt(offSetDspl) + parseInt(10);
+        document.getElementById("filtroActual").value = "noPVsiM18";
+        document.getElementById("filtroSueList").innerHTML = " sueños públicos y +18.";
         $.ajax({
             type: "GET",
             url: "http://anotasuenos:8080/CRUDs/mostrarSuenos.php",
@@ -559,11 +605,13 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         var opcion3 = document.getElementById("op3");
         var opcion4 = document.getElementById("op4");
         var opcion5 = document.getElementById("op5");
+        var opcion6 = document.getElementById("op5");
         $(opcion1).removeClass("active");
         $(opcion2).removeClass("active");
         $(opcion3).removeClass("active");
         $(opcion4).removeClass("active");
         $(opcion5).removeClass("active");
+        $(opcion6).removeClass("active");
         idopcion.addClass("active");
     });
 </script>

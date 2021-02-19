@@ -93,7 +93,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     <title>Bienvenido a AnotaSueños</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <link rel="stylesheet" href="..\estilo.css">
+    <link rel="stylesheet" href="../estilo.css">
     <script>
         $(document).ready(function(){
             $('div.mostrar').fadeIn(2000);
@@ -131,7 +131,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 <input type="submit" class="btn btn-primary" value="Registrarse">
                 <input type="reset" class="btn btn-default" value="Limpiar campos">
             </div>
-            <p>¿Ya tienes una cuenta? <a href="..\index.php">Inicia sesión</a>.</p>
+            <p>¿Ya tienes una cuenta? <a href="../index.php">Inicia sesión</a>.</p>
         </form>
             </div>
         </div>

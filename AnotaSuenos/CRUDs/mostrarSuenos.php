@@ -1,7 +1,8 @@
 <?php
 
 session_start();
-$link = mysqli_connect('localhost', 'root', '', 'anotasuenos');
+require "../config.php";
+
 $function = $_GET["function"];
 
 switch ($function) {
@@ -30,7 +31,11 @@ function prepararQuery($link)
             $query = "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno WHERE sue_pri = 0 AND sue_m18 = 0 ORDER BY fec_sue DESC LIMIT 10 OFFSET " . $offsetQuery . " ";
             mostrarSuenosGeneric($query, $link);
             break;
-            //PARA USO EN PERFIL DE USUARIO
+        case "noPVsiM18":
+            $query = "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno WHERE sue_pri = 0 AND sue_m18 = 1 ORDER BY fec_sue DESC LIMIT 10 OFFSET " . $offsetQuery . " ";
+            mostrarSuenosGeneric($query, $link);
+            break;
+        //PARA USO EN PERFIL DE USUARIO
         case "noPVnoM18User":
             //Sueños que no sean privados y tampoco sean +18 del usuario dueño del perfil.
             //Deben aparecer solo sueños públicos.
@@ -94,10 +99,59 @@ function prepararQuery($link)
             $query = "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,Sueno.cod_usu FROM Sueno,Seguidores,Login WHERE Sueno.cod_usu = Seguidores.id_usu_sdo AND Seguidores.id_usu_sdr = ".$_SESSION["id"]." AND Sueno.sue_pri = 0 AND Sueno.sue_m18 = 0 ORDER BY fec_sue DESC LIMIT 10 OFFSET " . $offsetQuery . " ";
             mostrarSuenosGeneric($query, $link);
             break;
+        case "modSue":
+            if(checkMod($link) <= 0 || checkMod($link) > 1){
+                echo "<script> alert('Se agradece el intento, pero por favor, nada más. Volviendo a home.'); </script>";
+                //Esta función fue tomada desde StackOverflow. Gracias Dan Heberden.
+                echo  "<script>";
+                echo "parent.changeURL('../home.php' );";
+                echo "</script>";
+                //Fin.
+            }else{
+                $query = "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno";
+                mostrarSuenosEspecial($query, $link);
+            }
+            break;
+        case "busqueda":
+            $busqueda = $_GET["termBusqueda"];
+            $query = "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno WHERE sue_pri = 0 AND (sue_m18 = 1 OR sue_m18 = 0) AND sueno LIKE '%".$busqueda."%' ORDER BY fec_sue DESC LIMIT 10 OFFSET " . $offsetQuery . " ";
+            mostrarSuenosGeneric($query,$link);
+            break;
+        case "masPopulares":
+            //840 líneas con 40 miserables registros? No es aceptable, esta función queda en espera hasta que se resuelva el tema con los likes y dislikes.
+            //Posibles soluciones: añadir la columna de cantidad de likes a los sueños y actualizarla al momento de dar like o dislike a un sueño.
+            //esto podría habilitar la función para ordenar por cantidad de comentarios
+            //pero será un cambio más o menos grande comparado al sistema que ya está en funcionamiento
+            //No para mostrar, sino para retocar estos aspectos internos que el usuario no ve.
+            $query = "SELECT Sueno.id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno WHERE sue_pri = 0 ORDER BY megusta DESC LIMIT 10 OFFSET " . $offsetQuery . " ";
+            mostrarSuenosGeneric($query,$link);
+            break;
     }
 }
 
 
+//MOD
+function checkMod($link){
+    $sql = "SELECT id_mod FROM modd WHERE id_usu = ?";
+    if ($stmt = mysqli_prepare($link, $sql)) {
+        mysqli_stmt_bind_param($stmt, "i", $param_codusu);
+        $param_codusu = $_SESSION["id"];
+        if (mysqli_stmt_execute($stmt)) {
+            mysqli_stmt_store_result($stmt);
+            if (mysqli_stmt_num_rows($stmt) == 1) {
+                mysqli_stmt_bind_result($stmt, $registro);
+                if (mysqli_stmt_fetch($stmt)) {
+                    return 1;
+                }
+            } else {
+                echo "<script>"; 
+                echo "alert('No eres parte del staff. Volviendo a home..');"; 
+                echo "</script>";
+                header("location: ../index.php");
+            }
+        }
+    }
+}
 
 //Función genérica para mostrar sueños:
 //INPUT: Directo - Consulta SQL preparada en el switch y link de conexión.
@@ -158,6 +212,63 @@ function mostrarSuenosGeneric($query, $link)
         echo "</div> <br>";
     }
 }
+
+//Función especial para mostrar sueños:
+//Esta función es identica a mostrarSuenosGeneric, simplemente se salta algunos chequeos
+function mostrarSuenosEspecial($query, $link)
+{
+    $response = array();
+    $result = mysqli_query($link, $query);
+    if (mysqli_num_rows($result) > 0) {
+        $response["suenos"] = array();
+        while ($row = mysqli_fetch_array($result)) {
+            $temp = array();
+            echo "<div class='border border-info rounded p-3' style='width: 100%; background-color: white;'>";
+            $cantidadCarac = strlen($row["sueno"]);
+            $nombreUsuario = nombreUsuSueno($row["cod_usu"], $link);
+            $alto = heightTXA($cantidadCarac);
+            $cantComentarios = cantidadComentarios($row["id_sue"], $link);
+            $cantLikes = cantidadLikes($row["id_sue"], $link);
+            echo "<label>";
+            echo "Por: <a href='../CRUDs/perfilPublico.php?cod_usu=" . $row["cod_usu"] . "'>".$nombreUsuario."</a>";
+            echo "</label>";
+            echo "<textarea class='form-control' id='textAreaSue" . $row["id_sue"] . "' style='resize:none;" . $alto . "border:none;maxlength:500;background-color:white;text-color:black;' disabled='true'>";
+            echo $row["sueno"];
+            echo "</textarea> <br>";
+            echo "<span>";
+            if ($row["sue_pri"] == 0) {
+                echo "Sueño público";
+            } else {
+                echo "Sueño privado";
+            }
+            echo "&nbsp;&nbsp;</span>";
+            if ($row["sue_m18"] == 1) {
+                echo "<span> +18 </span> &nbsp;&nbsp;";
+            }
+            echo "<span>";
+                echo "<button id='" . $row["id_sue"] . "' class='modificar btn btn-warning'><i id='modIcon".$row["id_sue"]."' class='modIcon fa fa-pencil'></i></button> &nbsp;";
+                echo "<button id='" . $row["id_sue"] . "' class='eliminar btn btn-danger'><i id='modIcon".$row["id_sue"]."' class='eliIcon fa fa-trash'></i></button> &nbsp;";
+            echo "</span>";
+            echo "<span>";
+            if (checkLike($row["id_sue"], $_SESSION["id"], $link) == 0) {
+                echo "<button id='" . $row['id_sue'] . "' class='like btn btn-info'>Me gusta</button>";
+            } else {
+                echo "<button id='" . $row['id_sue'] . "' class='dislike btn btn-danger'>Ya no me gusta</button>";
+            }
+            echo "&nbsp;&nbsp;Me gusta: ";
+            echo "<input type='text' disabled='true' id='cantLikes" . $row["id_sue"] . "' class='cantLikes' value='" . $cantLikes . "' style='border: none; width: 35px;' >";
+            echo "&nbsp;&nbsp;</span>";
+            echo "<a  class='btn btn-info another-element' href='../CRUDs/verComentarios.php?id_sue=" . $row["id_sue"] . " '>Comentarios (" . $cantComentarios . ")</a>";
+            echo "</div> </br>";
+            array_push($response["suenos"], $temp);
+        }
+    } else {
+        echo "<div class='border border-info rounded p-3' style='width: 100%; background-color: white;'>";
+        echo "<p>No se encontró ningún registro.</p>";
+        echo "</div> <br>";
+    }
+}
+
 
 //funcion heightTXA 
 //Input: cántidad de caracteres de un sueño

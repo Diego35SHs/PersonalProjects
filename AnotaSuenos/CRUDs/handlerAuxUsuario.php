@@ -14,7 +14,7 @@ session_start();
 
 $funcion = $_POST["function"];
 $id_usu = $_SESSION["id"];
-$link = mysqli_connect('localhost','root','','anotasuenos');
+require "../config.php";
 switch($funcion){
     case "getFotoPerUsuario":
         return "FotoPerfilPlaceHolder";

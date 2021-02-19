@@ -66,6 +66,19 @@
                 $query = "SELECT count(*) as total FROM Sueno,Seguidores,Login WHERE Sueno.cod_usu = Seguidores.id_usu_sdo AND Seguidores.id_usu_sdr = ".$_SESSION["id"]." AND Sueno.sue_pri = 0 AND Sueno.sue_m18 = 0 ";
                 cantidadSuenosCustom($link,$query);
             break;
+            case "busqueda":
+                $busqueda = $_POST["termBusqueda"];
+                $query = "SELECT count(*) as total FROM Sueno WHERE sue_pri = 0 AND (sue_m18 = 1 OR sue_m18 = 0) AND sueno LIKE '%".$busqueda."%' ";
+                cantidadSuenosCustom($link,$query);
+            break;
+            case "masPopulares":
+                $query = "SELECT count(*) as total FROM Sueno WHERE sue_pri = 0";
+                cantidadSuenosCustom($link,$query);
+            break;
+            case "noPVsiM18":
+                $query = "SELECT count(*) as total FROM Sueno WHERE sue_pri = 0 AND sue_m18 = 1";
+                cantidadSuenosCustom($link,$query);
+            break;
         }
     }
 
@@ -150,6 +163,8 @@
         }
     }
 
+    
+
     //Función modificarComentario
     //Input: Directo: Link de conexión - Indirecto: código de sueño, nuevo sueño y código de usuario.
     //Output: Texto actualizado del sueño.
@@ -232,6 +247,7 @@
             mysqli_stmt_bind_param($stmt,"ii",$id_sue_param,$cod_usu_param);
             $id_sue_param = $id_sue; $cod_usu_param = $_SESSION["id"];
             mysqli_stmt_execute($stmt);
+            updateLikesSueno($link, $id_sue, 1);
             echo cantidadLikes($id_sue,$link);
             return null;
         }else{
@@ -253,8 +269,34 @@
             mysqli_stmt_bind_param($stmt,"ii",$id_sue_param,$cod_usu_param);
             $id_sue_param = $id_sue; $cod_usu_param = $_SESSION["id"];
             mysqli_stmt_execute($stmt);
+            updateLikesSueno($link, $id_sue, 0);
             echo cantidadLikes($id_sue,$link);
             return null;
+        }else{
+            echo "Falla de conexión.";
+        }
+    }
+
+    //Actualizar cantidad de likes del sueño en su propia tabla.
+    //Hay dos opciones, una es añadir el like, buscar la cantidad de nuevo y poner esa cantidad en la columna en la tabla sueños
+    //o actualizar con +1 o -1 en la tabla sueños. Esta opción parece más sencilla sin hacer demasiadas consultas.
+    function updateLikesSueno($link, $id_sue, $masmenos){
+        //1 -> más -- 0 -> menos
+        if($masmenos == 1){
+            $sql = "UPDATE Sueno SET megusta = megusta + 1 WHERE id_sue=? ";
+        }else if($masmenos == 0){
+            $sql = "UPDATE Sueno SET megusta = megusta - 1 WHERE id_sue=? ";
+        }else{
+            echo "<script> alert('¿Qué pasa aquí?'); </script>";
+        }
+        if($stmt = mysqli_prepare($link,$sql)){
+            mysqli_stmt_bind_param($stmt,"i",$id_sue_param);
+            $id_sue_param = $id_sue;
+            if(mysqli_stmt_execute($stmt)){
+                echo null;
+            }else{
+                echo "No se pudo actualizar la columna megusta. Help.";
+            }
         }else{
             echo "Falla de conexión.";
         }

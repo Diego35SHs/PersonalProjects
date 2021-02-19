@@ -39,6 +39,7 @@ https://fontawesome.com/v4.7.0/icons/
 https://stackoverflow.com/questions/22709936/alert-with-multiple-options
 https://www.w3schools.com/bootstrap4/tryit.asp?filename=trybs_navbar_collapse
 https://stackoverflow.com/questions/8919682/remove-all-styling-formatting-from-hyperlinks
+https://stackoverflow.com/questions/13520127/submit-html-form-on-self-page
 
 Versión 0.4
 -Arreglado un bug que hacía que el checkeo de me gusta de cada sueño solo funcionara correctamente con un usuario
@@ -155,3 +156,17 @@ Versión 1.2 - Alpha
 -REBRANDING - Se cambió el nombre del sitio a "OniricNote", es posible que este cambio no esté reflejado en todos los aspectos de la aplicación o en github.
 
 Version 1.3 - Alpha
+***Estos cambios se harán presentes en al versión web a su debido momento, pero aún no.***
+-Se añadieron unos / en lugares donde se necesitaban.
+-Se eliminaron links de conexión específicos para ciertos archivos, ahora usan la configuración estándar.
+-Se implementó un chequeo para ver si un usuario es moderador en ciertos aspectos.
+-Se implementó una función nueva a la sección de mostrarSuenos.
+-Ahora se listan todos los sueños en la interfaz gráfica de moderación.
+-Se implementó la función de búsqueda, esta llevará al usuario a una página separada donde se listarán los registros.
+-Se implementó paginación en la búsqueda.
+-Se implementó la barra de navegación en la página de búsqueda.
+-Se añadió una nueva columna a la tabla Sueños, permitirá filtrar los sueños por cantidad de me gusta.
+-Se añadió la función para actualizar la cantidad de me gusta ligada a los sueños.
+-Se solucionó un bug provocado por una descordinación de nombres al momento de filtrar.
+-Se implementó el filtro +18 en la página Home. Solo mostrará sueños +18.
+-Se eliminó el botón para ver seguidos del cuadro de estadísticas.
