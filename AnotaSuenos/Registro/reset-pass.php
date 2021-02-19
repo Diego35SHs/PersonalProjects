@@ -75,7 +75,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             </div>
             <div class="form-group">
                 <input type="submit" class="btn btn-primary" value="Cambiar contraseña">
-                <a class="btn btn-link" href="home.php">Cancelar</a>
+                <a class="btn btn-link" href="../home.php">Cancelar</a>
             </div>
         </form>
     </div>   
