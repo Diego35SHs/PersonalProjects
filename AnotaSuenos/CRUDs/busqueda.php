@@ -21,11 +21,11 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     <link rel="stylesheet" href="../estilo.css">
 </head>
 <body style="background-color: #48BEFF;">
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navBar" aria-controls="navBar" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <a class="navbar-brand" href="home.php">OniricNote</a>
+        <a class="navbar-brand" href="../home.php">OniricNote</a>
         <div class="collapse navbar-collapse" id="navBar">
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                 <li class="nav-item">
@@ -42,8 +42,8 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                         Opciones
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
-                        <li><a class="dropdown-item" href="ajustes.php">Ajustes</a></li>
-                        <li><a class="dropdown-item" href="creditos.php">Créditos</a></li>
+                        <li><a class="dropdown-item" href="../ajustes.php">Ajustes</a></li>
+                        <li><a class="dropdown-item" href="../creditos.php">Créditos</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>

@@ -107,6 +107,23 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                     <span><img src="https://img.icons8.com/ios-filled/50/000000/help.png" width="50px" height="50px" alt="FDP" /></span>
                     <span id="nomUsuMiniPerfil"> <a href="../CRUDs/perfilPublico.php?cod_usu=<?php echo $_SESSION["id"]; ?>"> <?php echo $_SESSION["username"]; ?></a></span>
                 </div> <br>
+                <div id="reglasGenerales" class="center border border-info rounded p-3" style="background-color:white;">
+                    <p class="text-center"><b>Reglas generales</b></p>
+                    <p>Por favor, no incluir nada de lo siguiente en los sueños o comentarios. Podría resultar en la eliminación de tus sueños y/o tu cuenta.</p>
+                    <ul>
+                        <li>Información personal.</li>
+                        <li>Links.</li>
+                        <li>Contenido ilegal de todo tipo.</li>
+                        <li>Funas.</li>
+                        <li>Protestas políticas.</li>
+                    </ul>
+                    <p>Básicamente, evitemos tratar este sitio como Twitter.</p>
+                    <p>Extra: ¿500 caractéres no es suficiente? Puedes usar los comentarios de tu sueño para continuarlo, también tienen 500 caractéres como máximo.</p>
+                </div> <br>
+                <div id="espacioPublicitario" class="center border border-info rounded p-3" style="background-color:white;">
+                    <p class="text-center"><b>Espacio publicitario</b></p>
+                    <br><br><br><br><br><br><br><br><br>
+                </div> <br>
                 <div id="contenedorEstadisticas" class="center border border-info rounded p-3" style="background-color:white;">
                     <p class="text-center"><strong>Estadísticas del sitio</strong></p>
                     <p id="cantidadSuenosUsu">Cargando...</p>

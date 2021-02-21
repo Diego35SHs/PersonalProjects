@@ -200,7 +200,7 @@ function mostrarSuenosGeneric($query, $link)
                 echo "<button id='" . $row['id_sue'] . "' class='dislike btn btn-danger'>Ya no me gusta</button>";
             }
             echo "&nbsp;&nbsp;Me gusta: ";
-            echo "<input type='text' disabled='true' id='cantLikes" . $row["id_sue"] . "' class='cantLikes' value='" . $cantLikes . "' style='border: none; width: 35px;' >";
+            echo "<input type='text' disabled='true' id='cantLikes" . $row["id_sue"] . "' class='cantLikes' value='" . $cantLikes . "' style='border: none; width: 35px; background-color:white;' >";
             echo "&nbsp;&nbsp;</span>";
             echo "<a  class='btn btn-info another-element' href='../CRUDs/verComentarios.php?id_sue=" . $row["id_sue"] . " '>Comentarios (" . $cantComentarios . ")</a>";
             echo "</div> </br>";
@@ -229,9 +229,7 @@ function mostrarSuenosEspecial($query, $link)
             $alto = heightTXA($cantidadCarac);
             $cantComentarios = cantidadComentarios($row["id_sue"], $link);
             $cantLikes = cantidadLikes($row["id_sue"], $link);
-            echo "<label>";
-            echo "Por: <a href='../CRUDs/perfilPublico.php?cod_usu=" . $row["cod_usu"] . "'>".$nombreUsuario."</a>";
-            echo "</label>";
+            echo "<label>Por: <a href='../CRUDs/perfilPublico.php?cod_usu=" . $row["cod_usu"] . "'>".$nombreUsuario."</a></label>";
             echo "<textarea class='form-control' id='textAreaSue" . $row["id_sue"] . "' style='resize:none;" . $alto . "border:none;maxlength:500;background-color:white;text-color:black;' disabled='true'>";
             echo $row["sueno"];
             echo "</textarea> <br>";
@@ -255,9 +253,7 @@ function mostrarSuenosEspecial($query, $link)
             } else {
                 echo "<button id='" . $row['id_sue'] . "' class='dislike btn btn-danger'>Ya no me gusta</button>";
             }
-            echo "&nbsp;&nbsp;Me gusta: ";
-            echo "<input type='text' disabled='true' id='cantLikes" . $row["id_sue"] . "' class='cantLikes' value='" . $cantLikes . "' style='border: none; width: 35px;' >";
-            echo "&nbsp;&nbsp;</span>";
+            echo "&nbsp;&nbsp;Me gusta: <input type='text' disabled='true' id='cantLikes" . $row["id_sue"] . "' class='cantLikes' value='" . $cantLikes . "' style='border: none; width: 35px; background-color:white;' >&nbsp;&nbsp;</span>";
             echo "<a  class='btn btn-info another-element' href='../CRUDs/verComentarios.php?id_sue=" . $row["id_sue"] . " '>Comentarios (" . $cantComentarios . ")</a>";
             echo "</div> </br>";
             array_push($response["suenos"], $temp);
