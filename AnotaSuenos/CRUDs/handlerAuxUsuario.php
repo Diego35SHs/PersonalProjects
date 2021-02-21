@@ -47,7 +47,194 @@ switch($funcion){
     case "getSeguidoresUsuario":
         ajaxSeguidoresUsu($_POST["cod_usu"],$link);
     break;
+    case "eliminarCuentaUsuario":
+        eliminarCuentaUsuario($link);
+    break;
+    case "eliminarCuentaMOD":
+
+    break;
 }
+
+//Jerarquía
+//Estas funciones eliminarán todas y cada una de las cosas en las que el usuario tenga algo que ver.
+// 1.- 
+function eliminarCuentaUsuario($link){
+    try {
+        buscarSuenosUsuarioUser($link);
+        eliminarSuenos($link);
+        buscarComentariosUser($link);
+        eliminarSeguidos($link);
+        eliminarCuenta($link);
+    } catch (\Throwable $th) {
+        echo "<script> alert('Error: ".$th." '); </script>";
+    }
+}
+
+//PARA BORRAR COSAS DE CADA SUEÑO DEL USUARIO
+//CREAR UNA FUNCIÓN QUE BORRE LAS COSAS Y USARLA EN OTRA FUNCIÓN QUE BUSQUE LOS SUEÑOS
+//WHILE SELECT SUEÑOS (IDSUE) ELIMINAR X,Y,Z FIN WHILE
+//El "User" Al final significa que se accede por métodos disponibles para el USUARIO, no MODERADORES
+//PRIMERA
+function buscarSuenosUsuarioUser($link){
+    $cod_usu = $_SESSION["id"];
+    $query = "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno WHERE cod_usu = ".$cod_usu." ";
+    $result = mysqli_query($link, $query);
+    if (mysqli_num_rows($result) > 0) {
+        $response["suenos"] = array();
+        while ($row = mysqli_fetch_array($result)) {
+            $id_sue = $row["id_sue"];
+            eliminarComSue($link,$id_sue);
+            eliminarLikeSue($link,$id_sue);
+            eliminarLikeCom($link,$id_sue);
+        }
+    }else{
+        echo "<script> alert('No se pudieron buscar y eliminar los sueños del usuario'); </script>";
+    }
+}
+
+function buscarComentariosUser($link){
+    $cod_usu = $_SESSION["id"];
+    $query = "SELECT id_usu,id_sue,id_com FROM Comentario WHERE id_usu = ".$cod_usu." ";
+    $result = mysqli_query($link, $query);
+    if (mysqli_num_rows($result) > 0) {
+        $response["suenos"] = array();
+        while ($row = mysqli_fetch_array($result)) {
+            $id_usu = $row["id_usu"];
+            $id_com = $row["id_com"];
+            //Eliminar los likes y dislikes de los comentarios
+            elimLikesComsUsu($link,$id_com);
+            elimComent($link,$cod_usu);
+        }
+    }else{
+        echo "<script> alert('No se pudieron buscar y eliminar los sueños del usuario'); </script>";
+    }
+}
+
+function elimLikesComsUsu($link,$id_com){
+    $sql = "DELETE FROM LikeDislikeCom WHERE id_com = ? ";
+    if($stmt = mysqli_prepare($link,$sql)){
+        mysqli_stmt_bind_param($stmt,"i",$id_com_param);
+        $id_com_param = $id_com;
+        if(mysqli_stmt_execute($stmt)){
+            return 1;
+        }else{
+            return 0;
+        }
+    }else{
+        echo "<script> alert('No se pudieron eliminar los me gusta de los comentarios del usuario'); </script>";
+    }
+}
+
+function elimComent($link,$cod_usu){
+    $sql = "DELETE FROM Comentario WHERE id_usu = ? ";
+    if($stmt = mysqli_prepare($link,$sql)){
+        mysqli_stmt_bind_param($stmt,"i",$id_com_param);
+        $id_com_param = $cod_usu;
+        if(mysqli_stmt_execute($stmt)){
+            return 1;
+        }else{
+            return 0;
+        }
+    }else{
+        echo "<script> alert('No se pudieron eliminar los me gusta de los comentarios del usuario'); </script>";
+    }
+}
+
+//NO LLAMAR NINGUNA DE LAS SIGUIENTES 3 POR SI SOLAS.
+function eliminarComSue($link,$id_sue){
+    $sql = "DELETE FROM Comentario WHERE id_sue = ? ";
+    if($stmt = mysqli_prepare($link,$sql)){
+        mysqli_stmt_bind_param($stmt,"i",$id_sue_param);
+        $id_sue_param = $id_sue;
+        if(mysqli_stmt_execute($stmt)){
+            return 1;
+        }else{
+            return 0;
+        }
+    }else{
+        echo "<script> alert('No se pudieron eliminar los comentarios de los sueños'); </script>";
+    }
+}
+
+function eliminarLikeSue($link,$id_sue){
+    $sql = "DELETE FROM LikeDislike WHERE id_sue = ? ";
+    if($stmt = mysqli_prepare($link,$sql)){
+        mysqli_stmt_bind_param($stmt,"i",$id_sue_param);
+        $id_sue_param = $id_sue;
+        if(mysqli_stmt_execute($stmt)){
+            return 1;
+        }else{
+            return 0;
+        }
+    }else{
+        echo "<script> alert('No se pudieron eliminar los me gusta de los sueños del usuario'); </script>";
+    }
+}
+
+function eliminarLikeCom($link,$id_sue){
+    $sql = "DELETE FROM LikeDislikeCom WHERE id_sue = ? ";
+    if($stmt = mysqli_prepare($link,$sql)){
+        mysqli_stmt_bind_param($stmt,"i",$id_sue_param);
+        $id_sue_param = $id_sue;
+        if(mysqli_stmt_execute($stmt)){
+            return 1;
+        }else{
+            return 0;
+        }
+    }else{
+        echo "<script> alert('No se pudieron eliminar los likes de los comentarios del sueño del usuario.'); </script>";
+    }
+}
+
+//Borrar todos los sueños de un usuario, el usuario se determina por la SESIÓN. No se puede cambiar
+//por medio de inspeccionar elemento.
+//SEGUNDA
+function eliminarSuenos($link){
+    $sql = "DELETE FROM Sueno WHERE cod_usu = ? ";
+    if($stmt = mysqli_prepare($link,$sql)){
+        mysqli_stmt_bind_param($stmt,"i",$cod_usu_param);
+        $cod_usu_param = $_SESSION["id"];
+        if(mysqli_stmt_execute($stmt)){
+            return 1;
+        }else{
+            echo "Fallo al eliminar. El usuario en sesión podría no coincidir con el sueño que se intenta borrar.";
+        }
+    }else{
+        echo "<script> alert('No se pudieron eliminar los sueños del usuario'); </script>";
+    }
+}
+
+//Eliminar comentarios del usuario y los likes correspondientes
+//Eliminar seguidos
+function eliminarSeguidos($link){
+    $sql = "DELETE FROM Seguidores WHERE id_usu_sdo = ? OR id_usu_sdr = ?";
+    if($stmt = mysqli_prepare($link,$sql)){
+        mysqli_stmt_bind_param($stmt,"ii",$id_usu_sdo_param,$id_usu_sdr_param);
+        $id_usu_sdo_param = $_SESSION["id"]; $id_usu_sdr_param = $_SESSION["id"];
+        if(mysqli_stmt_execute($stmt)){
+            return 1;
+        }else{
+            return 0;
+        }
+    }
+}
+
+function eliminarCuenta($link){
+    $sql = "DELETE FROM Login WHERE cod_usu = ? ";
+    if($stmt = mysqli_prepare($link,$sql)){
+        mysqli_stmt_bind_param($stmt,"i",$cod_usu_param);
+        $cod_usu_param = $_SESSION["id"];
+        if(mysqli_stmt_execute($stmt)){
+            header("location: ../Registro/logout.php");
+        }else{
+            echo "<script> alert('Fallo al intentar eliminar cuenta'); </script>";
+        }
+    }else{
+        echo "<script> alert('No se pudo eliminar la cuenta'); </script>";
+    }
+}
+
+//=====================================================================
 
 //Función cantSueUsuario
 //Input: Código de usuario y link de conexión.

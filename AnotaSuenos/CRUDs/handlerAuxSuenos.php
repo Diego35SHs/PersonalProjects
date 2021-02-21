@@ -282,16 +282,19 @@
     //o actualizar con +1 o -1 en la tabla sueños. Esta opción parece más sencilla sin hacer demasiadas consultas.
     function updateLikesSueno($link, $id_sue, $masmenos){
         //1 -> más -- 0 -> menos
-        if($masmenos == 1){
-            $sql = "UPDATE Sueno SET megusta = megusta + 1 WHERE id_sue=? ";
-        }else if($masmenos == 0){
-            $sql = "UPDATE Sueno SET megusta = megusta - 1 WHERE id_sue=? ";
-        }else{
-            echo "<script> alert('¿Qué pasa aquí?'); </script>";
-        }
+        $masmenos = "No se está usando, borrameeee";
+        //REWORK -> Buscar cantidad de sueños nueva y poner esa cantidad en la columna de los sueños.
+        // if($masmenos == 1){
+        //     $sql = "UPDATE Sueno SET megusta = megusta + 1 WHERE id_sue=? ";
+        // }else if($masmenos == 0){
+        //     $sql = "UPDATE Sueno SET megusta = megusta - 1 WHERE id_sue=? ";
+        // }else{
+        //     echo "<script> alert('¿Qué pasa aquí?'); </script>";
+        // }
+        $sql = "UPDATE Sueno SET megusta = ? WHERE id_sue=? ";
         if($stmt = mysqli_prepare($link,$sql)){
-            mysqli_stmt_bind_param($stmt,"i",$id_sue_param);
-            $id_sue_param = $id_sue;
+            mysqli_stmt_bind_param($stmt,"ii",$cant_megusta_actual,$id_sue_param);
+            $cant_megusta_actual = cantidadLikes($id_sue,$link); $id_sue_param = $id_sue;
             if(mysqli_stmt_execute($stmt)){
                 echo null;
             }else{
