@@ -51,10 +51,171 @@ switch($funcion){
         eliminarCuentaUsuario($link);
     break;
     case "eliminarCuentaMOD":
-
+        eliminarCuentaUsuarioMOD($link);
+    break;
+    case "asignarModerador":
+        asignarModerador($link);
+    break;
+    case "desasignarModerador":
+        desasignarModerador($link);
+    break;
+    case "listarUsuarios":
+        prepararQueryListUsu($link);
     break;
 }
 
+function prepararQueryListUsu($link){
+    $opcion = $_POST["opcion"];
+    switch($opcion){
+        case "listarEspecial":
+            $query = "SELECT cod_usu,nom_usu,fec_usu FROM Login";
+            mostrarUsuariosEspecial($link,$query);
+        break;
+        case "listarUser":
+            $query = "SELECT cod_usu,nom_usu,fec_usu FROM Login";
+            mostrarUsuariosGeneric($link,$query);
+        break;
+    }
+    return null;
+}
+
+function mostrarUsuariosEspecial($link,$query){
+    $response = array();
+    $result = mysqli_query($link, $query);
+    if (mysqli_num_rows($result) > 0) {
+        $response["usuarios"] = array();
+        echo "<table class='table table-lg table-light table-hover border-info rounded'>";
+        echo "<thead>";
+        echo "<tr>";
+        echo "<th scope='col'>Código</th>";
+        echo "<th scope='col'>Nombre de usuario</th>";
+        echo "<th scope='col'>Fecha de registro</th>";
+        echo "<th scope='col'>Acción</th>";
+        echo "</tr>";
+        echo "</thead>";
+        echo "<tbody>";
+        while ($row = mysqli_fetch_array($result)) {
+            $temp = array();
+            echo "<tr>";
+                echo "<td> ".$row["cod_usu"]." </td>";
+                echo "<td> ".$row["nom_usu"]." </td>";
+                echo "<td> ".$row["fec_usu"]." </td>";
+                //TODO: Acciones para estos botones.
+                echo "<td>";
+                if($row["cod_usu"] != 1){
+                    if($row["cod_usu"] == $_SESSION["id"]){
+                        echo "Usuario en sesión";
+                    }else{
+                        echo "<a  class='borrarUser btn btn-danger another-element' id=' ".$row["cod_usu"]." ' href='javascript:void(0);'><i id='eliIcon".$row["cod_usu"]."' class='eliIcon fa fa-trash'></i></a> ";
+                    } 
+                }
+                if($_SESSION["id"] == 1){
+                    if(checkModCustom($link,$row["cod_usu"]) == 1){
+                        if($row["cod_usu"] == $_SESSION["id"]){
+                            echo "No disponible.";   
+                        }else{
+                            echo "<a  class='desasigMod btn btn-danger another-element' id=' ".$row["cod_usu"]." ' href='javascript:void(0);'>Desasignar moderador</a>";
+                        }
+                    }else{
+                        if($row["cod_usu"] == $_SESSION["id"]){
+                            echo "No disponible";
+                        }else{
+                            echo "<a  class='asigMod btn btn-warning another-element' id=' ".$row["cod_usu"]." ' href='javascript:void(0);'>Asignar moderador</a>";
+                        }
+                    }
+                }
+                echo "</td>";
+            echo "</tr>";
+            array_push($response["usuarios"], $temp);
+        }
+        echo "</tbody>";
+        echo "</table>";
+    } else {
+        echo "<div class='border border-info rounded p-3' style='width: 100%; background-color: white;'>";
+        echo "<p>No se encontró ningún registro.</p>";
+        echo "</div> <br>";
+    }
+}
+
+//Revisar si el usuario tiene permisos de moderación.
+function checkModCustom($link,$cod_usu){
+    $sql = "SELECT id_mod FROM modd WHERE id_usu = ?";
+    if ($stmt = mysqli_prepare($link, $sql)) {
+        mysqli_stmt_bind_param($stmt, "i", $param_codusu);
+        $param_codusu = $cod_usu;
+        if (mysqli_stmt_execute($stmt)) {
+            mysqli_stmt_store_result($stmt);
+            if (mysqli_stmt_num_rows($stmt) == 1) {
+                mysqli_stmt_bind_result($stmt, $registro);
+                if (mysqli_stmt_fetch($stmt)) {
+                    //Es parte del staff
+                    return 1;
+                }
+            } else {
+                //No es parte del staff
+                return 0;
+            }
+        }
+    }
+}
+
+//=======================ASIGNACIÓN Y DESASIGNACION DE MODERADORES==========================
+function asignarModerador($link){
+    $cod_usu = $_POST["cod_usu"];
+    $sql = "INSERT INTO modd (id_usu) VALUES(?)";
+    if($stmt = mysqli_prepare($link,$sql)){
+        mysqli_stmt_bind_param($stmt,"i",$id_usu_param);
+        $id_usu_param = $cod_usu;
+        mysqli_stmt_execute($stmt);
+        return 1;
+    }else{
+        echo "Falla de conexión.";
+    }
+}
+
+function desasignarModerador($link){
+    $cod_usu = $_POST["cod_usu"];
+    $sql = "DELETE FROM modd WHERE id_usu = ? ";
+    if($stmt = mysqli_prepare($link,$sql)){
+        mysqli_stmt_bind_param($stmt,"i",$cod_usu_param);
+        $cod_usu_param = $cod_usu;
+        if(mysqli_stmt_execute($stmt)){
+            return 1;
+        }else{
+            return 0;
+        }
+    }else{
+        echo "<script> alert('No se pudieron eliminar los me gusta de los comentarios del usuario'); </script>";
+    }
+}
+//==========================================================================================
+
+function mostrarUsuariosGeneric($link,$query){
+    $response = array();
+    $result = mysqli_query($link, $query);
+    if (mysqli_num_rows($result) > 0) {
+        $response["usuarios"] = array();
+        while ($row = mysqli_fetch_array($result)) {
+            $temp = array();
+            echo "<div class='border border-info rounded p-3' style='width: 100%; background-color: white;'>";
+            echo "<span>ID:".$row["cod_usu"]."</span> &nbsp;";
+            echo "<label>";
+            echo "<a href='../CRUDs/perfilPublico.php?cod_usu=".$row["cod_usu"]."'>".$row["nom_usu"]."</a>";
+            echo "</label>";
+            echo "<span>&nbsp;&nbsp;Registrado: ";
+            echo $row["fec_usu"];
+            echo "&nbsp;&nbsp;</span>";
+            echo "</div> </br>";
+            array_push($response["usuarios"], $temp);
+        }
+    } else {
+        echo "<div class='border border-info rounded p-3' style='width: 100%; background-color: white;'>";
+        echo "<p>No se encontró ningún registro.</p>";
+        echo "</div> <br>";
+    }
+}
+
+//===============================ELIMINACIÓN DE USUARIO A SU PROPIA CUENTA=====================================
 //Jerarquía
 //Estas funciones eliminarán todas y cada una de las cosas en las que el usuario tenga algo que ver.
 // 1.- 
@@ -234,7 +395,112 @@ function eliminarCuenta($link){
     }
 }
 
-//=====================================================================
+//===================================================================================================
+
+//===============================ELIMINACIÓN DE USUARIO (MODERADORES)=====================================
+//Jerarquía
+//Estas funciones eliminarán todas y cada una de las cosas en las que el usuario tenga algo que ver.
+// 1.- 
+function eliminarCuentaUsuarioMOD($link){
+    try {
+        buscarSuenosUsuarioUserMOD($link);
+        eliminarSuenosMOD($link);
+        buscarComentariosUserMOD($link);
+        eliminarSeguidosMOD($link);
+        eliminarCuentaMOD($link);
+    } catch (\Throwable $th) {
+        echo "<script> alert('Error: ".$th." '); </script>";
+    }
+}
+//PARA BORRAR COSAS DE CADA SUEÑO DEL USUARIO
+//CREAR UNA FUNCIÓN QUE BORRE LAS COSAS Y USARLA EN OTRA FUNCIÓN QUE BUSQUE LOS SUEÑOS
+//WHILE SELECT SUEÑOS (IDSUE) ELIMINAR X,Y,Z FIN WHILE
+//El "User" Al final significa que se accede por métodos disponibles para el USUARIO, no MODERADORES
+//PRIMERA
+function buscarSuenosUsuarioUserMOD($link){
+    $cod_usu = $_POST["cod_usu"];
+    $query = "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno WHERE cod_usu = ".$cod_usu." ";
+    $result = mysqli_query($link, $query);
+    if (mysqli_num_rows($result) > 0) {
+        $response["suenos"] = array();
+        while ($row = mysqli_fetch_array($result)) {
+            $id_sue = $row["id_sue"];
+            eliminarComSue($link,$id_sue);
+            eliminarLikeSue($link,$id_sue);
+            eliminarLikeCom($link,$id_sue);
+        }
+    }else{
+        echo "<script> alert('No se pudieron buscar y eliminar los sueños del usuario'); </script>";
+    }
+}
+
+function buscarComentariosUserMOD($link){
+    $cod_usu = $_POST["cod_usu"];
+    $query = "SELECT id_usu,id_sue,id_com FROM Comentario WHERE id_usu = ".$cod_usu." ";
+    $result = mysqli_query($link, $query);
+    if (mysqli_num_rows($result) > 0) {
+        $response["suenos"] = array();
+        while ($row = mysqli_fetch_array($result)) {
+            $id_usu = $row["id_usu"];
+            $id_com = $row["id_com"];
+            //Eliminar los likes y dislikes de los comentarios
+            elimLikesComsUsu($link,$id_com);
+            elimComent($link,$cod_usu);
+        }
+    }else{
+        echo "<script> alert('No se pudieron buscar y eliminar los sueños del usuario'); </script>";
+    }
+}
+
+//Borrar todos los sueños de un usuario, el usuario se determina por la SESIÓN. No se puede cambiar
+//por medio de inspeccionar elemento.
+//SEGUNDA
+function eliminarSuenosMOD($link){
+    $sql = "DELETE FROM Sueno WHERE cod_usu = ? ";
+    if($stmt = mysqli_prepare($link,$sql)){
+        mysqli_stmt_bind_param($stmt,"i",$cod_usu_param);
+        $cod_usu_param = $_POST["cod_usu"];
+        if(mysqli_stmt_execute($stmt)){
+            return 1;
+        }else{
+            echo "Fallo al eliminar. El usuario en sesión podría no coincidir con el sueño que se intenta borrar.";
+        }
+    }else{
+        echo "<script> alert('No se pudieron eliminar los sueños del usuario'); </script>";
+    }
+}
+
+//Eliminar comentarios del usuario y los likes correspondientes
+//Eliminar seguidos
+function eliminarSeguidosMOD($link){
+    $sql = "DELETE FROM Seguidores WHERE id_usu_sdo = ? OR id_usu_sdr = ?";
+    if($stmt = mysqli_prepare($link,$sql)){
+        mysqli_stmt_bind_param($stmt,"ii",$id_usu_sdo_param,$id_usu_sdr_param);
+        $id_usu_sdo_param = $_POST["cod_usu"]; $id_usu_sdr_param = $_POST["cod_usu"];;
+        if(mysqli_stmt_execute($stmt)){
+            return 1;
+        }else{
+            return 0;
+        }
+    }
+}
+
+function eliminarCuentaMOD($link){
+    $sql = "DELETE FROM Login WHERE cod_usu = ? ";
+    if($stmt = mysqli_prepare($link,$sql)){
+        mysqli_stmt_bind_param($stmt,"i",$cod_usu_param);
+        $cod_usu_param = $_POST["cod_usu"];
+        if(mysqli_stmt_execute($stmt)){
+            // header("location: ../Registro/logout.php");
+        }else{
+            echo "<script> alert('Fallo al intentar eliminar cuenta'); </script>";
+        }
+    }else{
+        echo "<script> alert('No se pudo eliminar la cuenta'); </script>";
+    }
+}
+
+//===================================================================================================
 
 //Función cantSueUsuario
 //Input: Código de usuario y link de conexión.

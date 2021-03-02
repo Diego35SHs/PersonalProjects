@@ -47,12 +47,12 @@ session_start();
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a href="Registro\reset-pass.php" class="dropdown-item bg-warning" style="color: white;">Cambiar contraseña</a></li>
-                        <li><a href="Registro\logout.php" class="dropdown-item bg-danger" style="color: white;">Cerrar sesión</a></li>
+                        <li><a href="../Registro/reset-pass.php" class="dropdown-item bg-warning" style="color: white;">Cambiar contraseña</a></li>
+                        <li><a href="../Registro/logout.php" class="dropdown-item bg-danger" style="color: white;">Cerrar sesión</a></li>
                     </ul>
                 </li>
             </ul>
-            <form class="form-inline my-2 my-lg-0" method="GET" >
+            <form class="form-inline my-2 my-lg-0" method="GET" action="busqueda.php" >
                 <input class="form-control mr-sm-2" type="search" name="buscar" placeholder="Buscar" aria-label="Buscar">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
             </form>
@@ -91,6 +91,7 @@ session_start();
                     <span id="offsetLimDisplay">--------</span>
                     <button id="siguientes10" class="btn btn-primary">Siguientes 10</button>
                 </div>
+                <br>
             </div>
             <div class="col-md-4">
                 <div id="contenedorMiniPerfil" class="center border border-info rounded p-3" style="background-color:white;">

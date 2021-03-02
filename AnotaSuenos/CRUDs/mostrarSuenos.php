@@ -108,7 +108,7 @@ function prepararQuery($link)
                 echo "</script>";
                 //Fin.
             }else{
-                $query = "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno";
+                $query = "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno ORDER BY id_sue desc";
                 mostrarSuenosEspecial($query, $link);
             }
             break;
@@ -153,6 +153,26 @@ function checkMod($link){
     }
 }
 
+function checkPrivacidad($link,$id_sue){
+    $sql = "SELECT sue_pri FROM Sueno WHERE id_sue = ?";
+    if($stmt = mysqli_prepare($link,$sql)){
+        mysqli_stmt_bind_param($stmt,"i",$param_id_sue);
+        $param_id_sue = $id_sue;
+        if(mysqli_stmt_execute($stmt)){
+            mysqli_stmt_store_result($stmt);
+            if(mysqli_stmt_num_rows($stmt) == 1){
+                mysqli_stmt_bind_result($stmt,$privacidad);
+                if(mysqli_stmt_fetch($stmt)){
+                    return $privacidad;
+                }
+            }else{
+                return "No se pudo encontrar la privacidad del sueño.";
+            }
+        }
+    }
+    return "Posible error de conexión.";
+}
+
 //Función genérica para mostrar sueños:
 //INPUT: Directo - Consulta SQL preparada en el switch y link de conexión.
 //OUTPUT: Los sueños
@@ -171,26 +191,33 @@ function mostrarSuenosGeneric($query, $link)
             $alto = heightTXA($cantidadCarac);
             $cantComentarios = cantidadComentarios($row["id_sue"], $link);
             $cantLikes = cantidadLikes($row["id_sue"], $link);
-            echo "<label>";
-            echo "Por: <a href='../CRUDs/perfilPublico.php?cod_usu=" . $row["cod_usu"] . "'>".$nombreUsuario."</a>";
-            echo "</label>";
-            echo "<textarea class='form-control' id='textAreaSue" . $row["id_sue"] . "' style='resize:none;" . $alto . "border:none;maxlength:500;background-color:white;text-color:black;' disabled='true'>";
-            echo $row["sueno"];
-            echo "</textarea> <br>";
-            echo "<span>";
+            echo "<label>Por: <a href='../CRUDs/perfilPublico.php?cod_usu=" . $row["cod_usu"] . "'>".$nombreUsuario."</a></label>";
+            echo "<textarea class='form-control' id='textAreaSue" . $row["id_sue"] . "' style='resize:none;" . $alto . "border:none;maxlength:500;background-color:white;text-color:black;' disabled='true'>".$row["sueno"]."</textarea> <br>";
             if ($row["sue_pri"] == 0) {
-                echo "Sueño público";
+                echo "<span id='privaSue".$row["id_sue"]."'>Sueño público</span>";
             } else {
-                echo "Sueño privado";
+                echo "<span id='privaSue".$row["id_sue"]."'>Sueño privado</span>";
             }
-            echo "&nbsp;&nbsp;</span>";
+            echo "&nbsp;&nbsp;";
             if ($row["sue_m18"] == 1) {
-                echo "<span> +18 </span> &nbsp;&nbsp;";
+                echo "<span id='estadoMas18".$row["id_sue"]."'> +18 </span> &nbsp;&nbsp;";
+            }else{
+                echo "<span id='estadoMas18".$row["id_sue"]."'></span> &nbsp;";
             }
             echo "<span>";
             if (checkPropiedad($row["cod_usu"]) == 1) {
+                if ($row["sue_m18"] == 1) {
+                    echo "<span><button id='" . $row["id_sue"] . "' class='setNoMas18 btn btn-danger'>No +18</button> </span> &nbsp;";
+                }else{
+                    echo "<span><button id='" . $row["id_sue"] . "' class='setMas18 btn btn-warning'>+18</button> </span> &nbsp;";
+                }
                 echo "<button id='" . $row["id_sue"] . "' class='modificar btn btn-warning'><i id='modIcon".$row["id_sue"]."' class='modIcon fa fa-pencil'></i></button> &nbsp;";
                 echo "<button id='" . $row["id_sue"] . "' class='eliminar btn btn-danger'><i id='modIcon".$row["id_sue"]."' class='eliIcon fa fa-trash'></i></button> &nbsp;";
+                if(checkPrivacidad($link,$row["id_sue"]) == 1){
+                    echo "<button id='" . $row["id_sue"] . "' class='desprivatizar btn btn-danger'><i id='modIcon".$row["id_sue"]."' class='eliIcon fa fa-lock'></i></button> &nbsp;";
+                }else{
+                    echo "<button id='" . $row["id_sue"] . "' class='privatizar btn btn-warning'><i id='modIcon".$row["id_sue"]."' class='eliIcon fa fa-lock'></i></button> &nbsp;";
+                }
             }
             echo "</span>";
             echo "<span>";
@@ -199,8 +226,7 @@ function mostrarSuenosGeneric($query, $link)
             } else {
                 echo "<button id='" . $row['id_sue'] . "' class='dislike btn btn-danger'>Ya no me gusta</button>";
             }
-            echo "&nbsp;&nbsp;Me gusta: ";
-            echo "<input type='text' disabled='true' id='cantLikes" . $row["id_sue"] . "' class='cantLikes' value='" . $cantLikes . "' style='border: none; width: 35px; background-color:white;' >";
+            echo "&nbsp;&nbsp;Me gusta: <input type='text' disabled='true' id='cantLikes" . $row["id_sue"] . "' class='cantLikes' value='" . $cantLikes . "' style='border: none; width: 35px; background-color:white;' >";
             echo "&nbsp;&nbsp;</span>";
             echo "<a  class='btn btn-info another-element' href='../CRUDs/verComentarios.php?id_sue=" . $row["id_sue"] . " '>Comentarios (" . $cantComentarios . ")</a>";
             echo "</div> </br>";
@@ -233,26 +259,32 @@ function mostrarSuenosEspecial($query, $link)
             echo "<textarea class='form-control' id='textAreaSue" . $row["id_sue"] . "' style='resize:none;" . $alto . "border:none;maxlength:500;background-color:white;text-color:black;' disabled='true'>";
             echo $row["sueno"];
             echo "</textarea> <br>";
-            echo "<span>";
             if ($row["sue_pri"] == 0) {
-                echo "Sueño público";
+                echo "<span id='privaSue".$row["id_sue"]."'>Sueño público</span>";
             } else {
-                echo "Sueño privado";
+                echo "<span id='privaSue".$row["id_sue"]."'>Sueño privado</span>";
             }
-            echo "&nbsp;&nbsp;</span>";
+            echo "&nbsp;&nbsp;";
             if ($row["sue_m18"] == 1) {
-                echo "<span> +18 </span> &nbsp;&nbsp;";
+                echo "<span id='estadoMas18".$row["id_sue"]."'> +18 </span> &nbsp;&nbsp;";
+                echo "<span><button id='" . $row["id_sue"] . "' class='setNoMas18 btn btn-danger'>No +18</button> </span> &nbsp;";
+            }else{
+                echo "<span id='estadoMas18".$row["id_sue"]."'>No +18 </span> &nbsp;&nbsp;";
+                echo "<span><button id='" . $row["id_sue"] . "' class='setMas18 btn btn-warning'>+18</button> </span> &nbsp;";
             }
+            //SECCIÓN Modificación - Eliminación - Privatización
             echo "<span>";
-                echo "<button id='" . $row["id_sue"] . "' class='modificar btn btn-warning'><i id='modIcon".$row["id_sue"]."' class='modIcon fa fa-pencil'></i></button> &nbsp;";
+                // echo "<button id='" . $row["id_sue"] . "' class='modificar btn btn-warning'><i id='modIcon".$row["id_sue"]."' class='modIcon fa fa-pencil'></i></button> &nbsp;";
                 echo "<button id='" . $row["id_sue"] . "' class='eliminar btn btn-danger'><i id='modIcon".$row["id_sue"]."' class='eliIcon fa fa-trash'></i></button> &nbsp;";
+                //Implementar un chequeo en la versión Generic para buscar si el usuario es dueño o no.
+                if(checkPrivacidad($link,$row["id_sue"]) == 1){
+                    echo "<button id='" . $row["id_sue"] . "' class='desprivatizar btn btn-danger'><i id='modIcon".$row["id_sue"]."' class='eliIcon fa fa-lock'></i></button> &nbsp;";
+                }else{
+                    echo "<button id='" . $row["id_sue"] . "' class='privatizar btn btn-warning'><i id='modIcon".$row["id_sue"]."' class='eliIcon fa fa-lock'></i></button> &nbsp;";
+                }
             echo "</span>";
+            //Fin sección
             echo "<span>";
-            if (checkLike($row["id_sue"], $_SESSION["id"], $link) == 0) {
-                echo "<button id='" . $row['id_sue'] . "' class='like btn btn-info'>Me gusta</button>";
-            } else {
-                echo "<button id='" . $row['id_sue'] . "' class='dislike btn btn-danger'>Ya no me gusta</button>";
-            }
             echo "&nbsp;&nbsp;Me gusta: <input type='text' disabled='true' id='cantLikes" . $row["id_sue"] . "' class='cantLikes' value='" . $cantLikes . "' style='border: none; width: 35px; background-color:white;' >&nbsp;&nbsp;</span>";
             echo "<a  class='btn btn-info another-element' href='../CRUDs/verComentarios.php?id_sue=" . $row["id_sue"] . " '>Comentarios (" . $cantComentarios . ")</a>";
             echo "</div> </br>";
@@ -450,7 +482,6 @@ function checkPropiedad($id_usu)
     $(document).on("click", ".modificar", function() {
         console.log("Botón modificar sueño - Iniciado");
         var id_sue = $(this).attr("id");
-        
         console.log("ID BUTTON Y SUEÑO = " + id_sue);
         var button = $(this);
         // button.text("Guardar");
@@ -505,7 +536,6 @@ function checkPropiedad($id_usu)
         }).done(function(respuesta) {
             // button.text("Modificar");
             console.log("Quitar clases actuales referentes al funcionamiento del botón");
-            
             button.removeClass("btn-info");
             button.removeClass("guardarCambios");
             console.log("Añadir clases necesarias para el nuevo funcionamiento del botón");
@@ -520,6 +550,98 @@ function checkPropiedad($id_usu)
             event.stopPropagation();
         }).fail(function(respuesta) {
             document.getElementById("textAreaSue" + id_sue).innerHTML = respuesta;
+        });
+    });
+
+    //Privatizar un sueño.
+    //Tomará el sueño correspondiente y lo hará privado.
+    $(document).on("click",".privatizar",function(){
+        var id_sue = $(this).attr("id");
+        var button = $(this);
+        var paquete = "funcion=privatizar&id_sue="+id_sue;
+        $.ajax({
+            type: "POST",
+            url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
+            data: paquete,
+        }).done(function(respuesta){
+            button.removeClass("btn-warning");
+            button.removeClass("privatizar");
+            button.addClass("btn-danger");
+            button.addClass("desprivatizar");
+            document.getElementById("privaSue"+id_sue).innerHTML = "Sueño privado";
+            event.stopPropagation();
+        }).fail(function(respuesta){
+            alert("No se pudo privatizar el sueño");
+        });
+    });
+
+    //Desprivatizar un sueño
+    //Tomará el sueño correspondiente y lo hará no privado
+    $(document).on("click",".desprivatizar",function(){
+        var id_sue = $(this).attr("id");
+        var button = $(this);
+        var paquete = "funcion=desprivatizar&id_sue="+id_sue;
+        $.ajax({
+            type: "POST",
+            url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
+            data: paquete,
+        }).done(function(respuesta){
+            button.removeClass("btn-danger");
+            button.removeClass("desprivatizar");
+            button.addClass("btn-warning");
+            button.addClass("privatizar");
+            document.getElementById("privaSue"+id_sue).innerHTML = "Sueño público";
+            event.stopPropagation();
+        }).fail(function(respuesta){
+            alert("No se pudo desprivatizar el sueño");
+        });
+    });
+
+    $(document).on("click",".setMas18",function(){
+        console.log("=======Cambiando sueño a +18==========");
+        var cod_sue = $(this).attr("id");
+        var button = $(this);
+        var paquete = "funcion=setMas18&id_sue="+cod_sue;
+        console.log(paquete);
+        $.ajax({
+            type: "POST",
+            url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
+            data: paquete,
+        }).done(function(respuesta){
+            button.text("No +18");
+            button.removeClass("btn-warning");
+            button.removeClass("setMas18");
+            button.addClass("btn-danger");
+            button.addClass("setNoMas18");
+            document.getElementById("estadoMas18"+cod_sue).innerHTML = "+18";
+            console.log("Operación completada");
+            event.stopPropagation();
+        }).fail(function(respuesta){
+            alert("No se pudo completar la acción: setMas18");
+        });
+    });
+
+    $(document).on("click",".setNoMas18",function(){
+        console.log("=======Cambiando sueño a no +18==========");
+        var cod_sue = $(this).attr("id");
+        var button = $(this);
+        var paquete = "funcion=setNoMas18&id_sue="+cod_sue;
+        console.log(paquete);
+        $.ajax({
+            type: "POST",
+            url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
+            data: paquete,
+        }).done(function(respuesta){
+            button.text("+18");
+            button.removeClass("btn-danger");
+            button.removeClass("setNoMas18");
+            button.addClass("btn-warning");
+            button.addClass("setMas18");
+            document.getElementById("estadoMas18"+cod_sue).innerHTML = "No +18";
+            console.log("Operación completada");
+            event.stopPropagation();
+        }).fail(function(respuesta){
+            alert("No se pudo completar la acción: setNoMas18");
         });
     });
 
@@ -549,12 +671,10 @@ function checkPropiedad($id_usu)
 
     }
 
-
     //Función tomada desde Stack Overflow - Usuario Dan Heberden
     function changeURL( url ) {
         document.location = url;
     }
     //Fin.
 </script>
-
 </html>

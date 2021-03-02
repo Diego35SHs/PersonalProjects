@@ -117,6 +117,9 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                         <li> <a href="https://stackoverflow.com/questions/8919682/remove-all-styling-formatting-from-hyperlinks" target="_blank">Quitar estilo y formato de links - StackOverflow</a> </li>
                         <li> <a href="https://stackoverflow.com/questions/13520127/submit-html-form-on-self-page" target="_blank">Enviar un formulario a la página actual - StackOverflow</a> </li>
                         <li> <a href="https://patorjk.com/software/taag/#p=display&f=Graffiti&t=Type%20Something%20" target="_blank">Creador de texto en ASCII - PatorJK</a> </li>
+                        <li> <a href="https://www.w3schools.com/jsref/met_document_createelement.asp" target="_blank">Crear un botón con JavaScript - W3Schools</a> </li>
+                        <li> <a href="https://stackoverflow.com/questions/30572521/create-a-button-and-set-its-class-using-javascript" target="_blank">Saif: Añadir clases a un botón creado con JavaScript - StackOverflow</a> </li>
+                        <li> <a href="https://stackoverflow.com/questions/19625646/javascript-adding-an-id-attribute-to-another-created-element" target="_blank">Añadir ID a un botón creado con JavaScript - StackOverflow</a> </li>
                     </ul>
                     <p><b>Notas, errores que no debería repetir y cosas aprendidas</b></p>
                     <ul>
@@ -132,6 +135,21 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                     <p>Este es el archivo donde se han ido anotando los avances a medida que se hacen. Las versiones se separan por subida a github.</p>
                     <ul>
                         <li> <a href="TODO.txt">Ver archivo con notas del parche (No tiene CSS)</a> </li>
+                    </ul>
+                    <p><b>Características "canceladas"</b></p>
+                    <p>Las siguientes caraterísticas estaban planeadas posterior a la versión 1.0, el poco interés en este proyecto significa que el desarrollo del proyecto no será prioridad una vez la versión 1.0 se lance.</p>
+                    <ul>
+                        <li>Fotos de perfil</li>
+                        <li>Ver usuarios que dieron me gusta a un sueño</li>
+                        <li>Ver cantidad de usuarios seguidos por un usuario</li>
+                        <li>Aplicación de Android</li>
+                        <li>Optimizaciones a la versión móvil</li>
+                        <li>Tema Oscuro</li>
+                        <li>Página de ayuda</li>
+                        <li>Consejos para dormir</li>
+                        <li>Espacio publicitario</li>
+                        <li>Compra de dominio</li>
+                        <li>Pago de hosting, nos quedamos en este hosting "demasiado bueno para ser gratis"</li>
                     </ul>
                 </div>
             </div>

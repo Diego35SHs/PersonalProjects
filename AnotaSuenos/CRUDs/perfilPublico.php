@@ -528,7 +528,6 @@ function heightTXA($cantidadCarac){
 }
 
 //Offsets.
-//TODO: Encontrar la manera de que los offsets se apliquen a cada filtro.
 //Idea: Mostrar el filtro actual en algun lado, ponerle id que cambie cuando se cambie de filtro
 //Tomar el filtro en estas funciones y mandarlo a la consulta, de alguna manera. Quizás cambiar la opcion con una variable.
 $('#siguientes10').click(function(){

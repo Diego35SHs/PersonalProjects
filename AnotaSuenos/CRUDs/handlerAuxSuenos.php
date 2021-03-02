@@ -52,6 +52,18 @@
         case "contarSueFiltro":
             prepararCountQuery($link);
         break;
+        case "setMas18":
+            setMas18($link);
+        break;
+        case "setNoMas18":
+            setNoMas18($link);
+        break;
+        case "privatizar":
+            privatizarSue($link);
+        break;
+        case "desprivatizar":
+            desprivatizarSue($link);
+        break;
     }
 
     //Contar cantidad de sueños basado en el filtro actual.
@@ -274,6 +286,70 @@
             return null;
         }else{
             echo "Falla de conexión.";
+        }
+    }
+
+    function setMas18($link){
+        $id_sue = $_POST["id_sue"];
+        $sql = "UPDATE Sueno SET sue_m18 = 1 WHERE id_sue = ?";
+        if($stmt = mysqli_prepare($link,$sql)){
+            mysqli_stmt_bind_param($stmt,"i",$cod_sue_param);
+            $cod_sue_param = $id_sue;
+            if(mysqli_stmt_execute($stmt)){
+                echo "+18";
+            }else{
+                echo "ERRRRORR";
+            }
+        }else{
+            echo "ERROR";
+        }
+    }
+
+    function setNoMas18($link){
+        $id_sue = $_POST["id_sue"];
+        $sql = "UPDATE Sueno SET sue_m18 = 0 WHERE id_sue = ?";
+        if($stmt = mysqli_prepare($link,$sql)){
+            mysqli_stmt_bind_param($stmt,"i",$cod_sue_param);
+            $cod_sue_param = $id_sue;
+            if(mysqli_stmt_execute($stmt)){
+                echo "No +18";
+            }else{
+                echo "ERRRRORR";
+            }
+        }else{
+            echo "ERROR";
+        }
+    }
+
+    function privatizarSue($link){
+        $id_sue = $_POST["id_sue"];
+        $sql = "UPDATE Sueno SET sue_pri = 1 WHERE id_sue = ?";
+        if($stmt = mysqli_prepare($link,$sql)){
+            mysqli_stmt_bind_param($stmt,"i",$cod_sue_param);
+            $cod_sue_param = $id_sue;
+            if(mysqli_stmt_execute($stmt)){
+                echo "Sueño privado";
+            }else{
+                echo "ERRRRORR";
+            }
+        }else{
+            echo "ERROR";
+        }
+    }
+
+    function desprivatizarSue($link){
+        $id_sue = $_POST["id_sue"];
+        $sql = "UPDATE Sueno SET sue_pri = 0 WHERE id_sue = ?";
+        if($stmt = mysqli_prepare($link,$sql)){
+            mysqli_stmt_bind_param($stmt,"i",$cod_sue_param);
+            $cod_sue_param = $id_sue;
+            if(mysqli_stmt_execute($stmt)){
+                echo "Sueño público";
+            }else{
+                echo "ERRRRORR";
+            }
+        }else{
+            echo "ERROR";
         }
     }
 
