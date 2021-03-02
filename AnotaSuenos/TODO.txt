@@ -158,3 +158,22 @@ Versión 1.4 - Alpha
 -Se implementó la barra de navegación en la página de ajustes.
 
 Versión 1.5 - BETA 1
+-Los moderadores pueden ver un listado completo de sueños y usuarios.
+-Se creó un chequeo que distingue a usuarios de moderadores.
+-Se implementó una función para asignar y desasignar moderadores, solo disponible para el administrador.
+-Se implementó un chequeo para evitar que un moderador borre su propia cuenta pero continúe en sesión.
+-Se identificó una prueba que realizar acerca del borrado de cuentas (redireccionamiento).
+-Se implementó la función para borrar usuarios por medio de las herramientas de moderación.
+-Se implementó un botón para cambiar sueños que no son +18 a +18 y viceversa.
+-Los moderadores ya no pueden dar Me Gusta a los sueños desde las herramientas de moderación, este cambio es puramente para mejorar la presentación de las herramientas, aún pueden realizar esta acción desde el modo usuario.
+-Se solucionó un problema de lógica que mostraba el botón de "desprivatizar" en sueños que no son privados.
+-Se implementó la función para que los usuarios privaticen y desprivaticen su sueños.
+-Se implementó la función para que los usuarios que no sean moderadores puedan cambiar sus sueños de +18 a no +18.
+-Se solucionó un problema en el que no se reflejaba el cambio de privacidad en la página de los moderadores.
+-Los moderadores ahora pueden eliminar cualquier comentario.
+-Los dueños de los sueños pueden eliminar comentarios en su sueños.
+-Se solucionó un problema que impedía que los usuarios cerraran sesión o cambiaran sus contraseñas desde la página para ver comentarios de un sueño.
+-Se deshabilitó la opción que permitía a los moderadores editar sueños a su antojo.
+-Se solucionó un problema que impedía que los usuarios buscaran sueños a partir de la vista de comentarios.
+
+Versión 1.6 - Beta 2

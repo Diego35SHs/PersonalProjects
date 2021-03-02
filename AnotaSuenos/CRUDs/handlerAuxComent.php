@@ -63,10 +63,11 @@
     //Output: Mensaje de éxito o fallo de la operación
     function eliminarComentario($link){
         $id_com = $_POST["id_com"];
-        $sql = "DELETE FROM Comentario WHERE id_com = ? AND id_usu = ? ";
+        $sql = "DELETE FROM Comentario WHERE id_com = ?";
         if($stmt = mysqli_prepare($link,$sql)){
-            mysqli_stmt_bind_param($stmt,"ii",$id_com_param,$cod_usu_param);
-            $id_com_param = $id_com; $cod_usu_param = $_SESSION["id"];
+            mysqli_stmt_bind_param($stmt,"i",$id_com_param);
+            $id_com_param = $id_com; 
+            // $cod_usu_param = $_SESSION["id"];
             if(mysqli_stmt_execute($stmt)){
                 eliminarLikeCom($link,$id_com);
                 echo "Eliminado.";

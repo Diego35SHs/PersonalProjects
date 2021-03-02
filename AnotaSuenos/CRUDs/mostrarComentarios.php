@@ -31,6 +31,29 @@ switch($funcion){
     break;
 }
 
+//MOD
+function checkMod($link){
+    $sql = "SELECT id_mod FROM modd WHERE id_usu = ?";
+    if ($stmt = mysqli_prepare($link, $sql)) {
+        mysqli_stmt_bind_param($stmt, "i", $param_codusu);
+        $param_codusu = $_SESSION["id"];
+        if (mysqli_stmt_execute($stmt)) {
+            mysqli_stmt_store_result($stmt);
+            if (mysqli_stmt_num_rows($stmt) == 1) {
+                mysqli_stmt_bind_result($stmt, $registro);
+                if (mysqli_stmt_fetch($stmt)) {
+                    return 1;
+                }
+            } else {
+                echo "<script>"; 
+                echo "alert('No eres parte del staff. Volviendo a home..');"; 
+                echo "</script>";
+                header("location: ../index.php");
+            }
+        }
+    }
+}
+
 //Función verSueno
 //Input: Ninguno directo - Toma el id del sueño con metodo GET
 //Output: Mostrar el sueño
@@ -164,6 +187,12 @@ function verComentarios($link){
             echo "<span>";
                     if(checkPropiedadCom($row["id_usu"]) == 1){
                         echo "<button id='" . $row["id_com"] . "' class='modificarCome btn btn-warning'><i id='modIcon".$row["id_com"]."' class='modIcon fa fa-pencil'></i></button> &nbsp;";
+                        echo "<button id='" . $row["id_com"] . "' class='eliminarCome btn btn-danger'><i id='modIcon".$row["id_com"]."' class='eliIcon fa fa-trash'></i></button> &nbsp;";
+                    }
+                    else if(checkPropiedad($link)  == 1){
+                        echo "<button id='" . $row["id_com"] . "' class='eliminarCome btn btn-danger'><i id='modIcon".$row["id_com"]."' class='eliIcon fa fa-trash'></i></button> &nbsp;";
+                    }
+                    else if(checkMod($link) == 1){
                         echo "<button id='" . $row["id_com"] . "' class='eliminarCome btn btn-danger'><i id='modIcon".$row["id_com"]."' class='eliIcon fa fa-trash'></i></button> &nbsp;";
                     }
                     if(checkLikeCom($row["id_com"],$row["id_usu"],$link) == 0){

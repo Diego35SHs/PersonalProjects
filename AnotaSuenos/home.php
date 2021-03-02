@@ -10,7 +10,6 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 <!DOCTYPE html>
 <html lang="es">
 <html>
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -105,7 +104,9 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
             <div class="col-md-4">
                 <div id="contenedorMiniPerfil" class="center border border-info rounded p-3" style="background-color:white;">
                     <span><img src="https://img.icons8.com/ios-filled/50/000000/help.png" width="50px" height="50px" alt="FDP" /></span>
-                    <span id="nomUsuMiniPerfil"> <a href="../CRUDs/perfilPublico.php?cod_usu=<?php echo $_SESSION["id"]; ?>"> <?php echo $_SESSION["username"]; ?></a></span>
+                    <span id="nomUsuMiniPerfil"> <a href="../CRUDs/perfilPublico.php?cod_usu=<?php echo $_SESSION["id"]; ?>"> <?php echo $_SESSION["username"]; ?></a></span> <br><br>
+                    <p id="estadoMod">Cargando...</p>
+                    <p id="botonMod"></p>
                 </div> <br>
                 <div id="reglasGenerales" class="center border border-info rounded p-3" style="background-color:white;">
                     <p class="text-center"><b>Reglas generales</b></p>
@@ -115,7 +116,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                         <li>Links.</li>
                         <li>Contenido ilegal de todo tipo.</li>
                         <li>Funas.</li>
-                        <li>Protestas políticas.</li>
+                        <li>Mensajes con el solo propósito de ser protestas.</li>
                     </ul>
                     <p>Básicamente, evitemos tratar este sitio como Twitter.</p>
                     <p>Extra: ¿500 caractéres no es suficiente? Puedes usar los comentarios de tu sueño para continuarlo, también tienen 500 caractéres como máximo.</p>
@@ -154,6 +155,41 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         listarRegistrosNPVNM18(); //No privados, no +18.
         listarCantidadSuenos(); //Lista la cantidad de sueños
         mostrarEstadisticas(); //Ejecuta todas las funciones para mostrar estadísticas.
+        checkModJS();
+    });
+
+    function checkModJS(){
+        var paquete = "funcion=checkMod";
+        $.ajax({
+            type: "POST",
+            url: "http://anotasuenos:8080/Registro/mod.php",
+            dataType: "html",
+            data: paquete,
+        }).done(function(respuesta){
+            if(respuesta > 1 || respuesta <= 0){
+                document.getElementById("estadoMod").innerHTML = "Usuario normal";
+                return null;
+            }else{
+                document.getElementById("estadoMod").innerHTML = "Moderador";
+                crearBotonMod();
+            }
+        }).fail(function(){
+            // alert("No se pudo verificar tu rol de staff. Volviendo a home.");
+        })
+    }
+
+    function crearBotonMod(){
+        var btn = document.createElement("BUTTON");
+        btn.innerHTML = "Herramientas de moderación";
+        btn.className += " btn";
+        btn.className += " btn-info";
+        btn.id = "herramientasMod";
+        var p = document.getElementById("botonMod");
+        p.append(btn);
+    }
+
+    $(document).on("click","#herramientasMod",function(){
+        parent.changeURL("Registro/modGUI");
     });
 
     $('#publicarSueno').click(function() {
@@ -327,6 +363,12 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
             $("#mostrarSuenosPublic").html("Algo falló.");
         });
     });
+
+    //Función tomada desde Stack Overflow - Usuario Dan Heberden
+    function changeURL( url ) {
+        document.location = url;
+    }
+    //Fin.
 
     //Esta función se encuentra aquí en lugar del handler de sueños porque
     //es necesario llamar a la función para listar registros nuevamente tras eliminar un sueño
