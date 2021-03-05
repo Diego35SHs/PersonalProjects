@@ -62,6 +62,76 @@ switch($funcion){
     case "listarUsuarios":
         prepararQueryListUsu($link);
     break;
+    case "procCambioNombre":
+        if(comprobarNombre($link) == 1){
+            echo 0;
+            return null;
+        }else{
+            if(updateNombre($link) == 1){
+                echo 1;
+            }
+        }
+    break;
+    case "resetDescUsu":
+        resetDesc($link);
+    break;
+}
+
+function resetDesc($link){
+    $id_usu = $_POST["id_usu"];
+    $nueva_des = "El moderador ".$_SESSION["username"]." restableció la descripción de este usuario.";
+    $sql = "UPDATE Login SET des_usu=? WHERE cod_usu=? ";
+    if($stmt = mysqli_prepare($link,$sql)){
+        mysqli_stmt_bind_param($stmt,"si",$des_param,$cod_usu_param);
+        $des_param = $nueva_des; 
+        $cod_usu_param = $id_usu;
+        if(mysqli_stmt_execute($stmt)){
+            return 1;
+        }else{
+            return 0;
+        }
+    }else{
+        echo "Falla de conexión.";
+    }
+}
+
+function comprobarNombre($link){
+    $sql = "SELECT cod_usu FROM Login WHERE nom_usu = ?";
+        if($stmt = mysqli_prepare($link, $sql)){
+            mysqli_stmt_bind_param($stmt,"s",$param_username);
+            $param_username = trim($_POST["nuevoNombre"]);
+            if(mysqli_stmt_execute($stmt)){
+                mysqli_stmt_store_result($stmt);
+                if(mysqli_stmt_num_rows($stmt) == 1){
+                    //Nombre de usuario en uso.
+                    return 1;
+                }else{
+                    //Nombre de usuario libre.
+                    return 0;
+                }
+            }else{
+                echo "Algo salió mal, inténtelo de nuevo más tarde";
+            }
+            mysqli_stmt_close($stmt);
+        }
+}
+
+function updateNombre($link){
+    $nuevo_nom = $_POST["nuevoNombre"];
+    $cod_usu = $_SESSION["id"];
+    $sql = "UPDATE Login SET nom_usu=? WHERE cod_usu=? ";
+    if($stmt = mysqli_prepare($link,$sql)){
+        mysqli_stmt_bind_param($stmt,"si",$nom_param,$cod_usu_param);
+        $nom_param = $nuevo_nom; 
+        $cod_usu_param = $cod_usu;
+        if(mysqli_stmt_execute($stmt)){
+            return 1;
+        }else{
+            return 0;
+        }
+    }else{
+        echo "Falla de conexión.";
+    }
 }
 
 function prepararQueryListUsu($link){

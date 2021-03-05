@@ -1,7 +1,10 @@
 <?php 
 session_start();
 require "../config.php";
-
+if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+    header("location: ../index.php");
+    exit;
+}
 
 ?>
 
@@ -101,6 +104,7 @@ require "../config.php";
         $.ajax({
             type: "GET",
             url: "http://anotasuenos:8080/CRUDs/mostrarSuenos.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/mostrarSuenos.php",
             dataType: "html",
             data: paquete,
         }).done(function(respuesta) {
@@ -115,6 +119,7 @@ require "../config.php";
         $.ajax({
             type: "POST",
             url: "http://anotasuenos:8080/Registro/mod.php",
+            // url: "http://oniricnote.epizy.com/Registro/mod.php",
             dataType: "html",
             data: paquete,
         }).done(function(respuesta){
@@ -144,6 +149,7 @@ require "../config.php";
             $.ajax({
                 type: "POST",
                 url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
+                // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxSuenos.php",
                 data: paquete,
             }).done(function(respuesta) {
                 alert(respuesta);
@@ -174,6 +180,7 @@ require "../config.php";
         $.ajax({
             type: "POST",
             url: "http://anotasuenos:8080/CRUDs/handlerAuxUsuario.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxUsuario.php",
             data: paquete,
         }).done(function(respuesta){
             $("#mostrarSuenos").html(respuesta);
@@ -192,6 +199,7 @@ require "../config.php";
             $.ajax({
             type: "POST",
             url: "http://anotasuenos:8080/CRUDs/handlerAuxUsuario.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxUsuario.php",
             data: paquete,
         }).done(function(respuesta){
             mostrarUsuarios();
@@ -212,6 +220,7 @@ require "../config.php";
         $.ajax({
             type: "POST",
             url: "http://anotasuenos:8080/CRUDs/handlerAuxUsuario.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxUsuario.php",
             data: paquete,
         }).done(function(respuesta){
             button.text("Desasignar moderador");
@@ -234,6 +243,7 @@ require "../config.php";
         $.ajax({
             type: "POST",
             url: "http://anotasuenos:8080/CRUDs/handlerAuxUsuario.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxUsuario.php",
             data: paquete,
         }).done(function(respuesta){
             button.text("Asignar moderador");
