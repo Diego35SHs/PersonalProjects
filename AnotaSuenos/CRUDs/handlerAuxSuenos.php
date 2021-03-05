@@ -420,5 +420,3 @@
         }
         return $altoTXA;
     }
-
-?>

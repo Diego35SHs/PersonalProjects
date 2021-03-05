@@ -54,30 +54,66 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="../estilo.css">
 </head>
-<body>
+<body style="background-color: #48BEFF;">
 <div class="wrapper">
-        <h2>Cambiar contraseña</h2>
-        <p>Llene el formulario para cambiar su contraseña:</p>
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post"> 
-            <div class="form-group <?php echo (!empty($new_password_err)) ? 'has-error' : ''; ?>">
-                <label>Nueva contraseña:</label>
-                <input type="password" name="new_password" class="form-control" value="<?php echo $new_password; ?>">
-                <span class="help-block"><?php echo $new_password_err; ?></span>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <br>
+                    <h2>Cambiar contraseña</h2>
+                    <p>Llene el formulario para cambiar su contraseña:</p>
+                    <div class="border border-info rounded p-3" style="background-color:white;">
+                    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post"> 
+                        <div class="form-group <?php echo (!empty($new_password_err)) ? 'has-error' : ''; ?>">
+                            <label>Nueva contraseña:</label>
+                            <input type="password" name="new_password" class="form-control" value="<?php echo $new_password; ?>">
+                            <span class="help-block"><?php echo $new_password_err; ?></span>
+                        </div>
+                        <div class="form-group <?php echo (!empty($confirm_password_err)) ? 'has-error' : ''; ?>">
+                            <label>Confirmar contraseña:</label>
+                            <input type="password" name="confirm_password" class="form-control">
+                            <span class="help-block"><?php echo $confirm_password_err; ?></span>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" class="btn btn-primary" value="Cambiar contraseña">
+                            <a class="btn btn-danger" href="../home.php" data-toggle="tooltip" title="Volver a home.">Cancelar</a>
+                        </div>
+                    </form>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                <br><br><br><br> <br>
+                    <div class="border border-info rounded p-3" style="background-color:white;">
+                        <p><b>Antes de cambiar tu contraseña:</b></p>
+                        <ul>
+                            <li>Se cerrará tu sesion y deberás iniciarla otra vez con tu nueva contraseña.</li>
+                            <li>No existe un historial de contraseñas.</li>
+                            <li>De momento, no existe forma de recuperar tu contraseña o autenticación en dos pasos (2FA).</li>
+                            <li>Tu contraseña es sensible a mayusculas y minúsculas, no lo olvides.</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-            <div class="form-group <?php echo (!empty($confirm_password_err)) ? 'has-error' : ''; ?>">
-                <label>Confirmar contraseña:</label>
-                <input type="password" name="confirm_password" class="form-control">
-                <span class="help-block"><?php echo $confirm_password_err; ?></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" class="btn btn-primary" value="Cambiar contraseña">
-                <a class="btn btn-link" href="../home.php">Cancelar</a>
-            </div>
-        </form>
+        </div>
+        
     </div>   
 </body>
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();  
+    iniToolTip();
+});
+
+function iniToolTip(){
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
+})
+}
+</script>
 </html>

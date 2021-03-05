@@ -1,4 +1,4 @@
-<?php 
+<?php
 session_start();
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("location: index.php");
@@ -8,6 +8,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -20,6 +21,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="../estilo.css">
 </head>
+
 <body style="background-color: #48BEFF;">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navBar" aria-controls="navBar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,7 +54,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                     </ul>
                 </li>
             </ul>
-            <form class="form-inline my-2 my-lg-0" method="GET" >
+            <form class="form-inline my-2 my-lg-0" method="GET">
                 <input class="form-control mr-sm-2" type="search" name="buscar" placeholder="Buscar" aria-label="Buscar">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
             </form>
@@ -60,21 +62,21 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     </nav>
     <div class="container">
         <div class="row">
-        <div class="col-md-12">
-            <br>
-            <p class="h3"><span>Buscando sueños que contegan "</span><span id="termBusqueda"><?php echo $_GET["buscar"]; ?></span><span>"</span></p>
-            <br>
+            <div class="col-md-12">
+                <br>
+                <p class="h3"><span>Buscando sueños que contegan "</span><span id="termBusqueda"><?php echo $_GET["buscar"]; ?></span><span>"</span></p>
+                <br>
             </div>
         </div>
         <div class="row">
             <div class="col-md-8">
-            <div id="cantidadSuenos" class="text-center border border-info rounded p-1" style="background-color: white; height: 40px;">
-                        <span>Hay </span>
-                        <span id="cantidadTotalSuenos"></span>
-                        <span id="filtroSueList"> coincidencia(s).</span>
-                    </div> <br>
+                <div id="cantidadSuenos" class="text-center border border-info rounded p-1" style="background-color: white; height: 40px;">
+                    <span>Hay </span>
+                    <span id="cantidadTotalSuenos"></span>
+                    <span id="filtroSueList"> coincidencia(s).</span>
+                </div> <br>
                 <div id="mostrarSuenoBus">Cargando sueños...</div>
-            
+
                 <div id="listContainer" class="border border-info rounded p-3 text-center" style="width:100%;background-color:white;">
                     <button id="anteriores10" class="btn btn-primary">Anteriores 10</button>
                     <span>Mostrando: </span>
@@ -90,7 +92,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                     <span id="nomUsuMiniPerfil"> <a href="../CRUDs/perfilPublico.php?cod_usu=<?php echo $_SESSION["id"]; ?>"> <?php echo $_SESSION["username"]; ?></a></span>
                 </div>
             </div>
-            
+
         </div>
     </div>
     <?php
@@ -100,14 +102,14 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     ?>
 </body>
 <script>
-    $(document).ready(function(){
+    $(document).ready(function() {
         buscar();
         listarCantidadSueCustom();
     });
 
-    function buscar(){
+    function buscar() {
         var termBusqueda = document.getElementById("termBusqueda").innerHTML;
-        var paquete = "function=mostrarSueCustomQuery&opcion=busqueda&termBusqueda="+termBusqueda+"&offset=0";
+        var paquete = "function=mostrarSueCustomQuery&opcion=busqueda&termBusqueda=" + termBusqueda + "&offset=0";
         var offSetDspl = "0";
         document.getElementById("offsetDisplay").innerHTML = offSetDspl;
         document.getElementById("offsetLimDisplay").innerHTML = parseInt(offSetDspl) + parseInt(10);
@@ -115,10 +117,11 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         $.ajax({
             type: "GET",
             url: "http://anotasuenos:8080/CRUDs/mostrarSuenos.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/mostrarSuenos.php",
             data: paquete,
-        }).done(function(respuesta){
+        }).done(function(respuesta) {
             $("#mostrarSuenoBus").html(respuesta);
-        }).fail(function(){
+        }).fail(function() {
             $("#mostrarSuenoBus").html("No se pudieron recuperar los registros.");
         });
     }
@@ -134,14 +137,14 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         //En este caso, se hace automáticamente.
         var termBusqueda = document.getElementById("termBusqueda").innerHTML;
         var opcion = document.getElementById("filtroActual").value;
-        var offset = "function=mostrarSueCustomQuery&opcion=" + opcion + "&offset=" + newOffset+"&termBusqueda="+termBusqueda;
+        var offset = "function=mostrarSueCustomQuery&opcion=" + opcion + "&offset=" + newOffset + "&termBusqueda=" + termBusqueda;
         var offsetDspl = newOffset;
         var offsetLimDspl = parseInt(offsetDspl) + parseInt(10);
         console.log("Siguientes 10: Variables definidas");
 
         var limite = parseInt(document.getElementById("cantidadTotalSuenos").innerHTML);
         if (limite > newOffset && limite < offsetLimDspl) {
-            offset = "function=mostrarSueCustomQuery&opcion=" + opcion + "&offset=" + limite+"&termBusqueda="+termBusqueda;
+            offset = "function=mostrarSueCustomQuery&opcion=" + opcion + "&offset=" + limite + "&termBusqueda=" + termBusqueda;
         }
 
         //Mostrar nuevos valores en la página
@@ -151,12 +154,12 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         //Limitar la cantidad máxima de sueños que se pueden mostrar.
         console.log(document.getElementById("cantidadTotalSuenos").innerHTML);
 
-
         //TODO: Limitar la cantidad de registros máxima a la cantidad total de registros.
 
         $.ajax({
             type: "GET",
             url: "http://anotasuenos:8080/CRUDs/mostrarSuenos.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/mostrarSuenos.php",
             dataType: "html",
             data: offset,
         }).done(function(respuesta) {
@@ -187,7 +190,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         //Definir variables para el offset.
         var termBusqueda = document.getElementById("termBusqueda").innerHTML;
         var opcion = document.getElementById("filtroActual").value;
-        var offset = "function=mostrarSueCustomQuery&opcion=" + opcion + "&offset=" + parseInt(newOffset)+"&termBusqueda="+termBusqueda;
+        var offset = "function=mostrarSueCustomQuery&opcion=" + opcion + "&offset=" + parseInt(newOffset) + "&termBusqueda=" + termBusqueda;
         var offsetDspl = newOffset;
         var offsetLim = parseInt(offsetDspl) + parseInt(10);
         console.log("Anteriores 10: Variables definidas");
@@ -199,6 +202,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         $.ajax({
             type: "GET",
             url: "http://anotasuenos:8080/CRUDs/mostrarSuenos.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/mostrarSuenos.php",
             dataType: "html",
             data: offset,
         }).done(function(respuesta) {
@@ -230,13 +234,14 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     //y la consulta ajax llevará este valor a la opción que ejecutará la función
     //para contar sueños. La consulta estará preparada de antemano en el switch
     //y devolverá el valor correspondiente.
-    function listarCantidadSueCustom(){
-        var filtro = document.getElementById("filtroActual").value;        
+    function listarCantidadSueCustom() {
+        var filtro = document.getElementById("filtroActual").value;
         var termBusqueda = document.getElementById("termBusqueda").innerHTML;
-        var paquete = "funcion=contarSueFiltro&opcion="+filtro+"&termBusqueda="+termBusqueda;
+        var paquete = "funcion=contarSueFiltro&opcion=" + filtro + "&termBusqueda=" + termBusqueda;
         $.ajax({
             type: "POST",
             url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxSuenos.php",
             dataType: "html",
             data: paquete,
         }).done(function(res) {
@@ -245,7 +250,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
             $("#cantidadTotalSuenos").html("Algo falló.");
         });
     }
-    
+
     //Cambiar clase active de los link del navBar
     //Un tanto ineficiente, pero solo se ejecuta al presionar el botón.
     $(document).on("click", ".nav-link", function() {
@@ -263,6 +268,6 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         $(opcion5).removeClass("active");
         idopcion.addClass("active");
     });
-    
 </script>
+
 </html>

@@ -1,6 +1,7 @@
 <?php
 require "config.php";
 session_start();
+//Chequear si es un usuario en sesión el que está intentando ingresar a la página.
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("location: index.php");
     exit;
@@ -17,11 +18,13 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="estilo.css">
-    <link rel="icon" type="image/png" href="Recursos/Fotos/ONPLACEHOLDERFAV.png"/>
+    <link rel="icon" type="image/png" href="Recursos/Fotos/ONPLACEHOLDERFAV.png" />
 </head>
+
 <body style="background-color: #48BEFF;">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navBar" aria-controls="navBar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,10 +40,10 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                     <span class="nav-link" id="op2"><a href="javascript:void(0);" id="verSeguidos" style="text-decoration: none; color:inherit;">Seguidos</a></span>
                 </li>
                 <li class="nav-item">
-                    <span class="nav-link" id="op3">  <a href="javascript:void(0);" id="verPopulares" style="text-decoration: none; color:inherit;" >Populares</a></span>
+                    <span class="nav-link" id="op3"> <a href="javascript:void(0);" id="verPopulares" style="text-decoration: none; color:inherit;">Populares</a></span>
                 </li>
                 <li class="nav-item">
-                    <span class="nav-link" id="op4">  <a href="javascript:void(0);" id="verMas18" style="text-decoration: none; color:inherit;" >+18</a></span>
+                    <span class="nav-link" id="op4"> <a href="javascript:void(0);" id="verMas18" style="text-decoration: none; color:inherit;">+18</a></span>
                 </li>
                 <li class="nav-item">
                     <a href="../CRUDs/perfilPublico.php?cod_usu=<?php echo $_SESSION["id"]; ?>" class="nav-link" id="op5"> <?php echo $_SESSION["username"]; ?> </a>
@@ -92,13 +95,13 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                     </div>
                 </div>
                 <div id="listContainer" class="border border-info rounded p-3 text-center" style="width:100%;background-color:white;">
-                    <a href="home.php" class="btn btn-info">Inicio</a>
-                    <button id="anteriores10" class="btn btn-primary">Anteriores 10</button>
+                    <a href="home.php" class="btn btn-info" data-toggle="tooltip" title="Quitar filtros y volver al inicio">Inicio</a>
+                    <button id="anteriores10" class="btn btn-primary" data-toggle="tooltip" title="Retroceder">Anteriores 10</button>
                     <span>Mostrando: </span>
                     <span id="offsetDisplay">-----------</span>
                     <span> - </span>
                     <span id="offsetLimDisplay">-----------</span>
-                    <button id="siguientes10" class="btn btn-primary">Siguientes 10</button>
+                    <button id="siguientes10" class="btn btn-primary" data-toggle="tooltip" title="Avanzar">Siguientes 10</button>
                 </div>
             </div>
             <div class="col-md-4">
@@ -145,7 +148,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     <br>
     <?php
     echo "<div hidden='true'>";
-    echo "<input type='hidden' id='filtroActual' value='default '";
+    echo "<input type='hidden' id='filtroActual' value='default'>";
     echo " </div>";
     ?>
 </body>
@@ -156,29 +159,35 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         listarCantidadSuenos(); //Lista la cantidad de sueños
         mostrarEstadisticas(); //Ejecuta todas las funciones para mostrar estadísticas.
         checkModJS();
+        $('[data-toggle="tooltip"]').tooltip();
     });
 
-    function checkModJS(){
+    //Verificar si el usuario en sesión es un moderador o no.
+    //Si lo es, se cambiará el contenido de un texto que partirá diciendo "Cargando..." a "Moderador" y se creará un botón que le permitirá acceder a las herramientas de moderación
+    //Caso contrario, si el usuario no es moderador, se dejará como "Usuario normal" y no se creará un botón
+    function checkModJS() {
         var paquete = "funcion=checkMod";
         $.ajax({
             type: "POST",
             url: "http://anotasuenos:8080/Registro/mod.php",
+            // url: "http://oniricnote.epizy.com/Registro/mod.php",
             dataType: "html",
             data: paquete,
-        }).done(function(respuesta){
-            if(respuesta > 1 || respuesta <= 0){
+        }).done(function(respuesta) {
+            if (respuesta > 1 || respuesta <= 0) {
                 document.getElementById("estadoMod").innerHTML = "Usuario normal";
                 return null;
-            }else{
+            } else {
                 document.getElementById("estadoMod").innerHTML = "Moderador";
                 crearBotonMod();
             }
-        }).fail(function(){
-            // alert("No se pudo verificar tu rol de staff. Volviendo a home.");
-        })
+        }).fail(function() {})
     }
 
-    function crearBotonMod(){
+    //Crear botón para acceder a las herramientas de moderación.
+    //Esta función es llamada a partir de checkModJS()
+    //No se debe llamar por si sola sin realizar el chequeo primero.
+    function crearBotonMod() {
         var btn = document.createElement("BUTTON");
         btn.innerHTML = "Herramientas de moderación";
         btn.className += " btn";
@@ -188,10 +197,19 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         p.append(btn);
     }
 
-    $(document).on("click","#herramientasMod",function(){
-        parent.changeURL("Registro/modGUI");
+    //Llevar al usuario a las herramientas de moderación.
+    //Se utiliza el ID del botón para llevar al usuario a la página.
+    $(document).on("click", "#herramientasMod", function() {
+        parent.changeURL("Registro/modGUI.php");
     });
 
+    //Se tomará el sueño y se realizarán verificaciones para ver si se puede publicar o no
+    //Si el sueño está vacío o supera los 500 caractéres, no se publicará y esta función
+    //dará aviso de ello.
+    //Caso contrario, se llamará a la función "publicarSueno()" que se encargará de tomar el sueño
+    //y hacer la consulta con Ajax.
+    //Una vez hecho eso, se volverán a mostrar los registros con la función "listarRegistrosNPVNM18();"
+    //y las estadísticas con la función mostrarEstadisticas();
     $('#publicarSueno').click(function() {
         var sueno = document.getElementById('txtSueno').value;
         var suenoL = sueno.length;
@@ -208,6 +226,8 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         }
     });
 
+    //Avanzar 10 sueños en la consulta.
+    //Simplemente, es paginación.
     $('#siguientes10').click(function() {
         //Se consigue un nuevo offset para la consulta sql y se le suma 10, haciendo que avance a los siguientes
         //10 registros.
@@ -241,6 +261,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         $.ajax({
             type: "GET",
             url: "http://anotasuenos:8080/CRUDs/mostrarSuenos.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/mostrarSuenos.php",
             dataType: "html",
             data: offset,
         }).done(function(respuesta) {
@@ -253,6 +274,8 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         scrollTop();
     });
 
+    //Retroceder 10 sueños en la consulta.
+    //Al igual que arriba, es paginación.
     $('#anteriores10').click(function() {
         console.log("-----------INICIO BTNANTERIORES-----------");
 
@@ -282,6 +305,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         $.ajax({
             type: "GET",
             url: "http://anotasuenos:8080/CRUDs/mostrarSuenos.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/mostrarSuenos.php",
             dataType: "html",
             data: offset,
         }).done(function(respuesta) {
@@ -294,10 +318,14 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         scrollTop();
     });
 
+    //Al presionar el botón, se actualizarán las estadísticas.
+    //Su brillo vendrá cuando y si es que varios usuarios usan el sitio al mismo tiempo.
     $('#actualizarEstadisticas').click(function() {
         mostrarEstadisticas();
     });
 
+    //Cambiará la consulta y el filtro a solo seguidos por el usuario.
+    //La paginación funciona normalmente y la cuenta de sueños también
     $('#verSeguidos').click(function() {
         $("#mostrarSuenosPublic").html("Cargando filtro...");
         var paquete = "function=mostrarSueCustomQuery&offset=0&opcion=soloSeguidosNoM18";
@@ -309,6 +337,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         $.ajax({
             type: "GET",
             url: "http://anotasuenos:8080/CRUDs/mostrarSuenos.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/mostrarSuenos.php",
             dataType: "html",
             data: paquete,
         }).done(function(res) {
@@ -320,7 +349,9 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         });
     });
 
-    $('#verPopulares').click(function(){
+    //Cambiará la consulta y el filtro a los sueños más populares medidos por cantidad de "Me Gusta"
+    //La paginación funciona correctamente y la cuenta de sueños también, igual que en la función anterior.
+    $('#verPopulares').click(function() {
         $("#mostrarSuenosPublic").html("Cargando filtro...");
         var paquete = "function=mostrarSueCustomQuery&offset=0&opcion=masPopulares";
         var offSetDspl = "0";
@@ -331,6 +362,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         $.ajax({
             type: "GET",
             url: "http://anotasuenos:8080/CRUDs/mostrarSuenos.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/mostrarSuenos.php",
             dataType: "html",
             data: paquete,
         }).done(function(res) {
@@ -342,7 +374,9 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         });
     });
 
-    $('#verMas18').click(function(){
+    //Cambiará la consulta y el filtro a los sueños marcados como +18 y públicos.
+    //Al igual que los dos anteriores, ambos aspectos funcionan correctamente.
+    $('#verMas18').click(function() {
         $("#mostrarSuenosPublic").html("Cargando filtro...");
         var paquete = "function=mostrarSueCustomQuery&offset=0&opcion=noPVsiM18";
         var offSetDspl = "0";
@@ -353,6 +387,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         $.ajax({
             type: "GET",
             url: "http://anotasuenos:8080/CRUDs/mostrarSuenos.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/mostrarSuenos.php",
             dataType: "html",
             data: paquete,
         }).done(function(res) {
@@ -364,8 +399,8 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         });
     });
 
-    //Función tomada desde Stack Overflow - Usuario Dan Heberden
-    function changeURL( url ) {
+    //Función tomada desde Stack Overflow - Usuario Dan Heberden - Cambiar URL
+    function changeURL(url) {
         document.location = url;
     }
     //Fin.
@@ -385,6 +420,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
             $.ajax({
                 type: "POST",
                 url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
+                // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxSuenos.php",
                 data: paquete,
             }).done(function(respuesta) {
                 alert(respuesta);
@@ -400,6 +436,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         }
     });
 
+    //Cambia el rango de sueños que se están viendo. Llamada desde los botones anteriores10 y siguientes10
     function cambiarSpans(offsetDspl, offsetLimDspl) {
         console.log("CAMBIANDO SPANS");
         console.log("nuevos spans: " + offsetDspl + " - " + offsetLimDspl);
@@ -408,6 +445,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         console.log("SPANS CAMBIADOS");
     }
 
+    //Envía al usuario de vuelta a la parte superior de la pantalla, usada en anteriores10 y siguientes10
     function scrollTop() {
         $("html,body").animate({
             scrollTop: 0
@@ -415,6 +453,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         return false;
     }
 
+    //Función llamada por el botón "publicar", se encarga de la consulta Ajax para publicar el sueño.
     function publicarSueno() {
         var txtSueno = document.getElementById('txtSueno').value;
         var suenoMas18 = 0;
@@ -431,6 +470,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         $.ajax({
                 type: 'POST',
                 url: 'http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php',
+                // url: 'http://oniricnote.epizy.com/CRUDs/handlerAuxSuenos.php',
                 data: paquete,
             })
             .done(function(respuesta) {
@@ -446,7 +486,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
             })
     }
 
-    //FILTROS
+    //Consulta predeterminada para mostrar sueños en la página principal.
     function listarRegistrosNPVNM18() {
         var offset = "function=mostrarSueCustomQuery&opcion=noPVnoM18&offset=0";
         var offSetDspl = "0";
@@ -456,20 +496,25 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         $.ajax({
             type: "GET",
             url: "http://anotasuenos:8080/CRUDs/mostrarSuenos.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/mostrarSuenos.php",
             dataType: "html",
             data: offset,
         }).done(function(respuesta) {
             $("#mostrarSuenosPublic").html(respuesta);
+            $('[data-toggle="tooltip"]').tooltip();
         }).fail(function() {
             $("#mostrarSuenosPublic").html("No se pudieron recuperar los registros.");
+            $('[data-toggle="tooltip"]').tooltip();
         });
     }
 
+    //Consulta predeterminada para listar la cantidad de sueños en la página principal.
     function listarCantidadSuenos() {
         var paquete = "funcion=cantidadSuenosPublic";
         $.ajax({
             type: "POST",
             url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxSuenos.php",
             dataType: "html",
             data: paquete,
         }).done(function(res) {
@@ -483,12 +528,13 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     //y la consulta ajax llevará este valor a la opción que ejecutará la función
     //para contar sueños. La consulta estará preparada de antemano en el switch
     //y devolverá el valor correspondiente.
-    function listarCantidadSueCustom(){
+    function listarCantidadSueCustom() {
         var filtro = document.getElementById("filtroActual").value;
-        var paquete = "funcion=contarSueFiltro&opcion="+filtro;
+        var paquete = "funcion=contarSueFiltro&opcion=" + filtro;
         $.ajax({
             type: "POST",
             url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxSuenos.php",
             dataType: "html",
             data: paquete,
         }).done(function(res) {
@@ -498,8 +544,8 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         });
     }
 
-//Sección estadísticas.
-//Función principal.
+    //Sección estadísticas.
+    //Función principal.
     function mostrarEstadisticas() {
         cantSuenosUsuario();
         cantComentUsuario();
@@ -518,6 +564,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         $.ajax({
             type: "POST",
             url: "http://anotasuenos:8080/CRUDs/handlerAuxUsuario.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxUsuario.php",
             dataType: "html",
             data: paquete,
         }).done(function(res) {
@@ -532,6 +579,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         $.ajax({
             type: "POST",
             url: "http://anotasuenos:8080/CRUDs/handlerAuxApp.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxApp.php",
             dataType: "html",
             data: paquete,
         }).done(function(res) {
@@ -546,6 +594,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         $.ajax({
             type: "POST",
             url: "http://anotasuenos:8080/CRUDs/handlerAuxApp.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxApp.php",
             dataType: "html",
             data: paquete,
         }).done(function(res) {
@@ -560,6 +609,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         $.ajax({
             type: "POST",
             url: "http://anotasuenos:8080/CRUDs/handlerAuxApp.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxApp.php",
             dataType: "html",
             data: paquete,
         }).done(function(res) {
@@ -574,6 +624,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         $.ajax({
             type: "POST",
             url: "http://anotasuenos:8080/CRUDs/handlerAuxApp.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxApp.php",
             dataType: "html",
             data: paquete,
         }).done(function(res) {
@@ -588,6 +639,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         $.ajax({
             type: "POST",
             url: "http://anotasuenos:8080/CRUDs/handlerAuxApp.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxApp.php",
             dataType: "html",
             data: paquete,
         }).done(function(res) {
@@ -602,6 +654,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         $.ajax({
             type: "POST",
             url: "http://anotasuenos:8080/CRUDs/handlerAuxApp.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxApp.php",
             dataType: "html",
             data: paquete,
         }).done(function(res) {
@@ -616,6 +669,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         $.ajax({
             type: "POST",
             url: "http://anotasuenos:8080/CRUDs/handlerAuxApp.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxApp.php",
             dataType: "html",
             data: paquete,
         }).done(function(res) {
@@ -630,6 +684,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         $.ajax({
             type: "POST",
             url: "http://anotasuenos:8080/CRUDs/handlerAuxApp.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxApp.php",
             dataType: "html",
             data: paquete,
         }).done(function(res) {
@@ -644,6 +699,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         $.ajax({
             type: "POST",
             url: "http://anotasuenos:8080/CRUDs/handlerAuxApp.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxApp.php",
             dataType: "html",
             data: paquete,
         }).done(function(res) {
@@ -652,7 +708,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
             $("#cantidadLikesComent").html("No se pudo cargar.");
         });
     }
-//Fin sección estadísticas
+    //Fin sección estadísticas
 
     //Cambiar clase active de los link del navBar
     //Un tanto ineficiente, pero solo se ejecuta al presionar el botón.

@@ -69,6 +69,8 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                     <h2>Créditos</h2>
                 </div>
                 <div class="border border-info rounded p-3" style="background-color:white;">
+                    <p><b>OniricNote - Versión 1.0.0 Release</b></p>
+                    <p>Consulta las últimas notas del parche más abajo.</p>
                     <p>Este proyecto fue creado con los siguientes lenguajes y frameworks.</p>
                     <p><b>Lenguajes</b></p>
                     <ul>
@@ -83,6 +85,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                         <li>JQuery 3.5.1</li>
                         <li>Ajax 3.5.1</li>
                         <li>Font Awesome 4.7.0</li>
+                        <li>Popper 1.16.0</li>
                     </ul>
                     <p><b>Software</b></p>
                     <ul>
@@ -130,6 +133,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                         <li>No poner el require config.php o ponerlo sin la referencia escrita correctamente -> "../config.php" por ejemplo.</li>
                         <li>No poner el session_start cuando necesito el id o nombre de usuario.</li>
                         <li>Al principio no le veía mucho sentido, pero me agrada Ajax.</li>
+                        <li>No logré hacer funcionar los tooltips en contenido mostrado con Ajax. Tampoco encontré ayuda en StackOverflow o la documentación de bootstrap.</li>
                     </ul>
                     <p><b>Notas de parche</b></p>
                     <p>Este es el archivo donde se han ido anotando los avances a medida que se hacen. Las versiones se separan por subida a github.</p>

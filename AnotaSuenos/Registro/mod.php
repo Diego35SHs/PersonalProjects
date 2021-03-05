@@ -1,4 +1,4 @@
-<?php 
+<?php
 session_start();
 require "../config.php";
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
@@ -7,14 +7,15 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 }
 
 $funcion = $_POST["funcion"];
-switch($funcion){
+switch ($funcion) {
     case "checkMod":
         checkMod($link);
-    break;
+        break;
 }
 
 //Revisar si el usuario tiene permisos de moderación.
-function checkMod($link){
+function checkMod($link)
+{
     $sql = "SELECT id_mod FROM modd WHERE id_usu = ?";
     if ($stmt = mysqli_prepare($link, $sql)) {
         mysqli_stmt_bind_param($stmt, "i", $param_codusu);
@@ -36,6 +37,3 @@ function checkMod($link){
         }
     }
 }
-
-
-?>

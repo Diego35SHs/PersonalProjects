@@ -1,12 +1,17 @@
-<?php 
+<?php
 require "../config.php";
 session_start();
+if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+    header("location: ../index.php");
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
 <html>
 <!-- INICIO HEAD -->
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,6 +25,7 @@ session_start();
 </head>
 <!-- FIN HEAD -->
 <!-- INICIO BODY -->
+
 <body style="background-color: #48BEFF;">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navBar" aria-controls="navBar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,7 +58,7 @@ session_start();
                     </ul>
                 </li>
             </ul>
-            <form class="form-inline my-2 my-lg-0" method="GET" action="busqueda.php" >
+            <form class="form-inline my-2 my-lg-0" method="GET" action="busqueda.php">
                 <input class="form-control mr-sm-2" type="search" name="buscar" placeholder="Buscar" aria-label="Buscar">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
             </form>
@@ -61,28 +67,28 @@ session_start();
     <div class="container">
         <br>
         <div class="row">
-            <div class="col-md-8"> 
+            <div class="col-md-8">
                 <div style="display:none;">
-                <?php echo "<input type='hidden' style='display:none;' id='id_sue' value=".$_GET["id_sue"]." '>";?>
+                    <?php echo "<input type='hidden' style='display:none;' id='id_sue' value=" . $_GET["id_sue"] . " '>"; ?>
                 </div>
-                <div id="contenedorSueno"  style="background-color: white;">
-                <p class="border border-info rounded p-3" style="background-color:white;">Cargando sueño...</p>
+                <div id="contenedorSueno" style="background-color: white;">
+                    <p class="border border-info rounded p-3" style="background-color:white;">Cargando sueño...</p>
                 </div> <br>
                 <div id="cantidadSuenos" class="text-center border border-info rounded p-1" style="background-color: white; height: 40px;">
                     <span>Actualmente hay </span>
                     <span id="cantidadTotalComentarios">0</span>
                     <span> comentario(s).</span>
-                    </div> <br>
+                </div> <br>
                 <div id="contenedorAgregarComentario" class="border border-info rounder p-3" style="background-color:white;">
                     <p>Comentario:</p>
                     <textarea name="txtComentario" id="txtComentario" cols="30" rows="10" style="width:100%; height: 80px; resize:none;" placeholder="¿Qué opinas?"></textarea><br>
                     <button id="publicarComentario" class="btn btn-primary">Comentar</button> <br>
                     <p id="Resultado"></p>
                 </div> <br>
-                <div id="contenedorComentarios" >
+                <div id="contenedorComentarios">
                     <p class="border border-info rounded p-3" style="background-color:white;">Cargando comentarios...</p>
                 </div> <br>
-                <div id="listContainer" class="border border-info rounded p-3" style="width:100%;background-color:white;"> 
+                <div id="listContainer" class="border border-info rounded p-3" style="width:100%;background-color:white;">
                     <a href="" class="btn btn-info">Inicio</a>
                     <button id="anteriores10" class="btn btn-primary">Anteriores 10</button>
                     <span>Mostrando: </span>
@@ -107,36 +113,38 @@ session_start();
     </div>
 </body>
 <script>
-$(document).ready(function(){
-    mostrarComentarios();
-    mostrarSueno();
-    listarCantidadComent();
-});
-
-function mostrarComentarios(){
-    var id_sue = document.getElementById("id_sue").value;
-    console.log(id_sue);
-    paquete = "funcion=verComentarios&id_sue="+id_sue;
-    $.ajax({
-        type: "GET",
-        url: "http://anotasuenos:8080/CRUDs/mostrarComentarios.php",
-        dataType: "html",
-        data: paquete,
-    }).done(function(respuesta){
-        $("#contenedorComentarios").html(respuesta);
-    }).fail(function(){
-        $("#contenedorComentarios").html("No se pudieron recuperar los registros.");
+    $(document).ready(function() {
+        mostrarComentarios();
+        mostrarSueno();
+        listarCantidadComent();
     });
-}
 
-$(document).on("click",".eliminarCome",function(){
+    function mostrarComentarios() {
+        var id_sue = document.getElementById("id_sue").value;
+        console.log(id_sue);
+        paquete = "funcion=verComentarios&id_sue=" + id_sue;
+        $.ajax({
+            type: "GET",
+            url: "http://anotasuenos:8080/CRUDs/mostrarComentarios.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/mostrarComentarios.php",
+            dataType: "html",
+            data: paquete,
+        }).done(function(respuesta) {
+            $("#contenedorComentarios").html(respuesta);
+        }).fail(function() {
+            $("#contenedorComentarios").html("No se pudieron recuperar los registros.");
+        });
+    }
+
+    $(document).on("click", ".eliminarCome", function() {
         var button = $(this);
         var id_com = button.attr("id");
-        paquete = "funcion=eliminarComentario&id_com="+id_com;
-        if(window.confirm("¿Eliminar este comentario?")){
+        paquete = "funcion=eliminarComentario&id_com=" + id_com;
+        if (window.confirm("¿Eliminar este comentario?")) {
             $.ajax({
                 type: "POST",
                 url: "http://anotasuenos:8080/CRUDs/handlerAuxComent.php",
+                // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxComent.php",
                 data: paquete,
             }).done(function(respuesta) {
                 alert(respuesta);
@@ -146,77 +154,80 @@ $(document).on("click",".eliminarCome",function(){
                 document.getElementById("textAreaCom" + id_com).innerHTML = respuesta;
             });
             event.stopPropagation();
-        }else{
+        } else {
             alert("Comentario no eliminado.");
         }
     });
 
-function mostrarSueno(){
-    var id_sue = document.getElementById("id_sue").value;
-    console.log(id_sue);
-    paquete = "funcion=verSueno&id_sue="+id_sue;
-    $.ajax({
-        type: "GET",
-        url: "http://anotasuenos:8080/CRUDs/mostrarComentarios.php",
-        dataType: "html",
-        data: paquete,
-    }).done(function(respuesta){
-        $("#contenedorSueno").html(respuesta);
-    }).fail(function(){
-        $("#contenedorSueno").html("No se pudieron recuperar los registros.");
-    });
-}
-
-$('#publicarComentario').click(function(){
-    var comentario = document.getElementById('txtComentario').value;
-    var comentarioL = comentario.length;
-    if(comentario == null || comentario == ''){
-        alert("Tu comentario no puede estar vacío");
-    }else if(comentarioL > 500){
-        alert("Tu comentario no debe pasar de 500 caracteres. Tienes: "+comentarioL);
-    }else{
-        publicarComentario();
-        console.log("PublicarComentario completada");
-        console.log("ListarRegistros completada");
+    function mostrarSueno() {
+        var id_sue = document.getElementById("id_sue").value;
+        console.log(id_sue);
+        paquete = "funcion=verSueno&id_sue=" + id_sue;
+        $.ajax({
+            type: "GET",
+            url: "http://anotasuenos:8080/CRUDs/mostrarComentarios.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/mostrarComentarios.php",
+            dataType: "html",
+            data: paquete,
+        }).done(function(respuesta) {
+            $("#contenedorSueno").html(respuesta);
+        }).fail(function() {
+            $("#contenedorSueno").html("No se pudieron recuperar los registros.");
+        });
     }
-});
 
-function publicarComentario(){
-    var txtComentario = document.getElementById('txtComentario').value;
-    var id_sue = document.getElementById('id_sue').value;
-    //Consulta SQL
-    //Empaquetar registro a enviar.
-    var paquete = "funcion=agregarComentario&txtComentario="+txtComentario+"&id_sue="+id_sue;
-    $.ajax({
-        url: 'http://anotasuenos:8080/CRUDs/handlerAuxComent.php',
-        type: 'POST',
-        data: paquete,
-    })
-    .done(function(respuesta){
-        $('#Resultado').html(respuesta);
-        mostrarComentarios();
-        listarCantidadComent();
-        document.getElementById('txtComentario').value = null;
-    })
-    .fail(function(){
-        $('#Resultado').html("No se pudo agregar tu sueño, posiblemente debido a un problema de conexión");
-    })
-}
-
-
-
-function listarCantidadComent(){
-    var id_sue = document.getElementById("id_sue").value;
-    var paquete = "funcion=cantidadComent&id_sue="+id_sue;    
-    $.ajax({
-        type: "POST",
-        url: "http://anotasuenos:8080/CRUDs/handlerAuxComent.php",
-        dataType: "html",
-        data: paquete,
-    }).done(function(res){
-        $("#cantidadTotalComentarios").html(res);
-    }).fail(function(){
-        $("#cantidadTotalComentarios").html("Algo falló.");
+    $('#publicarComentario').click(function() {
+        var comentario = document.getElementById('txtComentario').value;
+        var comentarioL = comentario.length;
+        if (comentario == null || comentario == '') {
+            alert("Tu comentario no puede estar vacío");
+        } else if (comentarioL > 500) {
+            alert("Tu comentario no debe pasar de 500 caracteres. Tienes: " + comentarioL);
+        } else {
+            publicarComentario();
+            console.log("PublicarComentario completada");
+            console.log("ListarRegistros completada");
+        }
     });
-}
+
+    function publicarComentario() {
+        var txtComentario = document.getElementById('txtComentario').value;
+        var id_sue = document.getElementById('id_sue').value;
+        //Consulta SQL
+        //Empaquetar registro a enviar.
+        var paquete = "funcion=agregarComentario&txtComentario=" + txtComentario + "&id_sue=" + id_sue;
+        $.ajax({
+                url: 'http://anotasuenos:8080/CRUDs/handlerAuxComent.php',
+                // url: 'http://oniricnote.epizy.com/CRUDs/handlerAuxComent.php',
+                type: 'POST',
+                data: paquete,
+            })
+            .done(function(respuesta) {
+                $('#Resultado').html(respuesta);
+                mostrarComentarios();
+                listarCantidadComent();
+                document.getElementById('txtComentario').value = null;
+            })
+            .fail(function() {
+                $('#Resultado').html("No se pudo agregar tu sueño, posiblemente debido a un problema de conexión");
+            })
+    }
+
+
+
+    function listarCantidadComent() {
+        var id_sue = document.getElementById("id_sue").value;
+        var paquete = "funcion=cantidadComent&id_sue=" + id_sue;
+        $.ajax({
+            type: "POST",
+            url: "http://anotasuenos:8080/CRUDs/handlerAuxComent.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxComent.php",
+            dataType: "html",
+            data: paquete,
+        }).done(function(res) {
+            $("#cantidadTotalComentarios").html(res);
+        }).fail(function() {
+            $("#cantidadTotalComentarios").html("Algo falló.");
+        });
+    }
 </script>

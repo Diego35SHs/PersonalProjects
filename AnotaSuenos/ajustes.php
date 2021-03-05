@@ -16,6 +16,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="estilo.css">
@@ -68,7 +69,15 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                     <p><b>Tema Oscuro: </b>¡Pronto!</p>
                     <p class="h4"><b>Cuenta</b></p>
                     <p><b>Cambiar nombre de usuario:</b></p>
-                    <p>¡Pronto!</p>
+                    <ul>
+                        <li>Se cerrará tu sesión al realizar esta acción</li>
+                        <li>Deberás usar tu nuevo nombre de usuario para iniciar sesión</li>
+                        <li>El sistema es sensible a mayúsculas y minúsculas.</li>
+                    </ul>
+                    <p>
+                        <input type="text" class="form-control" style="width:300px;" name="txtNombreUsuNue" id="txtNombreUsuNue" placeholder="Nuevo nombre de usuario"> <br>
+                        <button class="btn btn-danger" id="cambiarUserName">Cambiar mi nombre de usuario</button>
+                    </p>
                     <p><b>Eliminar mi cuenta:</b></p>
                     <p>Ten lo siguiente en cuenta antes de eliminar tu cuenta:</p>
                     <ul>
@@ -86,19 +95,55 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 </body>
 <script>
 
+    $(document).on("click","#cambiarUserName",function(){
+        var nuevoNombre = document.getElementById("txtNombreUsuNue").value;
+        if(nuevoNombre == null || nuevoNombre == ""){
+            alert("Tu nuevo nombre no puede estar vacío.");
+            return null;
+        }else if(nuevoNombre.length > 50){
+            alert("Tu nombre de usuario no puede tener más de 50 caractéres.");
+            return null;
+        }
+        if(window.confirm("Cerrarás tu sesión y tendrás que volver a iniciar sesión con tu nuevo nombre. \nEsta acción no se puede deshacer. ¿Continuar?")){
+            alert("Se comprobará que tu nuevo nombre de usuario no esté ya en uso. \nSi lo está, no se realizará el cambio.");  
+            procesoCambNomb(nuevoNombre);
+        }
+    });
+
+    function procesoCambNomb(nuevoNombre){
+        var paquete = "function=procCambioNombre&nuevoNombre="+nuevoNombre;
+        $.ajax({
+            type: "POST",
+            url: "http://anotasuenos:8080/CRUDs/handlerAuxUsuario.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxUsuario.php",
+            data: paquete,
+        }).done(function(respuesta){
+            if(respuesta == 1){
+                alert("¡Éxito! Cerrando sesión.");
+                changeURL("Registro/logout.php");
+            }else{
+                alert("El usuario ya existe, intenta otro nombre.");
+            }
+            event.stopPropagation();
+        }).fail(function(respuesta){
+            console.log("FAIL "+respuesta);
+            alert("No se pudo realizar la comprobación del nombre de usuario.");
+        });
+    }
+
     $(document).on("click", ".eliminarCuenta", function() {
         var button = $(this);
-        // var id_sue = button.attr("id");
-        
         if (window.confirm("Estás a punto de eliminar tu cuenta. Esta acción no se puede deshacer.")) {
             if(window.confirm("Última advertencia. Presionar aceptar ahora eliminará definitivamente tu cuenta y volverás a la página de inicio de sesión.")){
                 paquete = "function=eliminarCuentaUsuario";
                 $.ajax({
                     type: "POST",
                     url: "http://anotasuenos:8080/CRUDs/handlerAuxUsuario.php",
+                    // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxUsuario.php",
                     data: paquete,
                 }).done(function(respuesta) {
                     alert("¡Adios!");
+                    changeURL("../Registro/logout.php");
                     event.stopPropagation();
                 }).fail(function(respuesta) {
                     alert("Error.");
@@ -111,6 +156,12 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
             alert("Cancelaste la eliminación de tu cuenta.");
         }
     });
+
+    //Función tomada desde Stack Overflow - Usuario Dan Heberden
+    function changeURL( url ) {
+        document.location = url;
+    }
+    //Fin.
 
 </script>
 </html>

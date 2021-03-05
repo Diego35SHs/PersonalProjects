@@ -6,11 +6,6 @@ require "../config.php";
 $function = $_GET["function"];
 
 switch ($function) {
-    case "mostrarSuenosNPVNM18":
-        // $offsetQuery = $_GET["offset"];
-        // $query = "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno WHERE sue_pri = 0 AND sue_m18 = 0 ORDER BY fec_sue DESC LIMIT 10 OFFSET " . $offsetQuery . " ";
-        // mostrarSuenosGeneric($query, $link);
-        break;
     case "mostrarSueCustomQuery":
         prepararQuery($link);
         break;
@@ -35,7 +30,7 @@ function prepararQuery($link)
             $query = "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno WHERE sue_pri = 0 AND sue_m18 = 1 ORDER BY fec_sue DESC LIMIT 10 OFFSET " . $offsetQuery . " ";
             mostrarSuenosGeneric($query, $link);
             break;
-        //PARA USO EN PERFIL DE USUARIO
+            //PARA USO EN PERFIL DE USUARIO
         case "noPVnoM18User":
             //Sueños que no sean privados y tampoco sean +18 del usuario dueño del perfil.
             //Deben aparecer solo sueños públicos.
@@ -55,10 +50,10 @@ function prepararQuery($link)
             //Esta opción es exclusiva para el usuario en sesión que visite su perfil y solo aparecerá si el chequeo de propiedad da 1, es decir, positivo.
             //Deben aparecer todos los sueños del usuario.
             $cod_usu = $_GET["cod_usu"];
-            if($cod_usu == $_SESSION["id"]){
+            if ($cod_usu == $_SESSION["id"]) {
                 $query = "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno WHERE cod_usu = " . $cod_usu . " ORDER BY fec_sue DESC LIMIT 10 OFFSET " . $offsetQuery . " ";
                 mostrarSuenosGeneric($query, $link);
-            }else{
+            } else {
                 echo "<script> alert('Si de verdad quieres ver lo que este usuario no quiere que veas, pídeselo, a ver que dice. Volviendo a home.'); </script>";
                 //Esta función fue tomada desde StackOverflow. Gracias Dan Heberden.
                 echo  "<script>";
@@ -72,10 +67,10 @@ function prepararQuery($link)
             //Opción exclusiva para el usuario en sesión que visita su propio perfil.
             //Deben aparecer todos los sueños privados, sin importar si son +18 o no.
             $cod_usu = $_GET["cod_usu"];
-            if($cod_usu == $_SESSION["id"]){
+            if ($cod_usu == $_SESSION["id"]) {
                 $query = "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno WHERE sue_pri = 1 AND cod_usu = " . $cod_usu . " ORDER BY fec_sue DESC LIMIT 10 OFFSET " . $offsetQuery . " ";
                 mostrarSuenosGeneric($query, $link);
-            }else{
+            } else {
                 echo "<script> alert('¿Inspeccionar elemento? Casi resulta. Volviendo a home.'); </script>";
                 //Esta función fue tomada desde StackOverflow. Gracias Dan Heberden.
                 echo  "<script>";
@@ -96,26 +91,26 @@ function prepararQuery($link)
             //Los sueños correspondientes a los usuarios seguidos por el usuario en sesión
             //Opción disponible para todos los usuarios.
             //Esta opción NO funciona hasta ahora.
-            $query = "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,Sueno.cod_usu FROM Sueno,Seguidores,Login WHERE Sueno.cod_usu = Seguidores.id_usu_sdo AND Seguidores.id_usu_sdr = ".$_SESSION["id"]." AND Sueno.sue_pri = 0 AND Sueno.sue_m18 = 0 ORDER BY fec_sue DESC LIMIT 10 OFFSET " . $offsetQuery . " ";
+            $query = "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,Sueno.cod_usu FROM Sueno,Seguidores,Login WHERE Sueno.cod_usu = Seguidores.id_usu_sdo AND Seguidores.id_usu_sdr = " . $_SESSION["id"] . " AND Sueno.sue_pri = 0 AND Sueno.sue_m18 = 0 ORDER BY fec_sue DESC LIMIT 10 OFFSET " . $offsetQuery . " ";
             mostrarSuenosGeneric($query, $link);
             break;
         case "modSue":
-            if(checkMod($link) <= 0 || checkMod($link) > 1){
+            if (checkMod($link) <= 0 || checkMod($link) > 1) {
                 echo "<script> alert('Se agradece el intento, pero por favor, nada más. Volviendo a home.'); </script>";
                 //Esta función fue tomada desde StackOverflow. Gracias Dan Heberden.
                 echo  "<script>";
                 echo "parent.changeURL('../home.php' );";
                 echo "</script>";
                 //Fin.
-            }else{
+            } else {
                 $query = "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno ORDER BY id_sue desc";
                 mostrarSuenosEspecial($query, $link);
             }
             break;
         case "busqueda":
             $busqueda = $_GET["termBusqueda"];
-            $query = "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno WHERE sue_pri = 0 AND (sue_m18 = 1 OR sue_m18 = 0) AND sueno LIKE '%".$busqueda."%' ORDER BY fec_sue DESC LIMIT 10 OFFSET " . $offsetQuery . " ";
-            mostrarSuenosGeneric($query,$link);
+            $query = "SELECT id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno WHERE sue_pri = 0 AND (sue_m18 = 1 OR sue_m18 = 0) AND sueno LIKE '%" . $busqueda . "%' ORDER BY fec_sue DESC LIMIT 10 OFFSET " . $offsetQuery . " ";
+            mostrarSuenosGeneric($query, $link);
             break;
         case "masPopulares":
             //840 líneas con 40 miserables registros? No es aceptable, esta función queda en espera hasta que se resuelva el tema con los likes y dislikes.
@@ -124,14 +119,15 @@ function prepararQuery($link)
             //pero será un cambio más o menos grande comparado al sistema que ya está en funcionamiento
             //No para mostrar, sino para retocar estos aspectos internos que el usuario no ve.
             $query = "SELECT Sueno.id_sue,sueno,sue_pri,sue_m18,fec_sue,cod_usu FROM Sueno WHERE sue_pri = 0 ORDER BY megusta DESC LIMIT 10 OFFSET " . $offsetQuery . " ";
-            mostrarSuenosGeneric($query,$link);
+            mostrarSuenosGeneric($query, $link);
             break;
     }
 }
 
 
 //MOD
-function checkMod($link){
+function checkMod($link)
+{
     $sql = "SELECT id_mod FROM modd WHERE id_usu = ?";
     if ($stmt = mysqli_prepare($link, $sql)) {
         mysqli_stmt_bind_param($stmt, "i", $param_codusu);
@@ -144,8 +140,8 @@ function checkMod($link){
                     return 1;
                 }
             } else {
-                echo "<script>"; 
-                echo "alert('No eres parte del staff. Volviendo a home..');"; 
+                echo "<script>";
+                echo "alert('No eres parte del staff. Volviendo a home..');";
                 echo "</script>";
                 header("location: ../index.php");
             }
@@ -153,19 +149,20 @@ function checkMod($link){
     }
 }
 
-function checkPrivacidad($link,$id_sue){
+function checkPrivacidad($link, $id_sue)
+{
     $sql = "SELECT sue_pri FROM Sueno WHERE id_sue = ?";
-    if($stmt = mysqli_prepare($link,$sql)){
-        mysqli_stmt_bind_param($stmt,"i",$param_id_sue);
+    if ($stmt = mysqli_prepare($link, $sql)) {
+        mysqli_stmt_bind_param($stmt, "i", $param_id_sue);
         $param_id_sue = $id_sue;
-        if(mysqli_stmt_execute($stmt)){
+        if (mysqli_stmt_execute($stmt)) {
             mysqli_stmt_store_result($stmt);
-            if(mysqli_stmt_num_rows($stmt) == 1){
-                mysqli_stmt_bind_result($stmt,$privacidad);
-                if(mysqli_stmt_fetch($stmt)){
+            if (mysqli_stmt_num_rows($stmt) == 1) {
+                mysqli_stmt_bind_result($stmt, $privacidad);
+                if (mysqli_stmt_fetch($stmt)) {
                     return $privacidad;
                 }
-            }else{
+            } else {
                 return "No se pudo encontrar la privacidad del sueño.";
             }
         }
@@ -191,32 +188,32 @@ function mostrarSuenosGeneric($query, $link)
             $alto = heightTXA($cantidadCarac);
             $cantComentarios = cantidadComentarios($row["id_sue"], $link);
             $cantLikes = cantidadLikes($row["id_sue"], $link);
-            echo "<label>Por: <a href='../CRUDs/perfilPublico.php?cod_usu=" . $row["cod_usu"] . "'>".$nombreUsuario."</a></label>";
-            echo "<textarea class='form-control' id='textAreaSue" . $row["id_sue"] . "' style='resize:none;" . $alto . "border:none;maxlength:500;background-color:white;text-color:black;' disabled='true'>".$row["sueno"]."</textarea> <br>";
+            echo "<label>Por: <a href='../CRUDs/perfilPublico.php?cod_usu=" . $row["cod_usu"] . "'>" . $nombreUsuario . "</a></label>";
+            echo "<textarea class='form-control' id='textAreaSue" . $row["id_sue"] . "' style='resize:none;" . $alto . "border:none;maxlength:500;background-color:white;text-color:black;' disabled='true'>" . $row["sueno"] . "</textarea> <br>";
             if ($row["sue_pri"] == 0) {
-                echo "<span id='privaSue".$row["id_sue"]."'>Sueño público</span>";
+                echo "<span id='privaSue" . $row["id_sue"] . "'>Sueño público</span>";
             } else {
-                echo "<span id='privaSue".$row["id_sue"]."'>Sueño privado</span>";
+                echo "<span id='privaSue" . $row["id_sue"] . "'>Sueño privado</span>";
             }
             echo "&nbsp;&nbsp;";
             if ($row["sue_m18"] == 1) {
-                echo "<span id='estadoMas18".$row["id_sue"]."'> +18 </span> &nbsp;&nbsp;";
-            }else{
-                echo "<span id='estadoMas18".$row["id_sue"]."'></span> &nbsp;";
+                echo "<span id='estadoMas18" . $row["id_sue"] . "'> +18 </span> &nbsp;&nbsp;";
+            } else {
+                echo "<span id='estadoMas18" . $row["id_sue"] . "'></span> &nbsp;";
             }
             echo "<span>";
             if (checkPropiedad($row["cod_usu"]) == 1) {
                 if ($row["sue_m18"] == 1) {
                     echo "<span><button id='" . $row["id_sue"] . "' class='setNoMas18 btn btn-danger'>No +18</button> </span> &nbsp;";
-                }else{
+                } else {
                     echo "<span><button id='" . $row["id_sue"] . "' class='setMas18 btn btn-warning'>+18</button> </span> &nbsp;";
                 }
-                echo "<button id='" . $row["id_sue"] . "' class='modificar btn btn-warning'><i id='modIcon".$row["id_sue"]."' class='modIcon fa fa-pencil'></i></button> &nbsp;";
-                echo "<button id='" . $row["id_sue"] . "' class='eliminar btn btn-danger'><i id='modIcon".$row["id_sue"]."' class='eliIcon fa fa-trash'></i></button> &nbsp;";
-                if(checkPrivacidad($link,$row["id_sue"]) == 1){
-                    echo "<button id='" . $row["id_sue"] . "' class='desprivatizar btn btn-danger'><i id='modIcon".$row["id_sue"]."' class='eliIcon fa fa-lock'></i></button> &nbsp;";
-                }else{
-                    echo "<button id='" . $row["id_sue"] . "' class='privatizar btn btn-warning'><i id='modIcon".$row["id_sue"]."' class='eliIcon fa fa-lock'></i></button> &nbsp;";
+                echo "<button id='" . $row["id_sue"] . "' class='modificar btn btn-warning'><i id='modIcon" . $row["id_sue"] . "' class='modIcon fa fa-pencil'></i></button> &nbsp;";
+                echo "<button id='" . $row["id_sue"] . "' class='eliminar btn btn-danger'><i id='modIcon" . $row["id_sue"] . "' class='eliIcon fa fa-trash'></i></button> &nbsp;";
+                if (checkPrivacidad($link, $row["id_sue"]) == 1) {
+                    echo "<button id='" . $row["id_sue"] . "' class='desprivatizar btn btn-danger'><i id='modIcon" . $row["id_sue"] . "' class='eliIcon fa fa-lock'></i></button> &nbsp;";
+                } else {
+                    echo "<button id='" . $row["id_sue"] . "' class='privatizar btn btn-warning'><i id='modIcon" . $row["id_sue"] . "' class='eliIcon fa fa-lock'></i></button> &nbsp;";
                 }
             }
             echo "</span>";
@@ -255,33 +252,33 @@ function mostrarSuenosEspecial($query, $link)
             $alto = heightTXA($cantidadCarac);
             $cantComentarios = cantidadComentarios($row["id_sue"], $link);
             $cantLikes = cantidadLikes($row["id_sue"], $link);
-            echo "<label>Por: <a href='../CRUDs/perfilPublico.php?cod_usu=" . $row["cod_usu"] . "'>".$nombreUsuario."</a></label>";
+            echo "<label>Por: <a href='../CRUDs/perfilPublico.php?cod_usu=" . $row["cod_usu"] . "'>" . $nombreUsuario . "</a></label>";
             echo "<textarea class='form-control' id='textAreaSue" . $row["id_sue"] . "' style='resize:none;" . $alto . "border:none;maxlength:500;background-color:white;text-color:black;' disabled='true'>";
             echo $row["sueno"];
             echo "</textarea> <br>";
             if ($row["sue_pri"] == 0) {
-                echo "<span id='privaSue".$row["id_sue"]."'>Sueño público</span>";
+                echo "<span id='privaSue" . $row["id_sue"] . "'>Sueño público</span>";
             } else {
-                echo "<span id='privaSue".$row["id_sue"]."'>Sueño privado</span>";
+                echo "<span id='privaSue" . $row["id_sue"] . "'>Sueño privado</span>";
             }
             echo "&nbsp;&nbsp;";
             if ($row["sue_m18"] == 1) {
-                echo "<span id='estadoMas18".$row["id_sue"]."'> +18 </span> &nbsp;&nbsp;";
-                echo "<span><button id='" . $row["id_sue"] . "' class='setNoMas18 btn btn-danger'>No +18</button> </span> &nbsp;";
-            }else{
-                echo "<span id='estadoMas18".$row["id_sue"]."'>No +18 </span> &nbsp;&nbsp;";
-                echo "<span><button id='" . $row["id_sue"] . "' class='setMas18 btn btn-warning'>+18</button> </span> &nbsp;";
+                echo "<span id='estadoMas18" . $row["id_sue"] . "'> +18 </span> &nbsp;&nbsp;";
+                echo "<span><button id='" . $row["id_sue"] . "' class='setNoMas18 btn btn-danger' data-toggle='tooltip' title='Cambiar a No +18'>No +18</button> </span> &nbsp;";
+            } else {
+                echo "<span id='estadoMas18" . $row["id_sue"] . "'>No +18 </span> &nbsp;&nbsp;";
+                echo "<span><button id='" . $row["id_sue"] . "' class='setMas18 btn btn-warning' data-toggle='tooltip' title='Cambiar a +18'>+18</button> </span> &nbsp;";
             }
             //SECCIÓN Modificación - Eliminación - Privatización
             echo "<span>";
-                // echo "<button id='" . $row["id_sue"] . "' class='modificar btn btn-warning'><i id='modIcon".$row["id_sue"]."' class='modIcon fa fa-pencil'></i></button> &nbsp;";
-                echo "<button id='" . $row["id_sue"] . "' class='eliminar btn btn-danger'><i id='modIcon".$row["id_sue"]."' class='eliIcon fa fa-trash'></i></button> &nbsp;";
-                //Implementar un chequeo en la versión Generic para buscar si el usuario es dueño o no.
-                if(checkPrivacidad($link,$row["id_sue"]) == 1){
-                    echo "<button id='" . $row["id_sue"] . "' class='desprivatizar btn btn-danger'><i id='modIcon".$row["id_sue"]."' class='eliIcon fa fa-lock'></i></button> &nbsp;";
-                }else{
-                    echo "<button id='" . $row["id_sue"] . "' class='privatizar btn btn-warning'><i id='modIcon".$row["id_sue"]."' class='eliIcon fa fa-lock'></i></button> &nbsp;";
-                }
+            // echo "<button id='" . $row["id_sue"] . "' class='modificar btn btn-warning'><i id='modIcon".$row["id_sue"]."' class='modIcon fa fa-pencil'></i></button> &nbsp;";
+            echo "<button id='" . $row["id_sue"] . "' class='eliminar btn btn-danger' data-toggle='tooltip' title='Eliminar sueño'><i id='modIcon" . $row["id_sue"] . "' class='eliIcon fa fa-trash'></i></button> &nbsp;";
+            //Implementar un chequeo en la versión Generic para buscar si el usuario es dueño o no.
+            if (checkPrivacidad($link, $row["id_sue"]) == 1) {
+                echo "<button id='" . $row["id_sue"] . "' class='desprivatizar btn btn-danger' data-toggle='tooltip' title='Desprivatizar sueño'><i id='modIcon" . $row["id_sue"] . "' class='eliIcon fa fa-lock'></i></button> &nbsp;";
+            } else {
+                echo "<button id='" . $row["id_sue"] . "' class='privatizar btn btn-warning' data-toggle='tooltip' title='Privatizar sueño'><i id='modIcon" . $row["id_sue"] . "' class='eliIcon fa fa-lock'></i></button> &nbsp;";
+            }
             echo "</span>";
             //Fin sección
             echo "<span>";
@@ -399,11 +396,16 @@ function checkPropiedad($id_usu)
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>No deberías estar viendo esto.</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous"> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../estilo.css">
+    <link rel="icon" type="image/png" href="Recursos/Fotos/ONPLACEHOLDERFAV.png" />
 </head>
+
 <body>
 </body>
 <script>
@@ -416,24 +418,19 @@ function checkPropiedad($id_usu)
         var id_sue = $(this).attr("id");
         var funcion = "insertLike";
         var button = $(this);
-        //alert("AGGA"+id_sue);
         var paquete = "funcion=" + funcion + "&id_sue=" + id_sue;
         console.log("PAQUETE: " + paquete);
-        //alert(paquete);
         $.ajax({
             type: "POST",
             url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxSuenos.php",
             data: paquete,
         }).done(function(respuesta) {
             button.text("Ya no me gusta");
-            console.log("TEXTO CAMBIADO: Ya no me Gusta");
             button.removeClass("btn-info");
             button.removeClass("like");
-            console.log("CLASES REMOVIDAS");
             button.addClass("btn-danger");
             button.addClass("dislike");
-            console.log("CLASES AÑADIDAS");
-            console.log("Respuesta: " + respuesta);
             document.getElementById("cantLikes" + id_sue).value = respuesta;
             console.log("CANTIDAD DE ME GUSTA ACTUALIZADA");
             event.stopPropagation();
@@ -456,6 +453,7 @@ function checkPropiedad($id_usu)
         $.ajax({
             type: "POST",
             url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxSuenos.php",
             data: paquete,
         }).done(function(respuesta) {
             button.text("Me gusta");
@@ -532,6 +530,7 @@ function checkPropiedad($id_usu)
         $.ajax({
             type: "POST",
             url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxSuenos.php",
             data: paquete,
         }).done(function(respuesta) {
             // button.text("Modificar");
@@ -555,92 +554,96 @@ function checkPropiedad($id_usu)
 
     //Privatizar un sueño.
     //Tomará el sueño correspondiente y lo hará privado.
-    $(document).on("click",".privatizar",function(){
+    $(document).on("click", ".privatizar", function() {
         var id_sue = $(this).attr("id");
         var button = $(this);
-        var paquete = "funcion=privatizar&id_sue="+id_sue;
+        var paquete = "funcion=privatizar&id_sue=" + id_sue;
         $.ajax({
             type: "POST",
             url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxSuenos.php",
             data: paquete,
-        }).done(function(respuesta){
+        }).done(function(respuesta) {
             button.removeClass("btn-warning");
             button.removeClass("privatizar");
             button.addClass("btn-danger");
             button.addClass("desprivatizar");
-            document.getElementById("privaSue"+id_sue).innerHTML = "Sueño privado";
+            document.getElementById("privaSue" + id_sue).innerHTML = "Sueño privado";
             event.stopPropagation();
-        }).fail(function(respuesta){
+        }).fail(function(respuesta) {
             alert("No se pudo privatizar el sueño");
         });
     });
 
     //Desprivatizar un sueño
     //Tomará el sueño correspondiente y lo hará no privado
-    $(document).on("click",".desprivatizar",function(){
+    $(document).on("click", ".desprivatizar", function() {
         var id_sue = $(this).attr("id");
         var button = $(this);
-        var paquete = "funcion=desprivatizar&id_sue="+id_sue;
+        var paquete = "funcion=desprivatizar&id_sue=" + id_sue;
         $.ajax({
             type: "POST",
             url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxSuenos.php",
             data: paquete,
-        }).done(function(respuesta){
+        }).done(function(respuesta) {
             button.removeClass("btn-danger");
             button.removeClass("desprivatizar");
             button.addClass("btn-warning");
             button.addClass("privatizar");
-            document.getElementById("privaSue"+id_sue).innerHTML = "Sueño público";
+            document.getElementById("privaSue" + id_sue).innerHTML = "Sueño público";
             event.stopPropagation();
-        }).fail(function(respuesta){
+        }).fail(function(respuesta) {
             alert("No se pudo desprivatizar el sueño");
         });
     });
 
-    $(document).on("click",".setMas18",function(){
+    $(document).on("click", ".setMas18", function() {
         console.log("=======Cambiando sueño a +18==========");
         var cod_sue = $(this).attr("id");
         var button = $(this);
-        var paquete = "funcion=setMas18&id_sue="+cod_sue;
+        var paquete = "funcion=setMas18&id_sue=" + cod_sue;
         console.log(paquete);
         $.ajax({
             type: "POST",
             url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxSuenos.php",
             data: paquete,
-        }).done(function(respuesta){
+        }).done(function(respuesta) {
             button.text("No +18");
             button.removeClass("btn-warning");
             button.removeClass("setMas18");
             button.addClass("btn-danger");
             button.addClass("setNoMas18");
-            document.getElementById("estadoMas18"+cod_sue).innerHTML = "+18";
+            document.getElementById("estadoMas18" + cod_sue).innerHTML = "+18";
             console.log("Operación completada");
             event.stopPropagation();
-        }).fail(function(respuesta){
+        }).fail(function(respuesta) {
             alert("No se pudo completar la acción: setMas18");
         });
     });
 
-    $(document).on("click",".setNoMas18",function(){
+    $(document).on("click", ".setNoMas18", function() {
         console.log("=======Cambiando sueño a no +18==========");
         var cod_sue = $(this).attr("id");
         var button = $(this);
-        var paquete = "funcion=setNoMas18&id_sue="+cod_sue;
+        var paquete = "funcion=setNoMas18&id_sue=" + cod_sue;
         console.log(paquete);
         $.ajax({
             type: "POST",
             url: "http://anotasuenos:8080/CRUDs/handlerAuxSuenos.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxSuenos.php",
             data: paquete,
-        }).done(function(respuesta){
+        }).done(function(respuesta) {
             button.text("+18");
             button.removeClass("btn-danger");
             button.removeClass("setNoMas18");
             button.addClass("btn-warning");
             button.addClass("setMas18");
-            document.getElementById("estadoMas18"+cod_sue).innerHTML = "No +18";
+            document.getElementById("estadoMas18" + cod_sue).innerHTML = "No +18";
             console.log("Operación completada");
             event.stopPropagation();
-        }).fail(function(respuesta){
+        }).fail(function(respuesta) {
             alert("No se pudo completar la acción: setNoMas18");
         });
     });
@@ -668,13 +671,13 @@ function checkPropiedad($id_usu)
             altoTXA = "height:300px;";
         }
         return altoTXA;
-
     }
 
     //Función tomada desde Stack Overflow - Usuario Dan Heberden
-    function changeURL( url ) {
+    function changeURL(url) {
         document.location = url;
     }
     //Fin.
 </script>
+
 </html>
