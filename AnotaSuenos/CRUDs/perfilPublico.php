@@ -179,7 +179,21 @@ function checkSeguir($id_usu_sdo, $id_usu_sdr, $link)
     <div class="container">
         <br>
         <div class="col-md-12 col-lg-12 border border-info rounded p-3 " style="background-color:white;width:100%;">
-            <span class="col-md-3 col-lg-2"> <img src="https://img.icons8.com/ios-filled/50/000000/help.png" width="60px" height="60px" alt="FDP" /> </span>
+                    <?php 
+                        $result = $link -> query("SELECT fot_usu FROM Login WHERE cod_usu = ".$_GET["cod_usu"]." ");
+                        if($result->num_rows > 0){
+                            while($row = $result->fetch_assoc()){ 
+                    ?>
+                               <span><img src="data:image/jpg;charset=utf8;base64,<?php echo base64_encode($row["fot_usu"]); ?> " width="70px" height="70px" alt="FOTO" style="border-radius: 50%;" /></span>
+                    <?php
+                            }
+                        }else{
+                            //TODO: Encontrar la manera de que se muestre una imagen placeholder cuando el usuario no tenga imagen.
+                    ?>
+                            <span><img src="https://img.icons8.com/ios-filled/50/000000/help.png" width="70px" height="70px" alt="FDP" /></span>
+                    <?php
+                        }
+                    ?>
             <span class="font-weight-bold col-md-4 col-lg-4" style="text-size: 80px;"> <?php echo htmlspecialchars($nombreUsuarioPerf); ?> </span>
             <span>Sueños publicados: </span><span id="cantidadSuenosUserProf">---</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <span>Seguidores: </span><span id="cantidadSeguidoresUserProf">---</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -202,6 +216,7 @@ function checkSeguir($id_usu_sdo, $id_usu_sdr, $link)
             }
             if (checkMod($link) == 1) {
                 echo "&nbsp;<span><button id='" . $_GET["cod_usu"] . "' class='resetDesc btn btn-warning'>Restablecer descripción</button></span>";
+                echo "&nbsp;<span><button id='" . $_GET["cod_usu"] . "' class='resetFotoP btn btn-warning'>Restablecer foto de perfil</button></span>";
             }
             ?>
         </div> <br>
@@ -250,6 +265,23 @@ function checkSeguir($id_usu_sdo, $id_usu_sdr, $link)
         listarCantSueUsuPerf();
         listarCantLikesRecUsu();
         listarCantSegUsu();
+    });
+
+    $(document).on("click", ".resetFotoP", function() {
+        var id_usu = $(this).attr("id");
+        var button = $(this);
+        var paquete = "function=resetFotoP&id_usu=" + id_usu;
+        $.ajax({
+            type: "POST",
+            url: "http://anotasuenos:8080/CRUDs/handlerAuxUsuario.php",
+            // url: "http://oniricnote.epizy.com/CRUDs/handlerAuxUsuario.php",
+            data: paquete,
+        }).done(function(respuesta) {
+            alert("Se eliminó la foto de perfil");
+            location.reload();
+        }).fail(function(respuesta) {
+            alert("No se pudo restablecer la foto de perfil del usuario debido a un posible error de conexión");
+        })
     });
 
     $(document).on("click", ".resetDesc", function() {

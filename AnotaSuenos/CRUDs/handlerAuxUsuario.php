@@ -75,6 +75,58 @@ switch($funcion){
     case "resetDescUsu":
         resetDesc($link);
     break;
+    case "updateFP":
+        updateFP($link);
+    break;
+    case "resetFotoP":
+        resetFotoP($link);
+    break;
+}
+
+function resetFotoP($link){
+    $id_usu = $_POST["id_usu"];
+    $sql = "UPDATE Login SET fot_usu = null WHERE cod_usu=? ";
+    if($stmt = mysqli_prepare($link,$sql)){
+        mysqli_stmt_bind_param($stmt,"i",$cod_usu_param);
+        $cod_usu_param = $id_usu;
+        if(mysqli_stmt_execute($stmt)){
+            return 1;
+        }else{
+            return 0;
+        }
+    }else{
+        echo "Falla de conexión.";
+    }
+}
+
+function updateFP($link){
+    $status = $statusMsg = '';
+    if(isset($_POST["submit"])){
+    $status = 'error';
+    if(!empty($_FILES["image"]["name"])){
+        $fileName = basename($_FILES["image"]["name"]); 
+        $fileType = pathinfo($fileName, PATHINFO_EXTENSION); 
+        $allowTypes = array('jpg','png','jpeg','gif');
+        if(in_array($fileType, $allowTypes)){
+            $image = $_FILES['image']['tmp_name'];
+            $imgContent = addslashes(file_get_contents($image));
+            //$insert = $link -> query("INSERT into images (image,uploaded) VALUES('$imgContent',NOW())");
+            $update = $link -> query("UPDATE Login SET fot_usu = '$imgContent' WHERE cod_usu = ".$_SESSION["id"]." ");
+           if($update){
+                $status = 'success';
+                echo "<script> alert('Foto cambiada con éxito.'); document.location = '../ajustes.php' </script>";
+                //header("location: ../ajustes.php");
+           }else{
+               $statusMsg = "No se pudo subir la imagen";
+           }
+        }else{
+            $statusMsg = "Solo se permiten imágenes en formato JPG, JPEG, PNG y GIF.";
+        }
+    }else{
+        $statusMsg = "Seleccione una imagen para subir.";
+    }
+}
+echo "<script> alert('".$statusMsg."'); history.back(); </script>";
 }
 
 function resetDesc($link){
@@ -168,7 +220,7 @@ function mostrarUsuariosEspecial($link,$query){
             $temp = array();
             echo "<tr>";
                 echo "<td> ".$row["cod_usu"]." </td>";
-                echo "<td> ".$row["nom_usu"]." </td>";
+                echo "<td> <a href='../CRUDs/perfilPublico.php?cod_usu=".$row["cod_usu"]." '> ".$row["nom_usu"]." </a> </td>";
                 echo "<td> ".$row["fec_usu"]." </td>";
                 //TODO: Acciones para estos botones.
                 echo "<td>";

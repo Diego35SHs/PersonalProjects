@@ -78,6 +78,29 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                         <input type="text" class="form-control" style="width:300px;" name="txtNombreUsuNue" id="txtNombreUsuNue" placeholder="Nuevo nombre de usuario"> <br>
                         <button class="btn btn-danger" id="cambiarUserName">Cambiar mi nombre de usuario</button>
                     </p>
+                    <p><b>Cambiar foto de perfil:</b></p>
+                    <ul>
+                        <li>Las fotos inapropiadas pueden resultar en reseteo o eliminación de la foto subida.</li>
+                    </ul>
+                    <p>Foto actual:</p>
+                        <?php 
+                        $result = $link -> query("SELECT fot_usu FROM Login WHERE cod_usu = ".$_SESSION["id"]." ");
+                        if($result->num_rows > 0){
+                            while($row = $result->fetch_assoc()){ 
+                        ?>
+                               <span><img src="data:image/jpg;charset=utf8;base64,<?php echo base64_encode($row["fot_usu"]); ?> " width="120px" height="120px" alt="No hay foto de perfil" style="border-radius: 50%;" /></span>
+                        <?php
+                                }
+                            }
+                        ?>
+                    <p>
+                        <form action="CRUDs/handlerAuxUsuario.php" method="post" enctype="multipart/form-data">
+                            <label>Seleccione su nueva foto de perfil:</label> <br>
+                            <input type="file" name="image" accept="image/png,image/jpg,image/jpeg,image/gif"> <br> <br>
+                            <input type="hidden" name="function" value="updateFP">
+                            <input type="submit" class="btn btn-primary" id="cambiarFotoPerfil" name="submit" value="Cambiar foto de perfil">
+                        </form>
+                    </p>
                     <p><b>Eliminar mi cuenta:</b></p>
                     <p>Ten lo siguiente en cuenta antes de eliminar tu cuenta:</p>
                     <ul>

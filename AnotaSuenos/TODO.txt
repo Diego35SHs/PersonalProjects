@@ -195,5 +195,9 @@ Versión 1.0.0 - Release 1
 -Se implementaron chequeos de sesión donde hacían falta.
 
 Versión 1.0.1 - Release 2
-//MAAAAAAAAAAAAAAAAAAAAAAY BEEEEEEEEEEEEEEEEEEEEEEE
+-Se añadió la función para subir fotos de perfil a la página de ajustes.
+-Se añadió la opción para ir directamente al perfil de un usuario desde las herramientas de moderación.
+-Se añadió un botón para eliminar la foto de perfil de un usuario.
+-Se actualizó la página de créditos
+-Los moderadores pueden eliminar las fotos de los usuarios.
 

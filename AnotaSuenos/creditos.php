@@ -123,6 +123,8 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                         <li> <a href="https://www.w3schools.com/jsref/met_document_createelement.asp" target="_blank">Crear un botón con JavaScript - W3Schools</a> </li>
                         <li> <a href="https://stackoverflow.com/questions/30572521/create-a-button-and-set-its-class-using-javascript" target="_blank">Saif: Añadir clases a un botón creado con JavaScript - StackOverflow</a> </li>
                         <li> <a href="https://stackoverflow.com/questions/19625646/javascript-adding-an-id-attribute-to-another-created-element" target="_blank">Añadir ID a un botón creado con JavaScript - StackOverflow</a> </li>
+                        <li> <a href="https://stackoverflow.com/questions/8067510/onclick-javascript-to-make-browser-go-back-to-previous-page" target="_blank">Hacer que el usuario vuelva a la página anterior por medio de JavaScript (function history.back()) - StackOverflow</a> </li>
+                        <li> <a href="https://www.w3schools.com/howto/howto_css_rounded_images.asp">Presentar imagen como un círculo sin cortarla - W3Schools</a> </li>
                     </ul>
                     <p><b>Notas, errores que no debería repetir y cosas aprendidas</b></p>
                     <ul>
@@ -140,10 +142,10 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                     <ul>
                         <li> <a href="TODO.txt">Ver archivo con notas del parche (No tiene CSS)</a> </li>
                     </ul>
-                    <p><b>Características "canceladas"</b></p>
-                    <p>Las siguientes caraterísticas estaban planeadas posterior a la versión 1.0, el poco interés en este proyecto significa que el desarrollo del proyecto no será prioridad una vez la versión 1.0 se lance.</p>
+                    <p><b>Características pospuestas - El Limbo</b></p>
+                    <p>Estas características son posibilidades y no está garantizado que se implementen, tampoco está garantizado que nunca se vayan a implementar. Este es el limbo.</p>
                     <ul>
-                        <li>Fotos de perfil</li>
+                        <li>Fotos de perfil - LISTO</li>
                         <li>Ver usuarios que dieron me gusta a un sueño</li>
                         <li>Ver cantidad de usuarios seguidos por un usuario</li>
                         <li>Aplicación de Android</li>
@@ -161,8 +163,8 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     </div>
 </body>
 <script>
-//Cambiar clase active de los link del navBar
-    //Un tanto ineficiente, pero solo se ejecuta al presionar el botón.
+    //Cambiar clase active de los link del navBar
+    //Un tanto ineficiente, pero solo se ejecuta al presionar el botón así que no me quita el sueño.
     $(document).on("click", ".nav-link", function() {
         var idopcion = $(this);
         console.log(idopcion);
