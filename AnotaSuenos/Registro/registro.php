@@ -63,10 +63,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $sql = "INSERT INTO Login (nom_usu, pas_usu, fec_usu) VALUES (?,?,NOW())";
         if($stmt = mysqli_prepare($link,$sql)){
             //Asignar variables al statement.
-            mysqli_stmt_bind_param($stmt,"ss",$param_username,$param_password);
+            mysqli_stmt_bind_param($stmt,"sss",$param_username,$param_password,$param_fotusu);
             //Definir parámetros
             $param_username = $username;
             $param_password = password_hash($password,PASSWORD_DEFAULT); //Crear el hash de contraseña
+            
             //Intentar ejecutar consulta.
             if(mysqli_stmt_execute($stmt)){
                 //Redireccionar a página de login

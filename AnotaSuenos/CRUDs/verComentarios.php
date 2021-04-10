@@ -101,7 +101,16 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
             </div>
             <div class="col-md-4">
                 <div id="contenedorMiniPerfil" class="center border border-info rounded p-3" style="background-color:white;">
-                    <span><img src="https://img.icons8.com/ios-filled/50/000000/help.png" width="50px" height="50px" alt="FDP" /></span>
+                <?php 
+                        $result = $link -> query("SELECT fot_usu FROM Login WHERE cod_usu = ".$_SESSION["id"]." ");
+                        if($result->num_rows > 0){
+                            while($row = $result->fetch_assoc()){ 
+                        ?>
+                               <span><img src="data:image/jpg;charset=utf8;base64,<?php echo base64_encode($row["fot_usu"]); ?> " width="70px" height="70px" alt="No hay foto de perfil" style="border-radius: 50%;" /></span>
+                        <?php
+                                }
+                            }
+                        ?>
                     <span id="nomUsuMiniPerfil"> <a href="../CRUDs/perfilPublico.php?cod_usu=<?php echo $_SESSION["id"]; ?>"> <?php echo $_SESSION["username"]; ?></a></span>
                 </div> <br>
                 <div id="espacioPublicitario" class="center border border-info rounded p-3" style="background-color:white;">

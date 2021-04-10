@@ -80,8 +80,17 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
             <div class="col-md-4">
             <br><br><br><br><br>
                 <div id="contenedorMiniPerfil" class="center border border-info rounded p-3" style="background-color:white;">
-                    <span><img src="https://img.icons8.com/ios-filled/50/000000/help.png" width="50px" height="50px" alt="FDP" /></span>
-                    <span id="nomUsuMiniPerfil"> <a href="../CRUDs/perfilPublico.php?cod_usu=<?php echo $_SESSION["id"]; ?>"> <?php echo $_SESSION["username"]; ?></a></span> <br> <br>
+                <?php 
+                        $result = $link -> query("SELECT fot_usu FROM Login WHERE cod_usu = ".$_SESSION["id"]." ");
+                        if($result->num_rows > 0){
+                            while($row = $result->fetch_assoc()){ 
+                    ?>
+                               <span><img src="data:image/jpg;charset=utf8;base64,<?php echo base64_encode($row["fot_usu"]); ?> " width="70px" height="70px" alt="imagenBD" style="border-radius: 50%;" /></span>
+                    <?php
+                            }
+                        }
+                    ?>
+                    <span id="nomUsuMiniPerfil"> &nbsp; <a href="../CRUDs/perfilPublico.php?cod_usu=<?php echo $_SESSION["id"]; ?>"> <?php echo $_SESSION["username"]; ?></a></span> <br> <br>
                     <p id="estadoMod">Cargando...</p>
                     <p>Para volver al modo usuario, utiliza la opción "Volver al inicio" en la barra de navegación.</p>
                 </div> <br>
